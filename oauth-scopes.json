@@ -1,0 +1,150 @@
+[
+   {
+      "name" : "ChannelsHistoryScope",
+      "scope" : "channels:history"
+   },
+   {
+      "scope" : "channels:read",
+      "name" : "ChannelsReadScope"
+   },
+   {
+      "name" : "ChannelsWriteScope",
+      "scope" : "channels:write"
+   },
+   {
+      "scope" : "chat:write:bot",
+      "name" : "ChatWriteBotScope"
+   },
+   {
+      "scope" : "chat:write:user",
+      "name" : "ChatWriteUserScope"
+   },
+   {
+      "name" : "DndReadScope",
+      "scope" : "dnd:read"
+   },
+   {
+      "name" : "DndWriteScope",
+      "scope" : "dnd:write"
+   },
+   {
+      "name" : "EmojiReadScope",
+      "scope" : "emoji:read"
+   },
+   {
+      "scope" : "files:read",
+      "name" : "FilesReadScope"
+   },
+   {
+      "scope" : "files:write:user",
+      "name" : "FilesWriteUserScope"
+   },
+   {
+      "scope" : "groups:history",
+      "name" : "GroupsHistoryScope"
+   },
+   {
+      "scope" : "groups:read",
+      "name" : "GroupsReadScope"
+   },
+   {
+      "scope" : "groups:write",
+      "name" : "GroupsWriteScope"
+   },
+   {
+      "name" : "IdentityBasicScope",
+      "scope" : "identity.basic"
+   },
+   {
+      "scope" : "im:history",
+      "name" : "ImHistoryScope"
+   },
+   {
+      "scope" : "im:read",
+      "name" : "ImReadScope"
+   },
+   {
+      "name" : "ImWriteScope",
+      "scope" : "im:write"
+   },
+   {
+      "scope" : "links:write",
+      "name" : "LinksWriteScope"
+   },
+   {
+      "name" : "MpimHistoryScope",
+      "scope" : "mpim:history"
+   },
+   {
+      "name" : "MpimReadScope",
+      "scope" : "mpim:read"
+   },
+   {
+      "scope" : "mpim:write",
+      "name" : "MpimWriteScope"
+   },
+   {
+      "name" : "PinsReadScope",
+      "scope" : "pins:read"
+   },
+   {
+      "scope" : "pins:write",
+      "name" : "PinsWriteScope"
+   },
+   {
+      "name" : "ReactionsReadScope",
+      "scope" : "reactions:read"
+   },
+   {
+      "scope" : "reactions:write",
+      "name" : "ReactionsWriteScope"
+   },
+   {
+      "name" : "RemindersReadScope",
+      "scope" : "reminders:read"
+   },
+   {
+      "scope" : "reminders:write",
+      "name" : "RemindersWriteScope"
+   },
+   {
+      "name" : "SearchReadScope",
+      "scope" : "search:read"
+   },
+   {
+      "name" : "StarsReadScope",
+      "scope" : "stars:read"
+   },
+   {
+      "name" : "StarsWriteScope",
+      "scope" : "stars:write"
+   },
+   {
+      "scope" : "team:read",
+      "name" : "TeamReadScope"
+   },
+   {
+      "scope" : "usergroups:read",
+      "name" : "UsergroupsReadScope"
+   },
+   {
+      "scope" : "usergroups:write",
+      "name" : "UsergroupsWriteScope"
+   },
+   {
+      "scope" : "users.profile:read",
+      "name" : "UsersProfileReadScope"
+   },
+   {
+      "scope" : "users.profile:write",
+      "name" : "UsersProfileWriteScope"
+   },
+   {
+      "scope" : "users:read",
+      "name" : "UsersReadScope"
+   },
+   {
+      "scope" : "users:write",
+      "name" : "UsersWriteScope"
+   }
+]
