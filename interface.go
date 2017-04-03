@@ -110,6 +110,22 @@ type User struct {
 
 type UserList []*User
 
+type Presence string
+
+const (
+	Presencective Presence = "away"
+	PresenceAway  Presence = "away"
+)
+
+type UserPresence struct {
+	AutoAway        bool     `json:"auto_away,omitempty"`
+	ConnectionCount int      `json:"connection_count,omitempty"`
+	LastActivity    int      `json:"last_activity,omitempty"`
+	ManualAway      bool     `json:"manual_away,omitempty"`
+	Online          bool     `json:"online"`
+	Presence        Presence `json:"presence"`
+}
+
 type EventType int
 
 const (

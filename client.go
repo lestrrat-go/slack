@@ -3,7 +3,6 @@ package slack
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -65,7 +64,6 @@ func New(token string, options ...Option) *Client {
 	if !strings.HasSuffix(slackURL, "/") {
 		slackURL = slackURL + "/"
 	}
-	fmt.Println(slackURL)
 
 	wrappedcl := &httpClient{
 		client:   httpcl,
@@ -107,12 +105,15 @@ func (c *httpClient) postForm(ctx context.Context, path string, f url.Values, da
 	return c.post(ctx, path, "application/x-www-form-urlencoded", strings.NewReader(f.Encode()), data)
 }
 
-func (c *httpClient) post(ctx context.Context, path, ct string, body io.Reader, data interface{}) error {
+func (c *httpClient) post(octx context.Context, path, ct string, body io.Reader, data interface{}) error {
 	u := c.makeSlackURL(path)
 	req, err := http.NewRequest(http.MethodPost, u, body)
 	if err != nil {
 		return errors.New(`failed to create new POST request`)
 	}
+
+	ctx, cancel := context.WithCancel(octx)
+	defer cancel()
 
 	req = req.WithContext(ctx)
 	req.Header.Set("Content-Type", ct)
