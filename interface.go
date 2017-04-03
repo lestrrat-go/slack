@@ -221,22 +221,6 @@ type UserPresence struct {
 	Presence        Presence `json:"presence"`
 }
 
-type EventType int
-
-const (
-	RTMConnectingEvent EventType = iota
-	MaxEvent
-)
-
-type RTM struct {
-	outch chan Event
-}
-
-type RTMEvent struct {
-	typ  EventType
-	data interface{}
-}
-
 type eventUnmarshalProxy struct {
 	EventTimestamp string
 	Item           json.RawMessage
