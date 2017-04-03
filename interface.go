@@ -18,6 +18,7 @@ var OAuth2Endpoint = oauth2.Endpoint{
 type Client struct {
 	auth     *AuthService
 	chat     *ChatService
+	users    *UsersService
 	slackURL string
 	token    string
 }
@@ -65,6 +66,49 @@ type MessageParams struct {
 	UnfurlMedia bool
 	Username    string
 }
+
+type UsersService struct {
+	client *httpClient
+	token  string
+}
+
+type UserProfile struct {
+	AlwaysActive       bool   `json:"always_active"`
+	AvatarHash         string `json:"avatar_hash"`
+	FirstName          string `json:"first_name"`
+	Image24            string `json:"image_24"`
+	Image32            string `json:"image_32"`
+	Image48            string `json:"image_48"`
+	Image72            string `json:"image_72"`
+	Image192           string `json:"image_192"`
+	Image512           string `json:"image_512"`
+	LastName           string `json:"last_name"`
+	RealName           string `json:"real_name"`
+	RealNameNormalized string `json:"real_name_normalized"`
+}
+
+type User struct {
+	Color             string      `json:"color"`
+	Deleted           bool        `json:"deleted"`
+	ID                string      `json:"id"`
+	IsAdmin           bool        `json:"is_admin"`
+	IsBot             bool        `json:"is_bot"`
+	IsOwner           bool        `json:"is_owner"`
+	IsPrimaryOwner    bool        `json:"is_primary_owner"`
+	IsRestricted      bool        `json:"is_restricted"`
+	IsUltraRestricted bool        `json:"is_ultra_restricted"`
+	Name              string      `json:"name"`
+	Profile           UserProfile `json:"profile"`
+	RealName          string      `json:"real_name"`
+	Status            string      `json:"status,omitempty"`
+	TeamID            string      `json:"team_id"`
+	TZ                string      `json:"tz,omitempty"`
+	TZLabel           string      `json:"tz_label"`
+	TZOffset          int         `json:"tz_offset"`
+	Update            int         `json:"updated"`
+}
+
+type UserList []*User
 
 type EventType int
 

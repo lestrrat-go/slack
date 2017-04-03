@@ -9,7 +9,7 @@ import (
 )
 
 func TestAuthTest(t *testing.T) {
-	if !hasTestSlackToken(t) {
+	if !requireSlackToken(t) {
 		return
 	}
 
@@ -25,7 +25,9 @@ func TestAuthTest(t *testing.T) {
 }
 
 func TestAuthRevoke(t *testing.T) {
-	if !hasTestSlackToken(t) {
+	t.Skip()
+
+	if !requireSlackToken(t) {
 		return
 	}
 

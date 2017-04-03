@@ -7,20 +7,35 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/lestrrat/go-slack"
 	"golang.org/x/oauth2"
 )
 
-var slackToken string
 var dmUser string
+var isBot bool
+var slackToken string
 
 func init() {
 	slackToken = os.Getenv("SLACK_TOKEN")
 	dmUser = os.Getenv("TEST_DM_USER") // don't forget to include an "@"
+
+	if len(slackToken) > 0 {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		cl := slack.New(slackToken)
+		res, err := cl.Auth().Test(ctx)
+		if err == nil {
+			user, err := cl.Users().Info(ctx, res.UserID)
+			if err == nil {
+				isBot = user.IsBot
+			}
+		}
+	}
 }
 
-func hasTestSlackToken(t *testing.T) bool {
+func requireSlackToken(t *testing.T) bool {
 	if slackToken == "" {
 		t.Skip("SLACK_TOKEN not available")
 		return false
@@ -28,9 +43,21 @@ func hasTestSlackToken(t *testing.T) bool {
 	return true
 }
 
-func hasTestDMUser(t *testing.T) bool {
+func requireDMUser(t *testing.T) bool {
 	if dmUser == "" {
 		t.Skip("TEST_DM_USER not available")
+		return false
+	}
+	return true
+}
+
+func requireRealUser(t *testing.T) bool {
+	if !requireSlackToken(t) {
+		return false
+	}
+
+	if isBot {
+		t.Skip("User authenticated by the token is a bot.")
 		return false
 	}
 	return true

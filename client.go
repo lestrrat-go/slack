@@ -72,8 +72,9 @@ func New(token string, options ...Option) *Client {
 		slackURL: slackURL,
 	}
 	return &Client{
-		auth: &AuthService{client: wrappedcl, token: token},
-		chat: &ChatService{client: wrappedcl, token: token},
+		auth:  &AuthService{client: wrappedcl, token: token},
+		chat:  &ChatService{client: wrappedcl, token: token},
+		users: &UsersService{client: wrappedcl, token: token},
 	}
 }
 
@@ -83,6 +84,10 @@ func (c *Client) Auth() *AuthService {
 
 func (c *Client) Chat() *ChatService {
 	return c.chat
+}
+
+func (c *Client) Users() *UsersService {
+	return c.users
 }
 
 type httpClient struct {

@@ -10,7 +10,7 @@ import (
 
 // Test message create, update, delete
 func TestChatMessage(t *testing.T) {
-	if !hasTestSlackToken(t) || !hasTestDMUser(t) {
+	if !requireSlackToken(t) || !requireDMUser(t) {
 		return
 	}
 
@@ -40,12 +40,11 @@ func TestChatMessage(t *testing.T) {
 	*/
 }
 
-// Test me message
+// Test me message. Note that
 func TestChatMeMessage(t *testing.T) {
-	if !hasTestSlackToken(t) || !hasTestDMUser(t) {
+	if !requireSlackToken(t) || !requireDMUser(t) || !requireRealUser(t) {
 		return
 	}
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
