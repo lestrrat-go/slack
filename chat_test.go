@@ -31,11 +31,11 @@ func TestChatMessage(t *testing.T) {
 	}
 	t.Logf("%#v", res)
 
-/*
-	res, err = c.Chat().Delete(ctx, res.Channel, res.Timestamp)
-	if !assert.NoError(t, err, "Chat.Delete failed") {
-		return
-	}
-	t.Logf("%#v", res)
-*/
+	/*
+		res, err = c.Chat().Delete(ctx, res.Channel, res.Timestamp)
+		if !assert.NoError(t, err, "Chat.Delete failed") {
+			return
+		}
+		t.Logf("%#v", res)
+	*/
 }

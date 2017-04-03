@@ -30,7 +30,7 @@ type AuthTestResponse struct {
 type Attachment interface{} // TODO
 type ChatService struct {
 	client *httpClient
-	token string
+	token  string
 }
 
 type ChatResponse struct {
