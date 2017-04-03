@@ -51,6 +51,25 @@ func (s *ChatService) Delete(ctx context.Context, channel, ts string) (*ChatResp
 	return res.ChatResponse, nil
 }
 
+func (s *ChatService) MeMessage(ctx context.Context, channel, text string) (*ChatResponse, error) {
+	v := url.Values{
+		"token":   {s.token},
+		"channel": {channel},
+		"text":    {text},
+	}
+	const endpoint = "chat.meMessage"
+	var res fullChatResponse
+	if err := s.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return nil, errors.Wrap(err, `failed to post to chat.meMessage`)
+	}
+
+	if !res.OK {
+		return nil, errors.New(res.Error)
+	}
+
+	return res.ChatResponse, nil
+}
+
 func NewMessageParams() *MessageParams {
 	return &MessageParams{
 		// everything else should be initialzed to the zero value

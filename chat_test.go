@@ -39,3 +39,21 @@ func TestChatMessage(t *testing.T) {
 		t.Logf("%#v", res)
 	*/
 }
+
+// Test me message
+func TestChatMeMessage(t *testing.T) {
+	if !hasTestSlackToken(t) || !hasTestDMUser(t) {
+		return
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	c := slack.New(slackToken)
+
+	res, err := c.Chat().MeMessage(ctx, dmUser, "hello")
+	if !assert.NoError(t, err, "Chat.MeMessage failed") {
+		return
+	}
+	t.Logf("%#v", res)
+}
