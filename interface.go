@@ -1,6 +1,19 @@
 package slack
 
-const DefaultSlackURL = "https://slack.com/api/"
+import "golang.org/x/oauth2"
+
+// DefaultSlackAPIEndpoint contains the prefix used for Slack REST API
+const (
+	DefaultAPIEndpoint         = "https://slack.com/api/"
+	DefaultOAuth2AuthEndpoint  = "https://slack.com/oauth/authorize"
+	DefaultOAuth2TokenEndpoint = "https://slack.com/api/oauth.access"
+)
+
+// Oauth2Endpoint contains the Slack OAuth2 endpoint configuration
+var OAuth2Endpoint = oauth2.Endpoint{
+	AuthURL:  DefaultOAuth2AuthEndpoint,
+	TokenURL: DefaultOAuth2TokenEndpoint,
+}
 
 type Client struct {
 	auth     *AuthService

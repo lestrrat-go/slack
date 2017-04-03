@@ -42,7 +42,7 @@ func WithClient(cl *http.Client) Option {
 }
 
 // WithAPIEndpoint allows you to specify an alternate API endpoint.
-// The default is DefaultSlackURL.
+// The default is DefaultAPIEndpoint.
 func WithAPIEndpoint(s string) Option {
 	return &option{
 		name:  slackurlkey,
@@ -51,7 +51,7 @@ func WithAPIEndpoint(s string) Option {
 }
 
 func New(token string, options ...Option) *Client {
-	slackURL := DefaultSlackURL
+	slackURL := DefaultAPIEndpoint
 	httpcl := http.DefaultClient
 	for _, o := range options {
 		switch o.Name() {
