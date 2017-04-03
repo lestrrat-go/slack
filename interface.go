@@ -1,6 +1,12 @@
 package slack
 
-import "golang.org/x/oauth2"
+import (
+	"encoding/json"
+
+	"golang.org/x/oauth2"
+)
+
+type EpochTime int64
 
 // DefaultSlackAPIEndpoint contains the prefix used for Slack REST API
 const (
@@ -53,6 +59,95 @@ type ChatResponse struct {
 	Message   interface{} `json:"message"` // TODO
 }
 
+type Edited struct {
+	Timestamp string `json:"ts"`
+	User      string `json:"user"`
+}
+
+type Comment struct {
+	ID        string    `json:"id,omitempty"`
+	Created   EpochTime `json:"created,omitempty"`
+	Timestamp EpochTime `json:"timestamp,omitempty"`
+	User      string    `json:"user,omitempty"`
+	Comment   string    `json:"comment,omitempty"`
+}
+
+// Message is a representation of a message, as obtained
+// by the RTM or Events API. This is NOT what you use when
+// you are posting a message. See ChatService#PostMessage
+// and MessageParams for that.
+type Message struct {
+	Attachments []Attachment `json:"attachments"`
+	Channel     string       `json:"channel"`
+	Edited      *Edited      `json:"edited"`
+	IsStarred   bool         `json:"is_starred"`
+	PinnedTo    []string     `json:"pinned_to"`
+	Text        string       `json:"text"`
+	Timestamp   string       `json:"timestamp"`
+	Type        string       `json:"type"`
+	User        string       `json:"user"`
+
+	// Message Subtypes
+	Subtype string `json:"subtype"`
+
+	// Hidden Subtypes
+	Hidden           bool   `json:"hidden,omitempty"`     // message_changed, message_deleted, unpinned_item
+	DeletedTimestamp string `json:"deleted_ts,omitempty"` // message_deleted
+	EventTimestamp   string `json:"event_ts,omitempty"`
+
+	// bot_message (https://api.slack.com/events/message/bot_message)
+	BotID    string `json:"bot_id,omitempty"`
+	Username string `json:"username,omitempty"`
+	Icons    *Icon  `json:"icons,omitempty"`
+
+	// channel_join, group_join
+	Inviter string `json:"inviter,omitempty"`
+
+	// channel_topic, group_topic
+	Topic string `json:"topic,omitempty"`
+
+	// channel_purpose, group_purpose
+	Purpose string `json:"purpose,omitempty"`
+
+	// channel_name, group_name
+	Name    string `json:"name,omitempty"`
+	OldName string `json:"old_name,omitempty"`
+
+	// channel_archive, group_archive
+	Members []string `json:"members,omitempty"`
+
+	// file_share, file_comment, file_mention
+	//	File *File `json:"file,omitempty"`
+
+	// file_share
+	Upload bool `json:"upload,omitempty"`
+
+	// file_comment
+	Comment *Comment `json:"comment,omitempty"`
+
+	// pinned_item
+	ItemType string `json:"item_type,omitempty"`
+
+	// https://api.slack.com/rtm
+	ReplyTo int    `json:"reply_to,omitempty"`
+	Team    string `json:"team,omitempty"`
+
+	// reactions
+	Reactions []ItemReaction `json:"reactions,omitempty"`
+}
+
+type Icon struct {
+	IconURL   string `json:"icon_url,omitempty"`
+	IconEmoji string `json:"icon_emoji,omitempty"`
+}
+
+type ItemReaction struct {
+	Name  string   `json:"name"`
+	Count int      `json:"count"`
+	Users []string `json:"users"`
+}
+
+// MessageParans is used when posting a new message
 type MessageParams struct {
 	AsUser      bool
 	Attachments []Attachment
@@ -133,10 +228,6 @@ const (
 	MaxEvent
 )
 
-type Event interface {
-	Type() EventType
-}
-
 type RTM struct {
 	outch chan Event
 }
@@ -144,4 +235,20 @@ type RTM struct {
 type RTMEvent struct {
 	typ  EventType
 	data interface{}
+}
+
+type eventUnmarshalProxy struct {
+	EventTimestamp string
+	Item           json.RawMessage
+	Timestamp      string
+	Type           string
+	User           string
+}
+
+type Event struct {
+	EventTimestamp string
+	Item           interface{}
+	Timestamp      string
+	Type           string
+	User           string
 }

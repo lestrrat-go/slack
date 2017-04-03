@@ -1,0 +1,298 @@
+[
+   {
+      "value" : "accounts_changed",
+      "name" : "AccountsChangedType"
+   },
+   {
+      "name" : "BotAddedType",
+      "value" : "bot_added"
+   },
+   {
+      "name" : "BotChangedType",
+      "value" : "bot_changed"
+   },
+   {
+      "value" : "channel_archive",
+      "name" : "ChannelArchiveType"
+   },
+   {
+      "name" : "ChannelCreatedType",
+      "value" : "channel_created"
+   },
+   {
+      "name" : "ChannelDeletedType",
+      "value" : "channel_deleted"
+   },
+   {
+      "value" : "channel_history_changed",
+      "name" : "ChannelHistoryChangedType"
+   },
+   {
+      "name" : "ChannelJoinedType",
+      "value" : "channel_joined"
+   },
+   {
+      "value" : "channel_left",
+      "name" : "ChannelLeftType"
+   },
+   {
+      "name" : "ChannelMarkedType",
+      "value" : "channel_marked"
+   },
+   {
+      "value" : "channel_rename",
+      "name" : "ChannelRenameType"
+   },
+   {
+      "value" : "channel_unarchive",
+      "name" : "ChannelUnarchiveType"
+   },
+   {
+      "value" : "commands_changed",
+      "name" : "CommandsChangedType"
+   },
+   {
+      "name" : "DndUpdatedType",
+      "value" : "dnd_updated"
+   },
+   {
+      "value" : "dnd_updated_user",
+      "name" : "DndUpdatedUserType"
+   },
+   {
+      "value" : "email_domain_changed",
+      "name" : "EmailDomainChangedType"
+   },
+   {
+      "value" : "emoji_changed",
+      "name" : "EmojiChangedType"
+   },
+   {
+      "value" : "file_change",
+      "name" : "FileChangeType"
+   },
+   {
+      "name" : "FileCommentAddedType",
+      "value" : "file_comment_added"
+   },
+   {
+      "value" : "file_comment_deleted",
+      "name" : "FileCommentDeletedType"
+   },
+   {
+      "value" : "file_comment_edited",
+      "name" : "FileCommentEditedType"
+   },
+   {
+      "value" : "file_created",
+      "name" : "FileCreatedType"
+   },
+   {
+      "name" : "FileDeletedType",
+      "value" : "file_deleted"
+   },
+   {
+      "value" : "file_public",
+      "name" : "FilePublicType"
+   },
+   {
+      "name" : "FileSharedType",
+      "value" : "file_shared"
+   },
+   {
+      "name" : "FileUnsharedType",
+      "value" : "file_unshared"
+   },
+   {
+      "value" : "goodbye",
+      "name" : "GoodbyeType"
+   },
+   {
+      "value" : "group_archive",
+      "name" : "GroupArchiveType"
+   },
+   {
+      "value" : "group_close",
+      "name" : "GroupCloseType"
+   },
+   {
+      "value" : "group_history_changed",
+      "name" : "GroupHistoryChangedType"
+   },
+   {
+      "name" : "GroupJoinedType",
+      "value" : "group_joined"
+   },
+   {
+      "name" : "GroupLeftType",
+      "value" : "group_left"
+   },
+   {
+      "name" : "GroupMarkedType",
+      "value" : "group_marked"
+   },
+   {
+      "value" : "group_open",
+      "name" : "GroupOpenType"
+   },
+   {
+      "value" : "group_rename",
+      "name" : "GroupRenameType"
+   },
+   {
+      "value" : "group_unarchive",
+      "name" : "GroupUnarchiveType"
+   },
+   {
+      "name" : "HelloType",
+      "value" : "hello"
+   },
+   {
+      "value" : "im_close",
+      "name" : "ImCloseType"
+   },
+   {
+      "value" : "im_created",
+      "name" : "ImCreatedType"
+   },
+   {
+      "name" : "ImHistoryChangedType",
+      "value" : "im_history_changed"
+   },
+   {
+      "name" : "ImMarkedType",
+      "value" : "im_marked"
+   },
+   {
+      "value" : "im_open",
+      "name" : "ImOpenType"
+   },
+   {
+      "name" : "LinkSharedType",
+      "value" : "link_shared"
+   },
+   {
+      "name" : "ManualPresenceChangeType",
+      "value" : "manual_presence_change"
+   },
+   {
+      "value" : "message",
+      "name" : "MessageType"
+   },
+   {
+      "value" : "message.channels",
+      "name" : "MessageChannelsType"
+   },
+   {
+      "name" : "MessageGroupsType",
+      "value" : "message.groups"
+   },
+   {
+      "value" : "message.im",
+      "name" : "MessageImType"
+   },
+   {
+      "name" : "MessageMpimType",
+      "value" : "message.mpim"
+   },
+   {
+      "value" : "pin_added",
+      "name" : "PinAddedType"
+   },
+   {
+      "name" : "PinRemovedType",
+      "value" : "pin_removed"
+   },
+   {
+      "name" : "PrefChangeType",
+      "value" : "pref_change"
+   },
+   {
+      "name" : "PresenceChangeType",
+      "value" : "presence_change"
+   },
+   {
+      "name" : "ReactionAddedType",
+      "value" : "reaction_added"
+   },
+   {
+      "value" : "reaction_removed",
+      "name" : "ReactionRemovedType"
+   },
+   {
+      "value" : "reconnect_url",
+      "name" : "ReconnectUrlType"
+   },
+   {
+      "name" : "StarAddedType",
+      "value" : "star_added"
+   },
+   {
+      "value" : "star_removed",
+      "name" : "StarRemovedType"
+   },
+   {
+      "name" : "SubteamCreatedType",
+      "value" : "subteam_created"
+   },
+   {
+      "name" : "SubteamSelfAddedType",
+      "value" : "subteam_self_added"
+   },
+   {
+      "value" : "subteam_self_removed",
+      "name" : "SubteamSelfRemovedType"
+   },
+   {
+      "value" : "subteam_updated",
+      "name" : "SubteamUpdatedType"
+   },
+   {
+      "value" : "team_domain_change",
+      "name" : "TeamDomainChangeType"
+   },
+   {
+      "name" : "TeamJoinType",
+      "value" : "team_join"
+   },
+   {
+      "name" : "TeamMigrationStartedType",
+      "value" : "team_migration_started"
+   },
+   {
+      "value" : "team_plan_change",
+      "name" : "TeamPlanChangeType"
+   },
+   {
+      "value" : "team_pref_change",
+      "name" : "TeamPrefChangeType"
+   },
+   {
+      "name" : "TeamProfileChangeType",
+      "value" : "team_profile_change"
+   },
+   {
+      "name" : "TeamProfileDeleteType",
+      "value" : "team_profile_delete"
+   },
+   {
+      "value" : "team_profile_reorder",
+      "name" : "TeamProfileReorderType"
+   },
+   {
+      "name" : "TeamRenameType",
+      "value" : "team_rename"
+   },
+   {
+      "value" : "url_verification",
+      "name" : "UrlVerificationType"
+   },
+   {
+      "name" : "UserChangeType",
+      "value" : "user_change"
+   },
+   {
+      "name" : "UserTypingType",
+      "value" : "user_typing"
+   }
+]
