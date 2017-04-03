@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 
+	"golang.org/x/oauth2"
+
 	slack "github.com/lestrrat/go-slack"
 )
 
