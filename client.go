@@ -11,6 +11,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Option defines an interface of optional parameters to the
+// `slack.New` constructor.
 type Option interface {
 	Name() string
 	Value() interface{}
@@ -34,6 +36,10 @@ const (
 	slackurlkey = "slackurl"
 )
 
+// WithClient allows you to specify an net/http.Client object to
+// use to communicate with the Slack endpoints. For example, if you
+// need to use this in Google App Engine, you can pass it the
+// result of `urlfetch.Client`
 func WithClient(cl *http.Client) Option {
 	return &option{
 		name:  httpclkey,
@@ -50,6 +56,8 @@ func WithAPIEndpoint(s string) Option {
 	}
 }
 
+// WithDebug specifies that we want to run in debugging mode.
+// XXX I wrote it, but haven't actually implemented debugging yet
 func WithDebug(b bool) Option {
 	return &option{
 		name:  debugkey,
@@ -57,6 +65,9 @@ func WithDebug(b bool) Option {
 	}
 }
 
+// New creates a new REST Slack API client. The `token` is
+// required. Other optional parameters can be passed using the
+// various `WithXXXX` functions
 func New(token string, options ...Option) *Client {
 	slackURL := DefaultAPIEndpoint
 	httpcl := http.DefaultClient
@@ -90,18 +101,22 @@ func New(token string, options ...Option) *Client {
 	}
 }
 
+// Auth returns the Service object for `auth.*` endpoints
 func (c *Client) Auth() *AuthService {
 	return c.auth
 }
 
+// Chat returns the Service object for `chat.*` endpoints
 func (c *Client) Chat() *ChatService {
 	return c.chat
 }
 
+// RTM returns the Service object for `rtm.*` endpoints
 func (c *Client) RTM() *RTMService {
 	return c.rtm
 }
 
+// Users returns the Service object for `users.*` endpoints
 func (c *Client) Users() *UsersService {
 	return c.users
 }
