@@ -29,8 +29,9 @@ func (o *option) Value() interface{} {
 }
 
 const (
-	httpclkey   = "httpclient"
-	slackurlkey = "slackurl"
+	debugkey = "debug"
+	httpclkey    = "httpclient"
+	slackurlkey  = "slackurl"
 )
 
 func WithClient(cl *http.Client) Option {
@@ -49,13 +50,23 @@ func WithAPIEndpoint(s string) Option {
 	}
 }
 
+func WithDebug(b bool) Option {
+	return &option{
+		name:  debugkey,
+		value: b,
+	}
+}
+
 func New(token string, options ...Option) *Client {
 	slackURL := DefaultAPIEndpoint
 	httpcl := http.DefaultClient
+	var debug bool
 	for _, o := range options {
 		switch o.Name() {
 		case httpclkey:
 			httpcl = o.Value().(*http.Client)
+		case debugkey:
+			debug = o.Value().(bool)
 		case slackurlkey:
 			slackURL = o.Value().(string)
 		}
@@ -67,12 +78,14 @@ func New(token string, options ...Option) *Client {
 
 	wrappedcl := &httpClient{
 		client:   httpcl,
+		debug:    debug,
 		slackURL: slackURL,
 	}
 	return &Client{
 		auth:  &AuthService{client: wrappedcl, token: token},
 		chat:  &ChatService{client: wrappedcl, token: token},
 		users: &UsersService{client: wrappedcl, token: token},
+		debug: debug,
 	}
 }
 
@@ -90,6 +103,7 @@ func (c *Client) Users() *UsersService {
 
 type httpClient struct {
 	client   *http.Client
+	debug    bool
 	slackURL string
 }
 

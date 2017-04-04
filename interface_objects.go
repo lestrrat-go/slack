@@ -6,7 +6,50 @@ package slack
 
 import "encoding/json"
 
+// Conversation is a structure that is never used by itself:
+// it's re-used to describe a basic conversation profile
+// by being embedded in other objects
+type Conversation struct {
+	ID                 string    `json:"id"`
+	Created            EpochTime `json:"created"`
+	IsOpen             bool      `json:"is_open"`
+	LastRead           string    `json:"last_read,omitempty"`
+	Latest             *Message  `json:"latest,omitempty"`
+	UnreadCount        int       `json:"unread_count,omitempty"`
+	UnreadCountDisplay int       `json:"unread_count_display,omitempty"`
+}
+
+type GroupConversation struct {
+	Conversation
+	Name       string   `json:"name"`
+	Creator    string   `json:"creator"`
+	IsArchived bool     `json:"is_archived"`
+	Members    []string `json:"members"`
+	NumMembers int      `json:"num_members,omitempty"`
+	Topic      Topic    `json:"topic"`
+	Purpose    Purpose  `json:"purpose"`
+}
+
+type Purpose struct {
+	Value   string    `json:"value"`
+	Creator string    `json:"creator"`
+	LastSet EpochTime `json:"last_set"`
+}
+
+type Topic struct {
+	Value   string    `json:"value"`
+	Creator string    `json:"creator"`
+	LastSet EpochTime `json:"last_set"`
+}
+
 type Attachment interface{} // TODO
+
+type Channel struct {
+	GroupConversation
+	IsChannel bool `json:"is_channel"`
+	IsGeneral bool `json:"is_general"`
+	IsMember  bool `json:"is_member"`
+}
 
 type Edited struct {
 	Timestamp string `json:"ts"`
@@ -83,6 +126,13 @@ type Message struct {
 
 	// reactions
 	Reactions []ItemReaction `json:"reactions,omitempty"`
+}
+
+type IM struct {
+	Conversation
+	IsIM          bool   `json:"is_im"`
+	User          string `json:"user"`
+	IsUserDeleted bool   `json:"is_user_deleted"`
 }
 
 type Icon struct {
@@ -191,3 +241,20 @@ type Event struct {
 	Type           string
 	User           string
 }
+
+type Team struct {
+	ID                string                 `json:"id"`
+	Name              string                 `json:"name"`
+	Domain            string                 `json:"domain"`
+	EmailDomain       string                 `json:"email_domain"`
+	EnterpriseID      string                 `json:"enterprise_id,omitempty"`
+	EnterpriseName    string                 `json:"enterprise_name,omitempty"`
+	Icon              map[string]interface{} `json:"icon"`
+	MsgEditWindowMins int                    `json:"msg_edit_window_mins"`
+	OverStorageLimit  int                    `json:"over_storage_limit"`
+	Prefs             interface{}            `json:"prefs"`
+	Plan              string                 `json:"plan"`
+}
+
+type Group interface {}
+type Bot interface{}

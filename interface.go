@@ -25,6 +25,7 @@ type Client struct {
 	auth     *AuthService
 	chat     *ChatService
 	users    *UsersService
+	debug    bool
 	slackURL string
 	token    string
 }

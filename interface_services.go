@@ -60,3 +60,4 @@ type UsersService struct {
 	client *httpClient
 	token  string
 }
+

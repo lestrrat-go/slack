@@ -16,7 +16,7 @@ func TestAuthTest(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	c := slack.New(slackToken)
+	c := debuggingClient(slackToken)
 	res, err := c.Auth().Test(ctx)
 	if !assert.NoError(t, err, "Auth.Test failed") {
 		return

@@ -58,3 +58,8 @@ func requireRealUser(t *testing.T) bool {
 	}
 	return true
 }
+
+func debuggingClient(tok string, options ...slack.Option) *slack.Client {
+	options = append(options, slack.WithDebug(true))
+	return slack.New(tok, options...)
+}
