@@ -21,6 +21,6 @@ func TestRTM(t *testing.T) {
 	go rtm.Run(ctx)
 
 	for e := range rtm.Events() {
-	t.Logf("%#v", e)
+		t.Logf("%#v", e)
 	}
 }

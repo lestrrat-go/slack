@@ -6,6 +6,14 @@ import (
 	"github.com/pkg/errors"
 )
 
+func (e *Event) Type() EventType {
+	return e.typ
+}
+
+func (e *Event) Data() interface{} {
+	return e.data
+}
+
 func (e *Event) UnmarshalJSON(data []byte) error {
 	// mental note: RTM events are not really related to their
 	// counterparts in events API in terms of structure.
