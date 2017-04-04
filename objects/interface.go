@@ -38,7 +38,35 @@ type Topic struct {
 	LastSet EpochTime `json:"last_set"`
 }
 
-type Attachment interface{} // TODO
+// Action is used in conjunction with message buttons
+type Action struct {
+	Confirm Confirmation `json:"confirm"`
+	Name    string       `json:"name"`
+	Text    string       `json:"text"`
+	Type    string       `json:"type"`
+	Value   string       `json:"value"`
+}
+
+type Attachment struct {
+	Actions        []*Action `json:"actions,omitempty"` // for buttons
+	AttachmentType string    `json:"attachment_type"`
+	AuthorName     string    `json:"author_name"`
+	AuthorLink     string    `json:"author_link"`
+	AuthorIcon     string    `json:"author_icon"`
+	CallbackID     string    `json:"callback_id,omitempty"` // for buttons
+	Color          string    `json:"color,omitempty"`
+	Fallback       string    `json:"fallback"`
+	Fields         []*Field  `json:"fields"`
+	Footer         string    `json:"footer"`
+	FooterIcon     string    `json:"footer_icon"`
+	ImageURL       string    `json:"image_url"`
+	ThumbURL       string    `json:"thumb_url"`
+	Pretext        string    `json:"pretext,omitempty"`
+	Text           string    `json:"text"`
+	Timestamp      EpochTime `json:"ts"`
+	Title          string    `json:"title"`
+	TitleLink      string    `json:"title_link"`
+}
 
 type Channel struct {
 	GroupConversation
@@ -47,9 +75,12 @@ type Channel struct {
 	IsMember  bool `json:"is_member"`
 }
 
-type Edited struct {
-	Timestamp string `json:"ts"`
-	User      string `json:"user"`
+// Confirmation is used in conjunction with message buttons
+type Confirmation struct {
+	Title       string `json:"title"`
+	Text        string `json:"text"`
+	OkText      string `json:"ok_text"`
+	DismissText string `json:"dismiss_text"`
 }
 
 type Comment struct {
@@ -58,6 +89,17 @@ type Comment struct {
 	Timestamp EpochTime `json:"timestamp,omitempty"`
 	User      string    `json:"user,omitempty"`
 	Comment   string    `json:"comment,omitempty"`
+}
+
+type Edited struct {
+	Timestamp string `json:"ts"`
+	User      string `json:"user"`
+}
+
+type Field struct {
+	Title string `json:"title"`
+	Value string `json:"value"`
+	Short bool   `json:"short"`
 }
 
 // Message is a representation of a message, as obtained
