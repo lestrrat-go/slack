@@ -20,15 +20,30 @@ func (e *Event) UnmarshalJSON(data []byte) error {
 	var item interface{}
 	var typ EventType
 	switch m["type"] {
+	case ChannelCreatedTypeKey:
+		typ = ChannelCreatedType
+		item = &ChannelCreatedEvent{}
+	case ChannelJoinedTypeKey:
+		typ = ChannelJoinedType
+		item = &ChannelJoinedEvent{}
 	case HelloTypeKey:
 		typ = HelloType
 		item = &HelloEvent{} // XXX we should just skip unmarshaling after this
+	case ImCreatedTypeKey:
+		typ = ImCreatedType
+		item = &ImCreatedEvent{}
+	case MessageTypeKey:
+		typ = MessageType
+		item = &MessageEvent{}
 	case PresenceChangeTypeKey:
 		typ = PresenceChangeType
 		item = &PresenceChangeEvent{}
 	case ReconnectURLTypeKey:
 		typ = ReconnectURLType
 		item = &ReconnectURLEvent{}
+	case UserTypingTypeKey:
+		typ = UserTypingType
+		item = &UserTypingEvent{}
 	default:
 		return errors.Errorf("unknown RTM event type: %s", m["type"])
 	}

@@ -19,10 +19,10 @@ type Conversation struct {
 
 type GroupConversation struct {
 	Conversation
-	Name       string   `json:"name"`
 	Creator    string   `json:"creator"`
 	IsArchived bool     `json:"is_archived"`
 	Members    []string `json:"members"`
+	Name       string   `json:"name"`
 	NumMembers int      `json:"num_members,omitempty"`
 	Topic      Topic    `json:"topic"`
 	Purpose    Purpose  `json:"purpose"`

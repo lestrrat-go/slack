@@ -110,21 +110,35 @@ func newRtmCtx(octx context.Context, outch chan<- *Event) *rtmCtx {
 	}
 }
 
-func (ctx *rtmCtx) run() {
-	// callback to write to the outgoing channel
-	trywrite := func(ctx *rtmCtx, e *Event) error {
-		fmt.Println("Attempting to write to out channel")
-		wrtimeout := time.NewTimer(ctx.writeTimeout)
-		defer wrtimeout.Stop()
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		case ctx.outbuf <- e:
-			return nil
-		case <-wrtimeout.C:
-			return errors.New("timeout")
+// Attempt to write to the outgoing channel, within the
+// alloted time frame.
+func (ctx *rtmCtx) trywrite(e *Event) error {
+	tctx, cancel := context.WithTimeout(ctx, ctx.writeTimeout)
+	defer cancel()
+
+	select {
+	case <-tctx.Done():
+		switch err := tctx.Err(); err {
+		case context.DeadlineExceeded:
+			return errors.New("write timeout")
+		default:
+			return err
 		}
+	case ctx.outbuf <- e:
+		return nil
 	}
+
+	return errors.New("unreachable")
+}
+
+// The point of this loop is to ensure the writer (the loop receiving
+// events from the websocket connection) can safely write the events
+// to a channel without worrying about blocking.
+//
+// Inside this loop, we read from the channel receiving the events,
+// and we either write to the consumer channel, or buffer in our
+// in memory queue (list) for later consumption
+func (ctx *rtmCtx) run() {
 
 	periodic := time.NewTicker(time.Second)
 	defer periodic.Stop()
@@ -138,14 +152,16 @@ func (ctx *rtmCtx) run() {
 		case e := <-ctx.inbuf:
 			events = append(events, e)
 		case <-periodic.C:
-			// attempt to write periodically. only comes here in case we
-			// were unable to write to the channel during the alloted time
+			// attempt to flush the buffer periodically.
 		}
 
+		// events should only contain more than one item if we
+		// failed to write to the outgoing channel within the
+		// allotted time
 		for len(events) > 0 {
 			e := events[0]
 			// Try writing. if we fail, bail out of this write loop
-			if err := trywrite(ctx, e); err != nil {
+			if err := ctx.trywrite(e); err != nil {
 				break
 			}
 			// if we were successful, pop the current one and try the next one
@@ -159,11 +175,10 @@ func (ctx *rtmCtx) run() {
 	}
 }
 
-// emit sends the event e to a channel. This method doesn't "fail" because
-// we expect the the proxy loop in run() to handle things gracefully
+// emit sends the event e to a channel. This method doesn't "fail" to
+// write because we expect the the proxy loop in run() to read these
+// requests as quickly as possible under normal circumstances
 func (ctx *rtmCtx) emit(e *Event) {
-	fmt.Println("emit")
-	defer fmt.Println("done emit")
 	select {
 	case <-ctx.Done():
 		return
