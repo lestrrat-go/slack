@@ -4,8 +4,6 @@ package slack
 // See interface_objects.go for Slack object definitions
 // See interface_services.go for Slack service definitions
 
-import "encoding/json"
-
 // Conversation is a structure that is never used by itself:
 // it's re-used to describe a basic conversation profile
 // by being embedded in other objects
@@ -226,22 +224,6 @@ type UserPresence struct {
 	Presence        Presence `json:"presence"`
 }
 
-type eventUnmarshalProxy struct {
-	EventTimestamp string
-	Item           json.RawMessage
-	Timestamp      string
-	Type           string
-	User           string
-}
-
-type Event struct {
-	EventTimestamp string
-	Item           interface{}
-	Timestamp      string
-	Type           string
-	User           string
-}
-
 type Team struct {
 	ID                string                 `json:"id"`
 	Name              string                 `json:"name"`
@@ -251,10 +233,10 @@ type Team struct {
 	EnterpriseName    string                 `json:"enterprise_name,omitempty"`
 	Icon              map[string]interface{} `json:"icon"`
 	MsgEditWindowMins int                    `json:"msg_edit_window_mins"`
-	OverStorageLimit  bool                    `json:"over_storage_limit"`
+	OverStorageLimit  bool                   `json:"over_storage_limit"`
 	Prefs             interface{}            `json:"prefs"`
 	Plan              string                 `json:"plan"`
 }
 
-type Group interface {}
+type Group interface{}
 type Bot interface{}

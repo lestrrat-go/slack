@@ -1,8 +1,9 @@
-package slack
+package events
 
 import (
 	"encoding/json"
 
+	"github.com/nlopes/slack"
 	"github.com/pkg/errors"
 )
 
@@ -28,9 +29,8 @@ func (p *eventUnmarshalProxy) Populate(e *Event) error {
 
 	// TODO: Add more types
 	switch p.Type {
-	case MessageType, MessageChannelsType, MessageGroupsType, MessageImType, MessageMpimType:
-		item = &Message{}
-	case ReconnectUrlType:
+	case MessageChannelsType, MessageGroupsType, MessageImType, MessageMpimType:
+		item = &slack.Message{}
 	default:
 		return errors.Errorf("unknown event type: %s", p.Type)
 	}

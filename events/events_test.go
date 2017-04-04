@@ -1,11 +1,11 @@
-package slack_test
+package events_test
 
 import (
 	"encoding/json"
 	"strings"
 	"testing"
 
-	"github.com/lestrrat/go-slack"
+	"github.com/lestrrat/go-slack/events"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,7 +38,7 @@ func TestEventPayload(t *testing.T) {
     }
 }`
 
-	var p slack.Event
+	var p events.Event
 	if !assert.NoError(t, json.NewDecoder(strings.NewReader(src)).Decode(&p), "decode should suceed") {
 		return
 	}
