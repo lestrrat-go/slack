@@ -44,7 +44,7 @@ type RTMService struct {
 	token  string
 }
 
-type StartRTMResponse struct {
+type RTMResponse struct {
 	URL      string       `json:"url"`
 	Self     *UserDetails `json:"self"`
 	Team     *Team        `json:"team"`

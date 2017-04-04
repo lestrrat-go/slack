@@ -14,18 +14,32 @@ if ($content !~ m{<table class="table table-bordered full_width">(.+)</table>}sm
 
 my $events_table = $1;
 my @events;
-for my $name ($events_table =~ m{<a href="/events/([^"]+)"}g) {
-    push @events, $name;
+
+# extract <tr></tr>
+for my $row ($events_table =~ m{<tr>(.+?)</tr>}gsm) {
+    if ($row !~ m{<a href="/events/([^"]+)"}) {
+        next;
+    }
+    my $name = $1;
+    my %data = (name => $name, rtm => JSON::false, events => JSON::false);
+    if ($row =~ />RTM</) {
+        $data{rtm} = JSON::true;
+    }
+    if ($row =~ />Events API</) {
+        $data{events} = JSON::true;
+    }
+    push @events, \%data;
 }
 
 my @data;
-foreach my $name (@events) {
-    my $r = $name;
+foreach my $data (@events) {
+    my $r = $data->{name};
     $r =~ s/[^\w]+/_/g;
     $r =~ s/_(\w)/uc($1)/ge;
     $r = ucfirst($r);
+    $r =~ s/Url/URL/g;
     $r .= "Type";
-    push @data, {name => $r, "value" => $name};
+    push @data, {name => $r, "value" => $data->{name}, rtm => $data->{rtm}, events => $data->{events} };
 }
 
 print JSON->new->pretty->encode(\@data);

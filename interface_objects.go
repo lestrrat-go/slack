@@ -251,7 +251,7 @@ type Team struct {
 	EnterpriseName    string                 `json:"enterprise_name,omitempty"`
 	Icon              map[string]interface{} `json:"icon"`
 	MsgEditWindowMins int                    `json:"msg_edit_window_mins"`
-	OverStorageLimit  int                    `json:"over_storage_limit"`
+	OverStorageLimit  bool                    `json:"over_storage_limit"`
 	Prefs             interface{}            `json:"prefs"`
 	Plan              string                 `json:"plan"`
 }

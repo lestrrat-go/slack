@@ -29,9 +29,9 @@ func (o *option) Value() interface{} {
 }
 
 const (
-	debugkey = "debug"
-	httpclkey    = "httpclient"
-	slackurlkey  = "slackurl"
+	debugkey    = "debug"
+	httpclkey   = "httpclient"
+	slackurlkey = "slackurl"
 )
 
 func WithClient(cl *http.Client) Option {
@@ -84,6 +84,7 @@ func New(token string, options ...Option) *Client {
 	return &Client{
 		auth:  &AuthService{client: wrappedcl, token: token},
 		chat:  &ChatService{client: wrappedcl, token: token},
+		rtm:   &RTMService{client: wrappedcl, token: token},
 		users: &UsersService{client: wrappedcl, token: token},
 		debug: debug,
 	}
@@ -95,6 +96,10 @@ func (c *Client) Auth() *AuthService {
 
 func (c *Client) Chat() *ChatService {
 	return c.chat
+}
+
+func (c *Client) RTM() *RTMService {
+	return c.rtm
 }
 
 func (c *Client) Users() *UsersService {

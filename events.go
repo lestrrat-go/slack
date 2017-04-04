@@ -30,6 +30,7 @@ func (p *eventUnmarshalProxy) Populate(e *Event) error {
 	switch p.Type {
 	case MessageType, MessageChannelsType, MessageGroupsType, MessageImType, MessageMpimType:
 		item = &Message{}
+	case ReconnectUrlType:
 	default:
 		return errors.Errorf("unknown event type: %s", p.Type)
 	}

@@ -1,298 +1,446 @@
 [
    {
-      "value" : "accounts_changed",
-      "name" : "AccountsChangedType"
+      "rtm" : true,
+      "events" : false,
+      "name" : "AccountsChangedType",
+      "value" : "accounts_changed"
    },
    {
-      "name" : "BotAddedType",
-      "value" : "bot_added"
+      "rtm" : true,
+      "value" : "bot_added",
+      "events" : false,
+      "name" : "BotAddedType"
    },
    {
       "name" : "BotChangedType",
-      "value" : "bot_changed"
+      "events" : false,
+      "value" : "bot_changed",
+      "rtm" : true
    },
    {
+      "events" : true,
+      "name" : "ChannelArchiveType",
       "value" : "channel_archive",
-      "name" : "ChannelArchiveType"
+      "rtm" : true
    },
    {
+      "rtm" : true,
       "name" : "ChannelCreatedType",
+      "events" : true,
       "value" : "channel_created"
    },
    {
+      "rtm" : true,
+      "value" : "channel_deleted",
       "name" : "ChannelDeletedType",
-      "value" : "channel_deleted"
+      "events" : true
    },
    {
       "value" : "channel_history_changed",
-      "name" : "ChannelHistoryChangedType"
+      "events" : true,
+      "name" : "ChannelHistoryChangedType",
+      "rtm" : true
    },
    {
+      "value" : "channel_joined",
       "name" : "ChannelJoinedType",
-      "value" : "channel_joined"
+      "events" : false,
+      "rtm" : true
    },
    {
       "value" : "channel_left",
-      "name" : "ChannelLeftType"
+      "name" : "ChannelLeftType",
+      "events" : false,
+      "rtm" : true
    },
    {
+      "rtm" : true,
       "name" : "ChannelMarkedType",
+      "events" : false,
       "value" : "channel_marked"
    },
    {
+      "rtm" : true,
       "value" : "channel_rename",
+      "events" : true,
       "name" : "ChannelRenameType"
    },
    {
+      "events" : true,
+      "name" : "ChannelUnarchiveType",
       "value" : "channel_unarchive",
-      "name" : "ChannelUnarchiveType"
+      "rtm" : true
    },
    {
       "value" : "commands_changed",
-      "name" : "CommandsChangedType"
+      "name" : "CommandsChangedType",
+      "events" : false,
+      "rtm" : true
    },
    {
+      "rtm" : true,
+      "events" : true,
       "name" : "DndUpdatedType",
       "value" : "dnd_updated"
    },
    {
+      "events" : true,
+      "name" : "DndUpdatedUserType",
       "value" : "dnd_updated_user",
-      "name" : "DndUpdatedUserType"
+      "rtm" : true
    },
    {
       "value" : "email_domain_changed",
-      "name" : "EmailDomainChangedType"
+      "name" : "EmailDomainChangedType",
+      "events" : true,
+      "rtm" : true
    },
    {
       "value" : "emoji_changed",
-      "name" : "EmojiChangedType"
+      "name" : "EmojiChangedType",
+      "events" : true,
+      "rtm" : true
    },
    {
+      "rtm" : true,
       "value" : "file_change",
-      "name" : "FileChangeType"
+      "name" : "FileChangeType",
+      "events" : true
    },
    {
+      "value" : "file_comment_added",
       "name" : "FileCommentAddedType",
-      "value" : "file_comment_added"
+      "events" : true,
+      "rtm" : true
    },
    {
+      "name" : "FileCommentDeletedType",
+      "events" : true,
       "value" : "file_comment_deleted",
-      "name" : "FileCommentDeletedType"
+      "rtm" : true
    },
    {
+      "rtm" : true,
       "value" : "file_comment_edited",
+      "events" : true,
       "name" : "FileCommentEditedType"
    },
    {
+      "events" : true,
+      "name" : "FileCreatedType",
       "value" : "file_created",
-      "name" : "FileCreatedType"
+      "rtm" : true
    },
    {
       "name" : "FileDeletedType",
-      "value" : "file_deleted"
+      "events" : true,
+      "value" : "file_deleted",
+      "rtm" : true
    },
    {
+      "name" : "FilePublicType",
+      "events" : true,
       "value" : "file_public",
-      "name" : "FilePublicType"
+      "rtm" : true
    },
    {
+      "rtm" : true,
+      "value" : "file_shared",
       "name" : "FileSharedType",
-      "value" : "file_shared"
+      "events" : true
    },
    {
+      "value" : "file_unshared",
+      "events" : true,
       "name" : "FileUnsharedType",
-      "value" : "file_unshared"
+      "rtm" : true
    },
    {
       "value" : "goodbye",
-      "name" : "GoodbyeType"
+      "name" : "GoodbyeType",
+      "events" : false,
+      "rtm" : true
    },
    {
-      "value" : "group_archive",
-      "name" : "GroupArchiveType"
+      "rtm" : true,
+      "events" : true,
+      "name" : "GroupArchiveType",
+      "value" : "group_archive"
    },
    {
       "value" : "group_close",
-      "name" : "GroupCloseType"
+      "name" : "GroupCloseType",
+      "events" : true,
+      "rtm" : true
    },
    {
-      "value" : "group_history_changed",
-      "name" : "GroupHistoryChangedType"
+      "rtm" : true,
+      "name" : "GroupHistoryChangedType",
+      "events" : true,
+      "value" : "group_history_changed"
    },
    {
+      "rtm" : true,
       "name" : "GroupJoinedType",
+      "events" : false,
       "value" : "group_joined"
    },
    {
+      "value" : "group_left",
       "name" : "GroupLeftType",
-      "value" : "group_left"
+      "events" : false,
+      "rtm" : true
    },
    {
-      "name" : "GroupMarkedType",
-      "value" : "group_marked"
+      "rtm" : true,
+      "value" : "group_marked",
+      "events" : false,
+      "name" : "GroupMarkedType"
    },
    {
       "value" : "group_open",
-      "name" : "GroupOpenType"
+      "name" : "GroupOpenType",
+      "events" : true,
+      "rtm" : true
    },
    {
       "value" : "group_rename",
-      "name" : "GroupRenameType"
+      "events" : true,
+      "name" : "GroupRenameType",
+      "rtm" : true
    },
    {
+      "rtm" : true,
       "value" : "group_unarchive",
+      "events" : true,
       "name" : "GroupUnarchiveType"
    },
    {
+      "rtm" : true,
+      "value" : "hello",
       "name" : "HelloType",
-      "value" : "hello"
+      "events" : false
    },
    {
+      "rtm" : true,
       "value" : "im_close",
+      "events" : true,
       "name" : "ImCloseType"
    },
    {
-      "value" : "im_created",
-      "name" : "ImCreatedType"
+      "rtm" : true,
+      "name" : "ImCreatedType",
+      "events" : true,
+      "value" : "im_created"
    },
    {
+      "events" : true,
       "name" : "ImHistoryChangedType",
-      "value" : "im_history_changed"
+      "value" : "im_history_changed",
+      "rtm" : true
    },
    {
+      "rtm" : true,
+      "value" : "im_marked",
       "name" : "ImMarkedType",
-      "value" : "im_marked"
+      "events" : false
    },
    {
       "value" : "im_open",
-      "name" : "ImOpenType"
+      "events" : true,
+      "name" : "ImOpenType",
+      "rtm" : true
    },
    {
+      "rtm" : false,
+      "events" : true,
       "name" : "LinkSharedType",
       "value" : "link_shared"
    },
    {
+      "rtm" : true,
+      "events" : false,
       "name" : "ManualPresenceChangeType",
       "value" : "manual_presence_change"
    },
    {
-      "value" : "message",
-      "name" : "MessageType"
+      "rtm" : true,
+      "name" : "MessageType",
+      "events" : false,
+      "value" : "message"
    },
    {
-      "value" : "message.channels",
-      "name" : "MessageChannelsType"
+      "rtm" : false,
+      "name" : "MessageChannelsType",
+      "events" : true,
+      "value" : "message.channels"
    },
    {
+      "value" : "message.groups",
       "name" : "MessageGroupsType",
-      "value" : "message.groups"
+      "events" : true,
+      "rtm" : false
    },
    {
-      "value" : "message.im",
-      "name" : "MessageImType"
+      "rtm" : false,
+      "events" : true,
+      "name" : "MessageImType",
+      "value" : "message.im"
    },
    {
       "name" : "MessageMpimType",
-      "value" : "message.mpim"
+      "events" : true,
+      "value" : "message.mpim",
+      "rtm" : false
    },
    {
+      "events" : true,
+      "name" : "PinAddedType",
       "value" : "pin_added",
-      "name" : "PinAddedType"
+      "rtm" : true
    },
    {
+      "rtm" : true,
+      "events" : true,
       "name" : "PinRemovedType",
       "value" : "pin_removed"
    },
    {
-      "name" : "PrefChangeType",
-      "value" : "pref_change"
+      "rtm" : true,
+      "value" : "pref_change",
+      "events" : false,
+      "name" : "PrefChangeType"
    },
    {
+      "rtm" : true,
       "name" : "PresenceChangeType",
+      "events" : false,
       "value" : "presence_change"
    },
    {
+      "value" : "reaction_added",
       "name" : "ReactionAddedType",
-      "value" : "reaction_added"
+      "events" : true,
+      "rtm" : true
    },
    {
+      "events" : true,
+      "name" : "ReactionRemovedType",
       "value" : "reaction_removed",
-      "name" : "ReactionRemovedType"
+      "rtm" : true
    },
    {
+      "rtm" : true,
       "value" : "reconnect_url",
-      "name" : "ReconnectUrlType"
+      "events" : false,
+      "name" : "ReconnectURLType"
    },
    {
+      "rtm" : true,
+      "events" : true,
       "name" : "StarAddedType",
       "value" : "star_added"
    },
    {
+      "rtm" : true,
       "value" : "star_removed",
+      "events" : true,
       "name" : "StarRemovedType"
    },
    {
+      "rtm" : true,
       "name" : "SubteamCreatedType",
+      "events" : true,
       "value" : "subteam_created"
    },
    {
+      "rtm" : true,
+      "value" : "subteam_self_added",
       "name" : "SubteamSelfAddedType",
-      "value" : "subteam_self_added"
+      "events" : true
    },
    {
       "value" : "subteam_self_removed",
-      "name" : "SubteamSelfRemovedType"
+      "name" : "SubteamSelfRemovedType",
+      "events" : true,
+      "rtm" : true
    },
    {
+      "rtm" : true,
       "value" : "subteam_updated",
+      "events" : true,
       "name" : "SubteamUpdatedType"
    },
    {
-      "value" : "team_domain_change",
-      "name" : "TeamDomainChangeType"
+      "rtm" : true,
+      "name" : "TeamDomainChangeType",
+      "events" : true,
+      "value" : "team_domain_change"
    },
    {
+      "value" : "team_join",
+      "events" : true,
       "name" : "TeamJoinType",
-      "value" : "team_join"
+      "rtm" : true
    },
    {
+      "events" : false,
       "name" : "TeamMigrationStartedType",
-      "value" : "team_migration_started"
+      "value" : "team_migration_started",
+      "rtm" : true
    },
    {
       "value" : "team_plan_change",
-      "name" : "TeamPlanChangeType"
+      "events" : false,
+      "name" : "TeamPlanChangeType",
+      "rtm" : true
    },
    {
+      "rtm" : true,
       "value" : "team_pref_change",
-      "name" : "TeamPrefChangeType"
+      "name" : "TeamPrefChangeType",
+      "events" : false
    },
    {
+      "events" : false,
       "name" : "TeamProfileChangeType",
-      "value" : "team_profile_change"
+      "value" : "team_profile_change",
+      "rtm" : true
    },
    {
+      "rtm" : true,
       "name" : "TeamProfileDeleteType",
+      "events" : false,
       "value" : "team_profile_delete"
    },
    {
+      "name" : "TeamProfileReorderType",
+      "events" : false,
       "value" : "team_profile_reorder",
-      "name" : "TeamProfileReorderType"
+      "rtm" : true
    },
    {
-      "name" : "TeamRenameType",
-      "value" : "team_rename"
+      "rtm" : true,
+      "value" : "team_rename",
+      "events" : true,
+      "name" : "TeamRenameType"
    },
    {
+      "rtm" : false,
       "value" : "url_verification",
-      "name" : "UrlVerificationType"
+      "name" : "URLVerificationType",
+      "events" : true
    },
    {
+      "rtm" : true,
+      "value" : "user_change",
       "name" : "UserChangeType",
-      "value" : "user_change"
+      "events" : true
    },
    {
+      "rtm" : true,
       "name" : "UserTypingType",
+      "events" : false,
       "value" : "user_typing"
    }
 ]

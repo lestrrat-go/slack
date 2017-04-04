@@ -24,6 +24,7 @@ var OAuth2Endpoint = oauth2.Endpoint{
 type Client struct {
 	auth     *AuthService
 	chat     *ChatService
+	rtm      *RTMService
 	users    *UsersService
 	debug    bool
 	slackURL string
