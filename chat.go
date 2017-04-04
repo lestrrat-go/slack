@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Update returns the result of chat.update API
 func (s *ChatService) Update(ctx context.Context, channel, ts, text string) (*ChatResponse, error) {
 	v := url.Values{
 		"token":   {s.token},
@@ -31,6 +32,7 @@ func (s *ChatService) Update(ctx context.Context, channel, ts, text string) (*Ch
 	return res.ChatResponse, nil
 }
 
+// Delete returns the result of chat.delete API
 func (s *ChatService) Delete(ctx context.Context, channel, ts string) (*ChatResponse, error) {
 	v := url.Values{
 		"token":   {s.token},
@@ -51,6 +53,7 @@ func (s *ChatService) Delete(ctx context.Context, channel, ts string) (*ChatResp
 	return res.ChatResponse, nil
 }
 
+// MeMessage returns the result of users.meMessage API
 func (s *ChatService) MeMessage(ctx context.Context, channel, text string) (*ChatResponse, error) {
 	v := url.Values{
 		"token":   {s.token},
@@ -70,6 +73,9 @@ func (s *ChatService) MeMessage(ctx context.Context, channel, text string) (*Cha
 	return res.ChatResponse, nil
 }
 
+// NewMessageParams -- XXX This method and the MessageParams things
+// just feels so out of place within the context of the rest of the
+// API. perhaps we could do something better.
 func NewMessageParams() *MessageParams {
 	return &MessageParams{
 		// everything else should be initialzed to the zero value
@@ -139,6 +145,7 @@ type fullChatResponse struct {
 	*ChatResponse
 }
 
+// PostMessage returns the result of chat.postMessage API
 func (s *ChatService) PostMessage(ctx context.Context, channel, txt string, p *MessageParams) (*ChatResponse, error) {
 	v := url.Values{
 		"token":   {s.token},

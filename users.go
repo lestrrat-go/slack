@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// GetPresence returns the result of users.getPresence API
 func (s *UsersService) GetPresence(ctx context.Context, id string) (*UserPresence, error) {
 	v := url.Values{
 		"token": {s.token},
@@ -30,6 +31,7 @@ func (s *UsersService) GetPresence(ctx context.Context, id string) (*UserPresenc
 	return res.UserPresence, nil
 }
 
+// Info returns the result of users.info API
 func (s *UsersService) Info(ctx context.Context, id string) (*User, error) {
 	v := url.Values{
 		"token": {s.token},
@@ -53,6 +55,7 @@ func (s *UsersService) Info(ctx context.Context, id string) (*User, error) {
 	return res.User, nil
 }
 
+// List returns the result of users.list API
 func (s *UsersService) List(ctx context.Context, inclPresence bool) (UserList, error) {
 	v := url.Values{
 		"token": {s.token},

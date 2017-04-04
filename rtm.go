@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Start returns the result of users.getPresence API
 func (s *RTMService) Start(ctx context.Context) (*RTMResponse, error) {
 	v := url.Values{
 		"token": {s.token},
