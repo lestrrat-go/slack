@@ -1,8 +1,6 @@
-package slack
+package objects
 
-// See interface.go for general struct definitions
-// See interface_objects.go for Slack object definitions
-// See interface_services.go for Slack service definitions
+type EpochTime int64
 
 // Conversation is a structure that is never used by itself:
 // it's re-used to describe a basic conversation profile

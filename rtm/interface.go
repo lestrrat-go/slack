@@ -1,6 +1,9 @@
 package rtm
 
-import "github.com/lestrrat/go-slack"
+import (
+	"github.com/lestrrat/go-slack"
+	"github.com/lestrrat/go-slack/objects"
+)
 
 type EventType int
 
@@ -20,16 +23,16 @@ type Event struct {
 }
 
 type ChannelCreated struct {
-	Created            slack.EpochTime `json:"created"`
-	ID                 string          `json:"id"`
-	IsIM               bool            `json:"is_im"`
-	IsOpen             bool            `json:"is_open"`
-	IsOrgShared        bool            `json:"is_org_shared"`
-	LastRead           string          `json:"last_read"`
-	Latest             slack.Message   `json:"latest"`
-	UnreadCount        int             `json:"unread_count"`
-	UnreadCountDisplay int             `json:"unread_count_display"`
-	User               string          `json:"user"`
+	Created            objects.EpochTime `json:"created"`
+	ID                 string            `json:"id"`
+	IsIM               bool              `json:"is_im"`
+	IsOpen             bool              `json:"is_open"`
+	IsOrgShared        bool              `json:"is_org_shared"`
+	LastRead           string            `json:"last_read"`
+	Latest             *objects.Message  `json:"latest"`
+	UnreadCount        int               `json:"unread_count"`
+	UnreadCountDisplay int               `json:"unread_count_display"`
+	User               string            `json:"user"`
 }
 
 type ChannelCreatedEvent struct {
@@ -38,7 +41,7 @@ type ChannelCreatedEvent struct {
 }
 
 type ChannelJoinedEvent struct {
-	Channel        *slack.Channel `json:"channel"`
+	Channel        *objects.Channel `json:"channel"`
 	EventTimestamp string         `json:"event_ts"`
 }
 

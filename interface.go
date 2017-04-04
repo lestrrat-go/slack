@@ -6,8 +6,6 @@ package slack
 
 import "golang.org/x/oauth2"
 
-type EpochTime int64
-
 // DefaultSlackAPIEndpoint contains the prefix used for Slack REST API
 const (
 	DefaultAPIEndpoint         = "https://slack.com/api/"

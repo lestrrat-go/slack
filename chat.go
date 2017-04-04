@@ -1,12 +1,11 @@
 package slack
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"net/url"
 	"strings"
 
+	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
@@ -73,67 +72,6 @@ func (s *ChatService) MeMessage(ctx context.Context, channel, text string) (*Cha
 	return res.ChatResponse, nil
 }
 
-// NewMessageParams -- XXX This method and the MessageParams things
-// just feels so out of place within the context of the rest of the
-// API. perhaps we could do something better.
-func NewMessageParams() *MessageParams {
-	return &MessageParams{
-		// everything else should be initialzed to the zero value
-		EscapeText:  true,
-		Markdown:    true,
-		UnfurlMedia: true,
-	}
-}
-
-func (p *MessageParams) toValues(v url.Values) error {
-	if p.AsUser {
-		v.Set("as_user", "true")
-	}
-	if len(p.Attachments) > 0 {
-		var buf bytes.Buffer
-		if err := json.NewEncoder(&buf).Encode(p.Attachments); err != nil {
-			return errors.Wrap(err, `failed to serialize attachments`)
-		}
-		v.Set("attachments", buf.String())
-	}
-	if len(p.IconEmoji) > 0 {
-		v.Set("icon_emoji", p.IconEmoji)
-	}
-	if len(p.IconURL) > 0 {
-		v.Set("icon_url", p.IconURL)
-	}
-	if p.LinkNames {
-		v.Set("link_names", "true")
-	}
-
-	if !p.Markdown {
-		v.Set("mrkdwn", "false")
-	}
-
-	if len(p.Parse) > 0 {
-		v.Set("parse", p.Parse)
-	}
-
-	// taken from github.com/nlopes/slack:
-	//    I want to send a message with explicit `as_user` `true` and
-	//    `unfurl_links` `false` in request. Because setting `as_user` to
-	//    `true` will change the default value for `unfurl_links` to `true`
-	//    on Slack API side.
-	if p.AsUser && !p.UnfurlLinks {
-		v.Set("unfurl_link", "false")
-	} else if p.UnfurlLinks {
-		v.Set("unfurl_link", "true")
-	}
-
-	if p.UnfurlMedia {
-		v.Set("unfurl_media", "true")
-	}
-	if len(p.Username) > 0 {
-		v.Set("username", p.Username)
-	}
-	return nil
-}
-
 var replacer = strings.NewReplacer("&", "&amp;", "<", "&lt;", ">", "&gt;")
 
 func escapeMessage(s string) string {
@@ -146,7 +84,7 @@ type fullChatResponse struct {
 }
 
 // PostMessage returns the result of chat.postMessage API
-func (s *ChatService) PostMessage(ctx context.Context, channel, txt string, p *MessageParams) (*ChatResponse, error) {
+func (s *ChatService) PostMessage(ctx context.Context, channel, txt string, p *objects.MessageParams) (*ChatResponse, error) {
 	v := url.Values{
 		"token":   {s.token},
 		"channel": {channel},
@@ -157,7 +95,7 @@ func (s *ChatService) PostMessage(ctx context.Context, channel, txt string, p *M
 			txt = escapeMessage(txt)
 		}
 
-		if err := p.toValues(v); err != nil {
+		if err := p.Values(v); err != nil {
 			return nil, errors.Wrap(err, `failed to serialize message`)
 		}
 	}

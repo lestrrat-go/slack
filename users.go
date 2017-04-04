@@ -4,11 +4,12 @@ import (
 	"context"
 	"net/url"
 
+	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 // GetPresence returns the result of users.getPresence API
-func (s *UsersService) GetPresence(ctx context.Context, id string) (*UserPresence, error) {
+func (s *UsersService) GetPresence(ctx context.Context, id string) (*objects.UserPresence, error) {
 	v := url.Values{
 		"token": {s.token},
 		"user":  {id},
@@ -17,7 +18,7 @@ func (s *UsersService) GetPresence(ctx context.Context, id string) (*UserPresenc
 
 	var res struct {
 		SlackResponse
-		*UserPresence
+		*objects.UserPresence
 	}
 
 	if err := s.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -32,7 +33,7 @@ func (s *UsersService) GetPresence(ctx context.Context, id string) (*UserPresenc
 }
 
 // Info returns the result of users.info API
-func (s *UsersService) Info(ctx context.Context, id string) (*User, error) {
+func (s *UsersService) Info(ctx context.Context, id string) (*objects.User, error) {
 	v := url.Values{
 		"token": {s.token},
 		"user":  {id},
@@ -41,7 +42,7 @@ func (s *UsersService) Info(ctx context.Context, id string) (*User, error) {
 
 	var res struct {
 		SlackResponse
-		*User `json:"user"`
+		*objects.User `json:"user"`
 	}
 
 	if err := s.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -56,7 +57,7 @@ func (s *UsersService) Info(ctx context.Context, id string) (*User, error) {
 }
 
 // List returns the result of users.list API
-func (s *UsersService) List(ctx context.Context, inclPresence bool) (UserList, error) {
+func (s *UsersService) List(ctx context.Context, inclPresence bool) (objects.UserList, error) {
 	v := url.Values{
 		"token": {s.token},
 	}
@@ -67,7 +68,7 @@ func (s *UsersService) List(ctx context.Context, inclPresence bool) (UserList, e
 
 	var res struct {
 		SlackResponse
-		UserList `json:"members"`
+		objects.UserList `json:"members"`
 	}
 
 	if err := s.client.postForm(ctx, endpoint, v, &res); err != nil {

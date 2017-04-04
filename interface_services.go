@@ -1,8 +1,6 @@
 package slack
 
-// See interface.go for general struct definitions
-// See interface_objects.go for Slack object definitions
-// See interface_services.go for Slack service definitions
+import "github.com/lestrrat/go-slack/objects"
 
 // SlackResponse is the general response part given by all
 // slack API response.
@@ -45,14 +43,14 @@ type RTMService struct {
 }
 
 type RTMResponse struct {
-	URL      string       `json:"url"`
-	Self     *UserDetails `json:"self"`
-	Team     *Team        `json:"team"`
-	Users    []*User      `json:"users"`
-	Channels []Channel    `json:"channels"`
-	Groups   []Group      `json:"groups"`
-	Bots     []Bot        `json:"bots"`
-	IMs      []IM         `json:"ims"`
+	URL      string               `json:"url"`
+	Self     *objects.UserDetails `json:"self"`
+	Team     *objects.Team        `json:"team"`
+	Users    []*objects.User      `json:"users"`
+	Channels []*objects.Channel   `json:"channels"`
+	Groups   []*objects.Group     `json:"groups"`
+	Bots     []*objects.Bot       `json:"bots"`
+	IMs      []*objects.IM        `json:"ims"`
 }
 
 // UsersService handles all `users.*` API endpoints
@@ -60,4 +58,3 @@ type UsersService struct {
 	client *httpClient
 	token  string
 }
-
