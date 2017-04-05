@@ -85,7 +85,7 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) {
 			if !ok {
 				return
 			}
-			log.Printf("%s", payload)
+			log.Printf("raw payload: %s", payload)
 			var event Event
 			if err := json.Unmarshal(payload, &event); err != nil {
 				log.Printf("failed to unmarshal: %s", err)

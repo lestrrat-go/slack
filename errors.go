@@ -24,7 +24,6 @@ func (e *ErrorResponse) UnmarshalJSON(data []byte) error {
 	}
 
 	if len(data) > 0 {
-
 		switch data[0] {
 		case '"':
 			*e = ErrorResponse{}

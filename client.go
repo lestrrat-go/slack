@@ -145,7 +145,22 @@ func (c *httpClient) makeSlackURL(path string) string {
 	return c.slackURL + path
 }
 
-func (c *httpClient) parseResponse(rdr io.Reader, res interface{}) error {
+// path is only passed for debugging purposes
+func (c *httpClient) parseResponse(path string, rdr io.Reader, res interface{}) error {
+	if c.debug {
+		var buf bytes.Buffer
+		io.Copy(&buf, rdr)
+		log.Printf("-----> %s", path)
+		var m map[string]interface{}
+		if err := json.Unmarshal(buf.Bytes(), &m); err != nil {
+			log.Printf("failed to unmarshal payload: %s", err)
+		} else {
+			formatted, _ := json.MarshalIndent(m, "", "  ")
+			log.Printf("%s", formatted)
+		}
+		log.Printf("<----- %s", path)
+		rdr = &buf
+	}
 	return json.NewDecoder(rdr).Decode(res)
 }
 
@@ -170,22 +185,33 @@ func (c *httpClient) post(octx context.Context, path, ct string, body io.Reader,
 		return errors.Wrap(err, `failed to post to slack`)
 	}
 	defer res.Body.Close()
+	return c.parseResponse(path, res.Body, data)
+}
 
-	var rdr io.Reader = res.Body
+func (c *httpClient) get(octx context.Context, path string, f url.Values, data interface{}) error {
+	ustr := c.makeSlackURL(path)
+	u, err := url.Parse(ustr)
+	if err != nil {
+		return errors.Wrapf(err, `failed to parse get url: '%s'`, ustr)
+	}
+	u.RawQuery = f.Encode()
+
 	if c.debug {
-		var buf bytes.Buffer
-		io.Copy(&buf, res.Body)
-		log.Printf("-----> %s", path)
-		var m map[string]interface{}
-		if err := json.Unmarshal(buf.Bytes(), &m); err != nil {
-			log.Printf("failed to unmarshal payload: %s", err)
-		} else {
-			formatted, _ := json.MarshalIndent(m, "", "  ")
-			log.Printf("%s", formatted)
-		}
-		log.Printf("<----- %s", path)
-		rdr = &buf
+		log.Printf("> GET %s", u.String())
+	}
+	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
+	if err != nil {
+		return errors.New(`failed to create new GET request`)
 	}
 
-	return c.parseResponse(rdr, data)
+	ctx, cancel := context.WithCancel(octx)
+	defer cancel()
+
+	req = req.WithContext(ctx)
+	res, err := c.client.Do(req)
+	if err != nil {
+		return errors.Wrap(err, `failed to get slack`)
+	}
+	defer res.Body.Close()
+	return c.parseResponse(path, res.Body, data)
 }

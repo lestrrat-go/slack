@@ -1,6 +1,7 @@
 package objects
 
 type EpochTime int64
+type Timestamp float64
 
 const (
 	ButtonActionType = "button"
@@ -70,7 +71,7 @@ type Attachment struct {
 	ThumbURL       string     `json:"thumb_url"`
 	Pretext        string     `json:"pretext,omitempty"`
 	Text           string     `json:"text"`
-	Timestamp      EpochTime  `json:"ts"`
+	Timestamp      Timestamp  `json:"ts"`
 	Title          string     `json:"title"`
 	TitleLink      string     `json:"title_link"`
 }
@@ -178,6 +179,8 @@ type Message struct {
 	// reactions
 	Reactions []ItemReaction `json:"reactions,omitempty"`
 }
+
+type MessageList []*Message
 
 type IM struct {
 	Conversation

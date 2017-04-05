@@ -48,5 +48,11 @@ func TestChannelsList_Info(t *testing.T) {
 		if !assert.Equal(t, channel.ID, fromInfo.ID, "Channel.Info should produce identical channels") {
 			return
 		}
+
+		history, err := c.Channels().History(channel.ID).Do(ctx)
+		if !assert.NoError(t, err, "Channels.History failed") {
+			return
+		}
+		t.Logf("%#v", history)
 	}
 }

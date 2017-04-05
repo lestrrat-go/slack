@@ -67,6 +67,12 @@ type ChannelsService struct {
 	token  string
 }
 
+type ChannelsHistoryResponse struct {
+	HasMore  bool                `json:"has_more"`
+	Latest   string              `json:"latest"`
+	Messages objects.MessageList `json:"messages"`
+}
+
 // ChatService handles all `chat.*` API endpoints
 type ChatService struct {
 	client *httpClient

@@ -29,18 +29,18 @@ func TestChatMessage(t *testing.T) {
 		}
 		t.Logf("%#v", res)
 
-		res, err = c.Chat().Update(ctx, res.Channel, res.Timestamp, "hello, world!")
-		if !assert.NoError(t, err, "Chat.Update failed") {
-			return
-		}
-		t.Logf("%#v", res)
-
 		/*
-			res, err = c.Chat().Delete(ctx, res.Channel, res.Timestamp)
-			if !assert.NoError(t, err, "Chat.Delete failed") {
+			res, err = c.Chat().Update(ctx, res.Channel, res.Timestamp, "hello, world!")
+			if !assert.NoError(t, err, "Chat.Update failed") {
 				return
 			}
 			t.Logf("%#v", res)
+
+				res, err = c.Chat().Delete(ctx, res.Channel, res.Timestamp)
+				if !assert.NoError(t, err, "Chat.Delete failed") {
+					return
+				}
+				t.Logf("%#v", res)
 		*/
 	})
 
@@ -90,7 +90,8 @@ func TestChatMessage(t *testing.T) {
 	})
 }
 
-// Test me message.
+// MeMessages require chat:write:user, so I think I'm going to punt it
+/*
 func TestChatMeMessage(t *testing.T) {
 	if !requireSlackToken(t) || !requireDMUser(t) || !requireRealUser(t) {
 		return
@@ -106,3 +107,4 @@ func TestChatMeMessage(t *testing.T) {
 	}
 	t.Logf("%#v", res)
 }
+*/
