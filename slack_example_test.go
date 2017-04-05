@@ -21,7 +21,7 @@ func ExampleClient() {
 	cl := slack.New(token)
 
 	// check if we are connected
-	authres, err := cl.Auth().Test(ctx)
+	authres, err := cl.Auth().Test().Do(ctx)
 	if err != nil {
 		fmt.Printf("failed to test authentication: %s\n", err)
 		return
@@ -97,7 +97,7 @@ func ExampleOAuth2() {
 		// You could store tok.AccessToken for later use, or you can immediately
 		// start a client like this
 		cl := slack.New(tok.AccessToken)
-		if _, err := cl.Auth().Test(ctx); err != nil {
+		if _, err := cl.Auth().Test().Do(ctx); err != nil {
 			http.Error(w, "failed to test auth", http.StatusInternalServerError)
 			return
 		}

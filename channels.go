@@ -119,19 +119,21 @@ func (s *ChannelsService) Info(id string) *ChannelsInfoCall {
 	}
 }
 
-func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
-	v := url.Values{
+func (c *ChannelsInfoCall) Values() url.Values {
+	return url.Values{
 		"token":   {c.service.token},
 		"channel": {c.channel},
 	}
-	const endpoint = "channels.info"
+}
 
+func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
+	const endpoint = "channels.info"
 	var res struct {
 		SlackResponse
 		*objects.Channel `json:"channel"`
 	}
 
-	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+	if err := c.service.client.postForm(ctx, endpoint, c.Values(), &res); err != nil {
 		return nil, errors.Wrapf(err, `failed to post to %s`, endpoint)
 	}
 
@@ -155,26 +157,29 @@ func (s *ChannelsService) List() *ChannelsListCall {
 	}
 }
 
-func (c *ChannelsListCall) ExcludeArchive(b bool) *ChannelsListCall {
-	c.exclArchived = b
-	return c
-}
-
-func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) {
+func (c *ChannelsListCall) Values() url.Values {
 	v := url.Values{
 		"token": {c.service.token},
 	}
 	if c.exclArchived {
 		v.Set("exclude_archived", "true")
 	}
-	const endpoint = "channels.list"
+	return v
+}
 
+func (c *ChannelsListCall) ExcludeArchive(b bool) *ChannelsListCall {
+	c.exclArchived = b
+	return c
+}
+
+func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) {
+	const endpoint = "channels.list"
 	var res struct {
 		SlackResponse
 		objects.ChannelList `json:"channels"`
 	}
 
-	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+	if err := c.service.client.postForm(ctx, endpoint, c.Values(), &res); err != nil {
 		return nil, errors.Wrapf(err, `failed to post to %s`, endpoint)
 	}
 

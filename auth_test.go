@@ -17,7 +17,7 @@ func TestAuthTest(t *testing.T) {
 	defer cancel()
 
 	c := debuggingClient(slackToken)
-	res, err := c.Auth().Test(ctx)
+	res, err := c.Auth().Test().Do(ctx)
 	if !assert.NoError(t, err, "Auth.Test failed") {
 		return
 	}
@@ -35,7 +35,7 @@ func TestAuthRevoke(t *testing.T) {
 	defer cancel()
 
 	c := slack.New(slackToken)
-	err := c.Auth().Revoke(ctx, true)
+	err := c.Auth().Revoke().Do(ctx)
 	if !assert.NoError(t, err, "Auth.Revoke failed") {
 		return
 	}

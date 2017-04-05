@@ -28,7 +28,7 @@ func ExampleClient() {
   cl := slack.New(token)
 
   // check if we are connected
-  authres, err := cl.Auth().Test(ctx)
+  authres, err := cl.Auth().Test().Do(ctx)
   if err != nil {
     fmt.Printf("failed to test authentication: %s\n", err)
     return
