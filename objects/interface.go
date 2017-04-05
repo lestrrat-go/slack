@@ -203,6 +203,7 @@ type ItemReaction struct {
 type UserProfile struct {
 	AlwaysActive       bool   `json:"always_active"`
 	AvatarHash         string `json:"avatar_hash"`
+	Email              string `json:"email"`
 	FirstName          string `json:"first_name"`
 	Image24            string `json:"image_24"`
 	Image32            string `json:"image_32"`
