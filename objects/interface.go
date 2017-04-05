@@ -2,6 +2,10 @@ package objects
 
 type EpochTime int64
 
+const (
+	ButtonActionType = "button"
+)
+
 // Conversation is a structure that is never used by itself:
 // it's re-used to describe a basic conversation profile
 // by being embedded in other objects
@@ -40,33 +44,36 @@ type Topic struct {
 
 // Action is used in conjunction with message buttons
 type Action struct {
-	Confirm Confirmation `json:"confirm"`
-	Name    string       `json:"name"`
-	Text    string       `json:"text"`
-	Type    string       `json:"type"`
-	Value   string       `json:"value"`
+	Confirm *Confirmation `json:"confirm"`
+	Name    string        `json:"name"`
+	Style   string        `json:"style"`
+	Text    string        `json:"text"`
+	Type    string        `json:"type"`
+	Value   string        `json:"value"`
 }
+type ActionList []*Action
 
 type Attachment struct {
-	Actions        []*Action `json:"actions,omitempty"` // for buttons
-	AttachmentType string    `json:"attachment_type"`
-	AuthorName     string    `json:"author_name"`
-	AuthorLink     string    `json:"author_link"`
-	AuthorIcon     string    `json:"author_icon"`
-	CallbackID     string    `json:"callback_id,omitempty"` // for buttons
-	Color          string    `json:"color,omitempty"`
-	Fallback       string    `json:"fallback"`
-	Fields         []*Field  `json:"fields"`
-	Footer         string    `json:"footer"`
-	FooterIcon     string    `json:"footer_icon"`
-	ImageURL       string    `json:"image_url"`
-	ThumbURL       string    `json:"thumb_url"`
-	Pretext        string    `json:"pretext,omitempty"`
-	Text           string    `json:"text"`
-	Timestamp      EpochTime `json:"ts"`
-	Title          string    `json:"title"`
-	TitleLink      string    `json:"title_link"`
+	Actions        ActionList `json:"actions,omitempty"` // for buttons
+	AttachmentType string     `json:"attachment_type"`
+	AuthorName     string     `json:"author_name"`
+	AuthorLink     string     `json:"author_link"`
+	AuthorIcon     string     `json:"author_icon"`
+	CallbackID     string     `json:"callback_id,omitempty"` // for buttons
+	Color          string     `json:"color,omitempty"`
+	Fallback       string     `json:"fallback"`
+	Fields         []*Field   `json:"fields"`
+	Footer         string     `json:"footer"`
+	FooterIcon     string     `json:"footer_icon"`
+	ImageURL       string     `json:"image_url"`
+	ThumbURL       string     `json:"thumb_url"`
+	Pretext        string     `json:"pretext,omitempty"`
+	Text           string     `json:"text"`
+	Timestamp      EpochTime  `json:"ts"`
+	Title          string     `json:"title"`
+	TitleLink      string     `json:"title_link"`
 }
+type AttachmentList []*Attachment
 
 type Channel struct {
 	GroupConversation
@@ -107,15 +114,15 @@ type Field struct {
 // you are posting a message. See ChatService#PostMessage
 // and MessageParams for that.
 type Message struct {
-	Attachments []Attachment `json:"attachments"`
-	Channel     string       `json:"channel"`
-	Edited      *Edited      `json:"edited"`
-	IsStarred   bool         `json:"is_starred"`
-	PinnedTo    []string     `json:"pinned_to"`
-	Text        string       `json:"text"`
-	Timestamp   string       `json:"ts"`
-	Type        string       `json:"type"`
-	User        string       `json:"user"`
+	Attachments AttachmentList `json:"attachments"`
+	Channel     string         `json:"channel"`
+	Edited      *Edited        `json:"edited"`
+	IsStarred   bool           `json:"is_starred"`
+	PinnedTo    []string       `json:"pinned_to"`
+	Text        string         `json:"text"`
+	Timestamp   string         `json:"ts"`
+	Type        string         `json:"type"`
+	User        string         `json:"user"`
 
 	// Message Subtypes
 	Subtype string `json:"subtype"`
@@ -187,13 +194,15 @@ type ItemReaction struct {
 // MessageParans is used when posting a new message
 type MessageParams struct {
 	AsUser      bool
-	Attachments []Attachment
+	Attachments AttachmentList
+	Channel     string
 	EscapeText  bool
 	IconEmoji   string
 	IconURL     string
 	LinkNames   bool
-	Markdown    bool `json:"mrkdwn,omitempty"`
+	Markdown    bool
 	Parse       string
+	Text        string
 	UnfurlLinks bool
 	UnfurlMedia bool
 	Username    string

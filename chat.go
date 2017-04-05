@@ -84,12 +84,13 @@ type fullChatResponse struct {
 }
 
 // PostMessage returns the result of chat.postMessage API
-func (s *ChatService) PostMessage(ctx context.Context, channel, txt string, p *objects.MessageParams) (*ChatResponse, error) {
+func (s *ChatService) PostMessage(ctx context.Context, p *objects.MessageParams) (*ChatResponse, error) {
 	v := url.Values{
 		"token":   {s.token},
-		"channel": {channel},
+		"channel": {p.Channel},
 	}
 
+	var txt = p.Text
 	if p != nil {
 		if p.EscapeText {
 			txt = escapeMessage(txt)

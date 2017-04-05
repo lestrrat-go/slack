@@ -17,6 +17,7 @@ import (
   "os"
 
   "github.com/lestrrat/go-slack"
+  "github.com/lestrrat/go-slack/objects"
 )
 
 func ExampleClient() {
@@ -35,7 +36,10 @@ func ExampleClient() {
   fmt.Printf("%#v\n", authres)
 
   // simplest possible message
-  chatres, err := cl.Chat().PostMessage(ctx, "@username", "Hello, World!", nil)
+  p := objects.NewMessageParams()
+  p.Channel = "@username"
+  p.Text = "Hello, World!"
+  chatres, err := cl.Chat().PostMessage(ctx, p)
   if err != nil {
     fmt.Printf("failed to post messsage: %s\n", err)
     return
