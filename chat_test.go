@@ -46,6 +46,10 @@ func TestChatMessage(t *testing.T) {
 
 	t.Run("buttons", func(t *testing.T) {
 		var attachment objects.Attachment
+		attachment.CallbackID = "wopr_game"
+		attachment.Color = "#3AA3E3"
+		attachment.Fallback = "You are unable to choose a game"
+		attachment.Text = "Choose a game to play"
 		attachment.Actions.
 			Append(&objects.Action{
 				Name:  "game",
@@ -75,8 +79,14 @@ func TestChatMessage(t *testing.T) {
 
 		p := objects.NewMessageParams()
 		p.Attachments.Append(&attachment)
+		p.Channel = dmUser
+		p.Text = "Would you like to play a game?"
 
-		t.Logf("%#v", p)
+		res, err := c.Chat().PostMessage(ctx, p)
+		if !assert.NoError(t, err, "Chat.PostMessage failed") {
+			return
+		}
+		t.Logf("%#v", res)
 	})
 }
 
