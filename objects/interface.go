@@ -62,7 +62,7 @@ type Attachment struct {
 	CallbackID     string     `json:"callback_id,omitempty"` // for buttons
 	Color          string     `json:"color,omitempty"`
 	Fallback       string     `json:"fallback"`
-	Fields         FieldList   `json:"fields"`
+	Fields         FieldList  `json:"fields"`
 	Footer         string     `json:"footer"`
 	FooterIcon     string     `json:"footer_icon"`
 	ImageURL       string     `json:"image_url"`
