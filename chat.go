@@ -85,6 +85,10 @@ type fullChatResponse struct {
 
 // PostMessage returns the result of chat.postMessage API
 func (s *ChatService) PostMessage(ctx context.Context, p *objects.MessageParams) (*ChatResponse, error) {
+	if len(p.Channel) <= 0 {
+		return nil, errors.New("channel not specified")
+	}
+
 	v := url.Values{
 		"token":   {s.token},
 		"channel": {p.Channel},
