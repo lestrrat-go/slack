@@ -38,7 +38,7 @@ func (c *Client) Run(octx context.Context) error {
 		}
 
 		ctx.emit(&Event{typ: RTMConnectingEvent})
-		res, err := c.client.RTM().Start(ctx)
+		res, err := c.client.RTM().Start().Do(ctx)
 		if err != nil {
 			// TODO: exponential backoff
 			log.Printf("%s", err)
