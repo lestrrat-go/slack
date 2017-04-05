@@ -24,7 +24,7 @@ func init() {
 		cl := slack.New(slackToken)
 		res, err := cl.Auth().Test().Do(ctx)
 		if err == nil {
-			user, err := cl.Users().Info(ctx, res.UserID)
+			user, err := cl.Users().Info(res.UserID).Do(ctx)
 			if err == nil {
 				isBot = user.IsBot
 			}

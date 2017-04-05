@@ -19,7 +19,7 @@ func TestUsersList_Info_Presence(t *testing.T) {
 
 	c := slack.New(slackToken)
 
-	list, err := c.Users().List(ctx, false)
+	list, err := c.Users().List().Do(ctx)
 	if !assert.NoError(t, err, "Users.List failed") {
 		return
 	}
@@ -39,7 +39,7 @@ func TestUsersList_Info_Presence(t *testing.T) {
 		default:
 		}
 
-		fromInfo, err := c.Users().Info(ctx, user.ID)
+		fromInfo, err := c.Users().Info(user.ID).Do(ctx)
 		if !assert.NoError(t, err, "Users.Info failed") {
 			return
 		}
@@ -48,7 +48,7 @@ func TestUsersList_Info_Presence(t *testing.T) {
 			return
 		}
 
-		presence, err := c.Users().GetPresence(ctx, user.ID)
+		presence, err := c.Users().GetPresence(user.ID).Do(ctx)
 		if !assert.NoError(t, err, "Users.GetPresence failed") {
 			return
 		}
