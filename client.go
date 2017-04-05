@@ -1,11 +1,15 @@
 package slack
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -57,7 +61,11 @@ func WithAPIEndpoint(s string) Option {
 }
 
 // WithDebug specifies that we want to run in debugging mode.
-// XXX I wrote it, but haven't actually implemented debugging yet
+// You can set this value manually to override any existing global
+// defaults.
+//
+// If one is not specified, the default value is false, or the
+// value specified in SLACK_DEBUG environment variable
 func WithDebug(b bool) Option {
 	return &option{
 		name:  debugkey,
@@ -71,7 +79,7 @@ func WithDebug(b bool) Option {
 func New(token string, options ...Option) *Client {
 	slackURL := DefaultAPIEndpoint
 	httpcl := http.DefaultClient
-	var debug bool
+	debug, _ := strconv.ParseBool(os.Getenv("SLACK_DEBUG"))
 	for _, o := range options {
 		switch o.Name() {
 		case httpclkey:
@@ -93,17 +101,23 @@ func New(token string, options ...Option) *Client {
 		slackURL: slackURL,
 	}
 	return &Client{
-		auth:  &AuthService{client: wrappedcl, token: token},
-		chat:  &ChatService{client: wrappedcl, token: token},
-		rtm:   &RTMService{client: wrappedcl, token: token},
-		users: &UsersService{client: wrappedcl, token: token},
-		debug: debug,
+		auth:     &AuthService{client: wrappedcl, token: token},
+		channels: &ChannelsService{client: wrappedcl, token: token},
+		chat:     &ChatService{client: wrappedcl, token: token},
+		rtm:      &RTMService{client: wrappedcl, token: token},
+		users:    &UsersService{client: wrappedcl, token: token},
+		debug:    debug,
 	}
 }
 
 // Auth returns the Service object for `auth.*` endpoints
 func (c *Client) Auth() *AuthService {
 	return c.auth
+}
+
+// Channels returns the Service object for `channels.*` endpoints
+func (c *Client) Channels() *ChannelsService {
+	return c.channels
 }
 
 // Chat returns the Service object for `chat.*` endpoints
@@ -157,5 +171,21 @@ func (c *httpClient) post(octx context.Context, path, ct string, body io.Reader,
 	}
 	defer res.Body.Close()
 
-	return c.parseResponse(res.Body, data)
+	var rdr io.Reader = res.Body
+	if c.debug {
+		var buf bytes.Buffer
+		io.Copy(&buf, res.Body)
+		log.Printf("-----> %s", path)
+		var m map[string]interface{}
+		if err := json.Unmarshal(buf.Bytes(), &m); err != nil {
+			log.Printf("failed to unmarshal payload: %s", err)
+		} else {
+			formatted, _ := json.MarshalIndent(m, "", "  ")
+			log.Printf("%s", formatted)
+		}
+		log.Printf("<----- %s", path)
+		rdr = &buf
+	}
+
+	return c.parseResponse(rdr, data)
 }

@@ -20,6 +20,7 @@ var OAuth2Endpoint = oauth2.Endpoint{
 
 type Client struct {
 	auth     *AuthService
+	channels *ChannelsService
 	chat     *ChatService
 	rtm      *RTMService
 	users    *UsersService
@@ -58,6 +59,12 @@ type AuthTestResponse struct {
 	User   string `json:"user"`
 	TeamID string `json:"team_id"`
 	UserID string `json:"user_id"`
+}
+
+// ChannelsService handles all `channel.*` API endpoints
+type ChannelsService struct {
+	client *httpClient
+	token  string
 }
 
 // ChatService handles all `chat.*` API endpoints

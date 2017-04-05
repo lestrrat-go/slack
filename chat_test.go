@@ -22,7 +22,7 @@ func TestChatMessage(t *testing.T) {
 	t.Run("basic usage", func(t *testing.T) {
 		p := objects.NewMessageParams()
 		p.Text = "hello"
-		p.Channel = dmUser
+		p.Channel = testDmUser
 		res, err := c.Chat().PostMessage(ctx, p)
 		if !assert.NoError(t, err, "Chat.PostMessage failed") {
 			return
@@ -79,7 +79,7 @@ func TestChatMessage(t *testing.T) {
 
 		p := objects.NewMessageParams()
 		p.Attachments.Append(&attachment)
-		p.Channel = dmUser
+		p.Channel = testDmUser
 		p.Text = "Would you like to play a game?"
 
 		res, err := c.Chat().PostMessage(ctx, p)
@@ -100,7 +100,7 @@ func TestChatMeMessage(t *testing.T) {
 
 	c := slack.New(slackToken)
 
-	res, err := c.Chat().MeMessage(ctx, dmUser, "hello")
+	res, err := c.Chat().MeMessage(ctx, testDmUser, "hello")
 	if !assert.NoError(t, err, "Chat.MeMessage failed") {
 		return
 	}

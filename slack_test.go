@@ -9,13 +9,14 @@ import (
 	"github.com/lestrrat/go-slack"
 )
 
-var dmUser string
+var testDmUser string
+var testChannel string
 var isBot bool
 var slackToken string
 
 func init() {
 	slackToken = os.Getenv("SLACK_TOKEN")
-	dmUser = os.Getenv("TEST_DM_USER") // don't forget to include an "@"
+	testDmUser = os.Getenv("TEST_DM_USER") // don't forget to include an "@"
 
 	if len(slackToken) > 0 {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -40,7 +41,7 @@ func requireSlackToken(t *testing.T) bool {
 }
 
 func requireDMUser(t *testing.T) bool {
-	if dmUser == "" {
+	if testDmUser == "" {
 		t.Skip("TEST_DM_USER not available")
 		return false
 	}
