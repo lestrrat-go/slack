@@ -21,9 +21,9 @@ func init() {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		cl := slack.New(slackToken)
-		res, err := cl.Auth().Test(ctx)
+		res, err := cl.Auth().Test().Do(ctx)
 		if err == nil {
-			user, err := cl.Users().Info(ctx, res.UserID)
+			user, err := cl.Users().Info(res.UserID).Do(ctx)
 			if err == nil {
 				isBot = user.IsBot
 			}
