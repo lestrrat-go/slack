@@ -21,13 +21,14 @@ type Conversation struct {
 
 type GroupConversation struct {
 	Conversation
-	Creator    string   `json:"creator"`
-	IsArchived bool     `json:"is_archived"`
-	Members    []string `json:"members"`
-	Name       string   `json:"name"`
-	NumMembers int      `json:"num_members,omitempty"`
-	Topic      Topic    `json:"topic"`
-	Purpose    Purpose  `json:"purpose"`
+	Creator       string   `json:"creator"`
+	IsArchived    bool     `json:"is_archived"`
+	Members       []string `json:"members"`
+	Name          string   `json:"name"`
+	NumMembers    int      `json:"num_members,omitempty"`
+	PreviousNames []string `json:"previous_names"`
+	Purpose       Purpose  `json:"purpose"`
+	Topic         Topic    `json:"topic"`
 }
 
 type Purpose struct {
@@ -77,10 +78,14 @@ type AttachmentList []*Attachment
 
 type Channel struct {
 	GroupConversation
-	IsChannel bool `json:"is_channel"`
-	IsGeneral bool `json:"is_general"`
-	IsMember  bool `json:"is_member"`
+	IsChannel   bool `json:"is_channel"`
+	IsGeneral   bool `json:"is_general"`
+	IsMember    bool `json:"is_member"`
+	IsOrgShared bool `json:"is_org_shared"`
+	IsShared    bool `json:"is_shared"`
 }
+
+type ChannelList []*Channel
 
 // Confirmation is used in conjunction with message buttons
 type Confirmation struct {
