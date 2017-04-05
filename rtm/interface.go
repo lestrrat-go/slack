@@ -7,11 +7,6 @@ import (
 
 type EventType int
 
-const (
-	RTMConnectingEvent EventType = iota
-	MaxEvent
-)
-
 type Client struct {
 	client   *slack.Client
 	eventsCh chan *Event

@@ -37,7 +37,7 @@ func (c *Client) Run(octx context.Context) error {
 		default:
 		}
 
-		ctx.emit(&Event{typ: RTMConnectingEvent})
+		ctx.emit(&Event{typ: ClientConnectingEventType})
 
 		var conn *websocket.Conn
 		strategy := backoff.NewExponentialBackOff()

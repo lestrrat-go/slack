@@ -72,6 +72,7 @@ func writeEventEvents(list []definition) error {
 	dst.Write(src)
 	return nil
 }
+
 func writeRTMEvents(list []definition) error {
 	var buf bytes.Buffer
 	buf.WriteString("// This file is auto-generated. DO NOT EDIT")
@@ -88,6 +89,7 @@ func writeRTMEvents(list []definition) error {
 
 	buf.WriteString("\nconst (")
 	buf.WriteString("\nInvalidEventType EventType = iota")
+	buf.WriteString("\nClientConnectingEventType // internal")
 	for _, data := range list {
 		if !data.RTM {
 			continue
