@@ -3,10 +3,10 @@ package rtm
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/gorilla/websocket"
 	"github.com/lestrrat/go-slack"
 	"github.com/pkg/errors"
@@ -38,18 +38,28 @@ func (c *Client) Run(octx context.Context) error {
 		}
 
 		ctx.emit(&Event{typ: RTMConnectingEvent})
-		res, err := c.client.RTM().Start().Do(ctx)
-		if err != nil {
-			// TODO: exponential backoff
-			log.Printf("%s", err)
-			return errors.Wrap(err, `failed to start rtm session`)
-		}
 
-		conn, _, err := websocket.DefaultDialer.Dial(res.URL, nil)
+		var conn *websocket.Conn
+		strategy := backoff.NewExponentialBackOff()
+		strategy.InitialInterval = 100 * time.Millisecond
+		strategy.MaxInterval = 5 * time.Second
+		strategy.MaxElapsedTime = 0
+		err := backoff.Retry(func() error {
+			res, err := c.client.RTM().Start().Do(ctx)
+			if err != nil {
+				log.Printf("failed to start RTM sesson: %s", err)
+				return err
+			}
+			conn, _, err = websocket.DefaultDialer.Dial(res.URL, nil)
+			if err != nil {
+				log.Printf("failed to dial to websocket: %s", err)
+				return err
+			}
+			return nil
+		}, backoff.WithContext(strategy, ctx))
+
 		if err != nil {
-			// TODO: exponential backoff
-			log.Printf("%s", err)
-			return errors.Wrap(err, `failed to dial websocket`)
+			return errors.Wrap(err, `failed to connect to RTM endpoint`)
 		}
 		ctx.handleConn(conn)
 	}
@@ -139,13 +149,13 @@ func (ctx *rtmCtx) trywrite(e *Event) error {
 // and we either write to the consumer channel, or buffer in our
 // in memory queue (list) for later consumption
 func (ctx *rtmCtx) run() {
+	defer close(ctx.outbuf) // make sure the reader of Events() gets notified
 
 	periodic := time.NewTicker(time.Second)
 	defer periodic.Stop()
 
 	var events []*Event
 	for {
-		fmt.Println("Proxy loop")
 		select {
 		case <-ctx.Done():
 			return

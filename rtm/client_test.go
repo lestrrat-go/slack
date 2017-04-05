@@ -8,7 +8,7 @@ import (
 	"github.com/lestrrat/go-slack/rtm"
 )
 
-func TestRTM(t *testing.T) {
+func TestClient(t *testing.T) {
 	if !requireSlackToken(t) {
 		return
 	}
