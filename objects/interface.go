@@ -200,23 +200,6 @@ type ItemReaction struct {
 	Users []string `json:"users"`
 }
 
-// MessageParans is used when posting a new message
-type MessageParams struct {
-	AsUser      bool
-	Attachments AttachmentList
-	Channel     string
-	EscapeText  bool
-	IconEmoji   string
-	IconURL     string
-	LinkNames   bool
-	Markdown    bool
-	Parse       string
-	Text        string
-	UnfurlLinks bool
-	UnfurlMedia bool
-	Username    string
-}
-
 type UserProfile struct {
 	AlwaysActive       bool   `json:"always_active"`
 	AvatarHash         string `json:"avatar_hash"`

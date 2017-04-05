@@ -5,6 +5,11 @@ import (
 	"golang.org/x/oauth2"
 )
 
+const (
+	ParseFull = "full"
+	ParseNone = "none"
+)
+
 // DefaultSlackAPIEndpoint contains the prefix used for Slack REST API
 const (
 	DefaultAPIEndpoint         = "https://slack.com/api/"

@@ -10,7 +10,6 @@ import (
 	"golang.org/x/oauth2"
 
 	slack "github.com/lestrrat/go-slack"
-	"github.com/lestrrat/go-slack/objects"
 )
 
 func ExampleClient() {
@@ -29,10 +28,9 @@ func ExampleClient() {
 	fmt.Printf("%#v\n", authres)
 
 	// simplest possible message
-	p := objects.NewMessageParams()
-	p.Channel = "@username"
-	p.Text = "Hello, World!"
-	chatres, err := cl.Chat().PostMessage(ctx, p)
+	chatres, err := cl.Chat().PostMessage("@username").
+		Text("Hello, World!").
+		Do(ctx)
 	if err != nil {
 		fmt.Printf("failed to post messsage: %s\n", err)
 		return
