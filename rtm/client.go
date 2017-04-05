@@ -179,7 +179,7 @@ func (ctx *rtmCtx) run() {
 		}
 
 		// shink the slice if we're too big
-		if l := len(events); l > 16 && cap(events) > 64 {
+		if l := len(events); l > 16 && cap(events) > 2*l {
 			events = append([]*Event(nil), events...)
 		}
 	}
