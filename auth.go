@@ -31,7 +31,7 @@ func (s *AuthService) Revoke(ctx context.Context, test bool) error {
 	}
 
 	if !res.OK {
-		return errors.New(res.Error)
+		return errors.New(res.Error.String())
 	}
 	return nil
 }
@@ -52,7 +52,7 @@ func (s *AuthService) Test(ctx context.Context) (*AuthTestResponse, error) {
 	}
 
 	if !res.OK {
-		return nil, errors.New(res.Error)
+		return nil, errors.New(res.Error.String())
 	}
 
 	return res.AuthTestResponse, nil

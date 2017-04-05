@@ -31,8 +31,18 @@ type Client struct {
 // SlackResponse is the general response part given by all
 // slack API response.
 type SlackResponse struct {
-	OK    bool   `json:"ok"`
-	Error string `json:"error"`
+	OK        bool          `json:"ok"`
+	ReplyTo   int           `json:"reply_to,omitempty"`
+	Error     ErrorResponse `json:"error,omitempty"`
+	Timestamp string        `json:"ts"`
+}
+
+// ErrorResponse wraps errors returned by Slack. It's usually a string,
+// but it could be a structure.
+// https://api.slack.com/rtm#handling_responses
+type ErrorResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"msg"`
 }
 
 // AuthService handles all `auth.*` API endpoints

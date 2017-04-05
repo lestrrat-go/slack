@@ -25,7 +25,7 @@ func (s *ChatService) Update(ctx context.Context, channel, ts, text string) (*Ch
 	}
 
 	if !res.OK {
-		return nil, errors.New(res.Error)
+		return nil, errors.New(res.Error.String())
 	}
 
 	return res.ChatResponse, nil
@@ -46,7 +46,7 @@ func (s *ChatService) Delete(ctx context.Context, channel, ts string) (*ChatResp
 	}
 
 	if !res.OK {
-		return nil, errors.New(res.Error)
+		return nil, errors.New(res.Error.String())
 	}
 
 	return res.ChatResponse, nil
@@ -66,7 +66,7 @@ func (s *ChatService) MeMessage(ctx context.Context, channel, text string) (*Cha
 	}
 
 	if !res.OK {
-		return nil, errors.New(res.Error)
+		return nil, errors.New(res.Error.String())
 	}
 
 	return res.ChatResponse, nil
@@ -114,7 +114,7 @@ func (s *ChatService) PostMessage(ctx context.Context, p *objects.MessageParams)
 	}
 
 	if !res.OK {
-		return nil, errors.New(res.Error)
+		return nil, errors.New(res.Error.String())
 	}
 
 	return res.ChatResponse, nil

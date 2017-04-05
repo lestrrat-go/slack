@@ -24,7 +24,7 @@ func (s *RTMService) Start(ctx context.Context) (*RTMResponse, error) {
 	}
 
 	if !res.OK {
-		return nil, errors.New(res.Error)
+		return nil, errors.New(res.Error.String())
 	}
 
 	return res.RTMResponse, nil

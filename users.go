@@ -26,7 +26,7 @@ func (s *UsersService) GetPresence(ctx context.Context, id string) (*objects.Use
 	}
 
 	if !res.OK {
-		return nil, errors.New(res.Error)
+		return nil, errors.New(res.Error.String())
 	}
 
 	return res.UserPresence, nil
@@ -50,7 +50,7 @@ func (s *UsersService) Info(ctx context.Context, id string) (*objects.User, erro
 	}
 
 	if !res.OK {
-		return nil, errors.New(res.Error)
+		return nil, errors.New(res.Error.String())
 	}
 
 	return res.User, nil
@@ -76,7 +76,7 @@ func (s *UsersService) List(ctx context.Context, inclPresence bool) (objects.Use
 	}
 
 	if !res.OK {
-		return nil, errors.New(res.Error)
+		return nil, errors.New(res.Error.String())
 	}
 
 	return res.UserList, nil
