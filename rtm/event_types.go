@@ -74,8 +74,9 @@ const (
 	UserTypingTypeKey            = "user_typing"
 )
 const (
-	InvalidEventType          EventType = iota
-	ClientConnectingEventType           // internal
+	InvalidEventType            EventType = iota
+	ClientConnectingEventType             // internal
+	ClientDisconnectedEventType           // internal
 	AccountsChangedType
 	BotAddedType
 	BotChangedType

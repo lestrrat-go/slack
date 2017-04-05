@@ -90,6 +90,7 @@ func writeRTMEvents(list []definition) error {
 	buf.WriteString("\nconst (")
 	buf.WriteString("\nInvalidEventType EventType = iota")
 	buf.WriteString("\nClientConnectingEventType // internal")
+	buf.WriteString("\nClientDisconnectedEventType // internal")
 	for _, data := range list {
 		if !data.RTM {
 			continue

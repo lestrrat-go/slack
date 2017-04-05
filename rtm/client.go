@@ -14,8 +14,8 @@ import (
 
 func New(cl *slack.Client) *Client {
 	return &Client{
-		client:   cl,
-		eventsCh: make(chan *Event),
+		client:       cl,
+		eventsCh:     make(chan *Event),
 	}
 }
 
@@ -23,6 +23,7 @@ func (c *Client) Events() <-chan *Event {
 	return c.eventsCh
 }
 
+// Run starts the RTM run loop.
 func (c *Client) Run(octx context.Context) error {
 	octxwc, cancel := context.WithCancel(octx)
 	defer cancel()
@@ -40,6 +41,7 @@ func (c *Client) Run(octx context.Context) error {
 		ctx.emit(&Event{typ: ClientConnectingEventType})
 
 		var conn *websocket.Conn
+
 		strategy := backoff.NewExponentialBackOff()
 		strategy.InitialInterval = 100 * time.Millisecond
 		strategy.MaxInterval = 5 * time.Second
@@ -61,7 +63,12 @@ func (c *Client) Run(octx context.Context) error {
 		if err != nil {
 			return errors.Wrap(err, `failed to connect to RTM endpoint`)
 		}
+
 		ctx.handleConn(conn)
+		// we get here if we manually canceled the context
+		// of if the websocket ReadMessage returned an error
+		ctx.emit(&Event{typ: ClientDisconnectedEventType})
+
 	}
 
 	return nil
@@ -71,12 +78,17 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) {
 	defer conn.Close()
 
 	in := make(chan []byte)
+
+	// This goroutine is responsible for reading from the
+	// websocket connection. It's separated because the
+	// ReadMessage() operation is blocking.
 	go func(ch chan []byte, conn *websocket.Conn) {
 		defer close(ch)
 
 		for {
 			typ, data, err := conn.ReadMessage()
 			if err != nil {
+				// There was an error. we need to bail out
 				return
 			}
 			// we only understand text messages
@@ -93,6 +105,8 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) {
 			return
 		case payload, ok := <-in:
 			if !ok {
+				// if the channel is closed, we probably had some
+				// problems in the ReadMessage proxy. bail out
 				return
 			}
 			log.Printf("raw payload: %s", payload)
