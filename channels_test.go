@@ -19,7 +19,7 @@ func TestChannelsList_Info(t *testing.T) {
 
 	c := slack.New(slackToken)
 
-	list, err := c.Channels().List(ctx, false)
+	list, err := c.Channels().List().Do(ctx)
 	if !assert.NoError(t, err, "Channels.List failed") {
 		return
 	}
@@ -39,7 +39,7 @@ func TestChannelsList_Info(t *testing.T) {
 		default:
 		}
 
-		fromInfo, err := c.Channels().Info(ctx, channel.ID)
+		fromInfo, err := c.Channels().Info(channel.ID).Do(ctx)
 		if !assert.NoError(t, err, "Channels.Info failed") {
 			return
 		}

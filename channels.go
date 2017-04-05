@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// ChannelsHistoryCall is created via Channels.History() method
 type ChannelsHistoryCall struct {
 	service   *ChannelsService
 	channel   string // channel ID
@@ -104,11 +105,24 @@ func (c *ChannelsHistoryCall) Do(ctx context.Context) (*ChannelsHistoryResponse,
 	return res.ChannelsHistoryResponse, nil
 }
 
+// ChannelsInfoCall is created via Channels.Info() method
+type ChannelsInfoCall struct {
+	service *ChannelsService
+	channel string // channel ID
+}
+
 // Info returns the result of channels.info API
-func (s *ChannelsService) Info(ctx context.Context, id string) (*objects.Channel, error) {
+func (s *ChannelsService) Info(id string) *ChannelsInfoCall {
+	return &ChannelsInfoCall{
+		service: s,
+		channel: id,
+	}
+}
+
+func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
 	v := url.Values{
-		"token":   {s.token},
-		"channel": {id},
+		"token":   {c.service.token},
+		"channel": {c.channel},
 	}
 	const endpoint = "channels.info"
 
@@ -117,7 +131,7 @@ func (s *ChannelsService) Info(ctx context.Context, id string) (*objects.Channel
 		*objects.Channel `json:"channel"`
 	}
 
-	if err := s.client.postForm(ctx, endpoint, v, &res); err != nil {
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrapf(err, `failed to post to %s`, endpoint)
 	}
 
@@ -128,12 +142,29 @@ func (s *ChannelsService) Info(ctx context.Context, id string) (*objects.Channel
 	return res.Channel, nil
 }
 
+// ChannelsListCall is created via Channels.List() method
+type ChannelsListCall struct {
+	service      *ChannelsService
+	exclArchived bool
+}
+
 // List returns the result of channels.list API
-func (s *ChannelsService) List(ctx context.Context, exclArchived bool) (objects.ChannelList, error) {
-	v := url.Values{
-		"token": {s.token},
+func (s *ChannelsService) List() *ChannelsListCall {
+	return &ChannelsListCall{
+		service: s,
 	}
-	if exclArchived {
+}
+
+func (c *ChannelsListCall) ExcludeArchive(b bool) *ChannelsListCall {
+	c.exclArchived = b
+	return c
+}
+
+func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) {
+	v := url.Values{
+		"token": {c.service.token},
+	}
+	if c.exclArchived {
 		v.Set("exclude_archived", "true")
 	}
 	const endpoint = "channels.list"
@@ -143,7 +174,7 @@ func (s *ChannelsService) List(ctx context.Context, exclArchived bool) (objects.
 		objects.ChannelList `json:"channels"`
 	}
 
-	if err := s.client.postForm(ctx, endpoint, v, &res); err != nil {
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrapf(err, `failed to post to %s`, endpoint)
 	}
 
