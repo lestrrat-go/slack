@@ -62,7 +62,7 @@ type Attachment struct {
 	CallbackID     string     `json:"callback_id,omitempty"` // for buttons
 	Color          string     `json:"color,omitempty"`
 	Fallback       string     `json:"fallback"`
-	Fields         []*Field   `json:"fields"`
+	Fields         FieldList   `json:"fields"`
 	Footer         string     `json:"footer"`
 	FooterIcon     string     `json:"footer_icon"`
 	ImageURL       string     `json:"image_url"`
@@ -108,6 +108,7 @@ type Field struct {
 	Value string `json:"value"`
 	Short bool   `json:"short"`
 }
+type FieldList []*Field
 
 // Message is a representation of a message, as obtained
 // by the RTM or Events API. This is NOT what you use when
