@@ -54,7 +54,7 @@ See the [README in the rtm/ directory](./rtm/README.md).
 
 The API is constructed along the same lines of Google API Go libraries (https://google.golang.org/api), so if you are familiar with that style you should have no problem. But if you have not used their API, I'm sure you're confused - I know I was when I first saw their API.
 
-The basic idea is that you have a central client, which you can create via `New`:
+This section will walk you through how the APIs in this REST client generally work. The basic idea is that you have a central client, which you can create via `New`:
 
 ```go
   client := slack.New(token)
