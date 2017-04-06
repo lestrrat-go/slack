@@ -111,6 +111,15 @@ type ChatResponse struct {
 	Message   interface{} `json:"message"` // TODO
 }
 
+type OAuthService struct {
+	client *httpClient
+}
+
+type OAuthStartResponse struct {
+	AccessToken string
+	Scope       string
+}
+
 // RTMService handles all `rtm.*` API endpoints
 type RTMService struct {
 	client *httpClient
