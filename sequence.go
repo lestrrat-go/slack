@@ -20,12 +20,36 @@ func stringifyLink(href, text string) string {
 	return buf.String()
 }
 
+func (l *ExternalLink) Data() string {
+	return l.URL
+}
+
+func (l *ExternalLink) Surface() string {
+	return l.Text
+}
+
 func (l *ExternalLink) String() string {
 	return stringifyLink(l.URL, l.Text)
 }
 
+func (l *UserLink) Data() string {
+	return l.ID
+}
+
+func (l *UserLink) Surface() string {
+	return l.Username
+}
+
 func (l *UserLink) String() string {
 	return stringifyLink(l.ID, l.Username)
+}
+
+func (l *ChannelLink) Data() string {
+	return l.ID
+}
+
+func (l *ChannelLink) Surface() string {
+	return l.Channel
 }
 
 func (l *ChannelLink) String() string {
