@@ -246,7 +246,7 @@ func (c *ChatPostMessageCall) AsUser(b bool) *ChatPostMessageCall {
 }
 
 // SetAttachments replaces the attachment list
-func (c *ChatPostMessageCall) SetAttachment(l objects.AttachmentList) *ChatPostMessageCall {
+func (c *ChatPostMessageCall) SetAttachments(l objects.AttachmentList) *ChatPostMessageCall {
 	c.attachments = l
 	return c
 }
