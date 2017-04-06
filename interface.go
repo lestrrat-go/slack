@@ -11,6 +11,8 @@ const (
 )
 
 type ControlSequence interface {
+	Data() string
+	Surface() string
 	String() string
 }
 
