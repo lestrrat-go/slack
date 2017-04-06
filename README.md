@@ -60,9 +60,9 @@ The basic idea is that you have a central client, which you can create via `New`
   client := slack.New(token)
 ```
 
-The client is nothing but a place holder for other "services". For example, to
+The client is nothing but a placeholder for other "services". For example, to
 use the slack APIs for `chat.*` endpoints, lookup the `ChatService` object
-which can obtain by calling the `Chat()` method:
+which can be obtained by calling the `Chat()` method:
 
 ```go
   service := client.Chat()
