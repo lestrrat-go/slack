@@ -10,6 +10,25 @@ const (
 	ParseNone = "none"
 )
 
+type ControlSequence interface {
+	String() string
+}
+
+type ChannelLink struct {
+	ID      string
+	Channel string
+}
+
+type UserLink struct {
+	ID       string
+	Username string
+}
+
+type ExternalLink struct {
+	URL  string
+	Text string
+}
+
 // DefaultSlackAPIEndpoint contains the prefix used for Slack REST API
 const (
 	DefaultAPIEndpoint         = "https://slack.com/api/"
