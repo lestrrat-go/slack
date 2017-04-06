@@ -282,3 +282,68 @@ type Team struct {
 
 type Group interface{}
 type Bot interface{}
+
+// File represents a file object (https://api.slack.com/types/file)
+type File struct {
+	ID           string
+	Name         string
+	User         string
+	Created      int    `json:"created"`   // The created property is a unix timestamp representing when the file was created.
+	Timestamp    int    `json:"timestamp"` // Deprecated
+	Updated      int    `json:"updated"`   // The updated property (for Post filetypes only) is a unix timestamp of when the Post was last edited.
+	MimeType     string `json:"mimetype"`  // The mimetype and filetype props do not have a 1-to-1 mapping, as multiple different files types ('html', 'js', etc.) share the same mime type.
+	FileType     string `json:"filetype"`
+	PrettyType   string `json:"pretty_type"` // The pretty_type property contains a human-readable version of the type.
+	Mode         string `json:"mode"`        // The mode property contains one of hosted, external, snippet or post.
+	Editable     bool   `json:"editable"`    // The editable property indicates that files are stored in editable mode.
+	IsExternal   bool   `json:"is_external"` // The is_external property indicates whether the master copy of a file is stored within the system or not. If the file is_external, then the url property will point to the externally-hosted master file. Further, the external_type property will indicate what kind of external file it is, e.g. dropbox or gdoc.
+	ExternalType string `json:"external_type"`
+	Size         int    `json:"size"` // The size parameter is the filesize in bytes. Snippets are limited to a maximum file size of 1 megabyte.
+
+	URL                string `json:"url"`          // Deprecated - never set
+	URLDownload        string `json:"url_download"` // Deprecated - never set
+	URLPrivate         string `json:"url_private"`
+	URLPrivateDownload string `json:"url_private_download"`
+
+	ImageExifRotation string `json:"image_exif_rotation"`
+	OriginalWidth     int    `json:"original_w"`
+	OriginalHeight    int    `json:"original_h"`
+	Thumb64           string `json:"thumb_64"`
+	Thumb80           string `json:"thumb_80"`
+	Thumb160          string `json:"thumb_160"`
+	Thumb360          string `json:"thumb_360"`
+	Thumb360Gif       string `json:"thumb_360_gif"`
+	Thumb360W         int    `json:"thumb_360_w"`
+	Thumb360H         int    `json:"thumb_360_h"`
+	Thumb480          string `json:"thumb_480"`
+	Thumb480W         int    `json:"thumb_480_w"`
+	Thumb480H         int    `json:"thumb_480_h"`
+	Thumb720          string `json:"thumb_720"`
+	Thumb720W         int    `json:"thumb_720_w"`
+	Thumb720H         int    `json:"thumb_720_h"`
+	Thumb960          string `json:"thumb_960"`
+	Thumb960W         int    `json:"thumb_960_w"`
+	Thumb960H         int    `json:"thumb_960_h"`
+	Thumb1024         string `json:"thumb_1024"`
+	Thumb1024W        int    `json:"thumb_1024_w"`
+	Thumb1024H        int    `json:"thumb_1024_h"`
+
+	Permalink       string `json:"permalink"`
+	PermalinkPublic string `json:"permalink_public"`
+
+	EditLink         string `json:"edit_link"`
+	Preview          string `json:"preview"`
+	PreviewHighlight string `json:"preview_highlight"`
+	Lines            int    `json:"lines"`
+	LinesMore        int    `json:"lines_more"`
+
+	IsPublic        bool     `json:"is_public"`
+	PublicURLShared bool     `json:"public_url_shared"`
+	Channels        []string `json:"channels"`
+	Groups          []string `json:"groups"`
+	IMs             []string `json:"ims"`
+	InitialComment  Comment  `json:"initial_comment"`
+	CommentsCount   int      `json:"comments_count"`
+	NumStars        int      `json:"num_stars"`
+	IsStarred       bool     `json:"is_starred"`
+}

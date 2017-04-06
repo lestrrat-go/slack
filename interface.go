@@ -45,14 +45,16 @@ var OAuth2Endpoint = oauth2.Endpoint{
 }
 
 type Client struct {
-	auth     *AuthService
-	channels *ChannelsService
-	chat     *ChatService
-	rtm      *RTMService
-	users    *UsersService
-	debug    bool
-	slackURL string
-	token    string
+	auth      *AuthService
+	channels  *ChannelsService
+	chat      *ChatService
+	oauth     *OAuthService
+	reactions *ReactionsService
+	rtm       *RTMService
+	users     *UsersService
+	debug     bool
+	slackURL  string
+	token     string
 }
 
 // SlackResponse is the general response part given by all
@@ -120,6 +122,26 @@ type OAuthStartResponse struct {
 	Scope       string
 }
 
+type ReactionsService struct {
+	client *httpClient
+	token  string
+}
+
+// ReactionsGetResponse represents the response obtained from
+// reactions.get API (https://api.slack.com/methods/reactions.get)
+type ReactionsGetResponse struct {
+	Channel string           `json:"channel"`
+	Message *objects.Message `json:"message"`
+	File    *objects.File    `json:"file"`
+	Comment string           `json:"comment"`
+}
+
+type ReactionsGetResponseList []ReactionsGetResponse
+type ReactionsListResponse struct {
+	Items  ReactionsGetResponseList `json:"items"`
+	Paging Paging                   `json:"paging"`
+}
+
 // RTMService handles all `rtm.*` API endpoints
 type RTMService struct {
 	client *httpClient
@@ -141,4 +163,11 @@ type RTMResponse struct {
 type UsersService struct {
 	client *httpClient
 	token  string
+}
+
+type Paging struct {
+	Count int `json:"count"`
+	Total int `json:"total"`
+	Page  int `json:"page"`
+	Pages int `json:"pages"`
 }

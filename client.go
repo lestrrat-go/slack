@@ -101,12 +101,14 @@ func New(token string, options ...Option) *Client {
 		slackURL: slackURL,
 	}
 	return &Client{
-		auth:     &AuthService{client: wrappedcl, token: token},
-		channels: &ChannelsService{client: wrappedcl, token: token},
-		chat:     &ChatService{client: wrappedcl, token: token},
-		rtm:      &RTMService{client: wrappedcl, token: token},
-		users:    &UsersService{client: wrappedcl, token: token},
-		debug:    debug,
+		auth:      &AuthService{client: wrappedcl, token: token},
+		channels:  &ChannelsService{client: wrappedcl, token: token},
+		chat:      &ChatService{client: wrappedcl, token: token},
+		oauth:     &OAuthService{client: wrappedcl},
+		reactions: &ReactionsService{client: wrappedcl, token: token},
+		rtm:       &RTMService{client: wrappedcl, token: token},
+		users:     &UsersService{client: wrappedcl, token: token},
+		debug:     debug,
 	}
 }
 
@@ -123,6 +125,16 @@ func (c *Client) Channels() *ChannelsService {
 // Chat returns the Service object for `chat.*` endpoints
 func (c *Client) Chat() *ChatService {
 	return c.chat
+}
+
+// OAuth returns the Service object for `oauth.*` endpoints
+func (c *Client) OAuth() *OAuthService {
+	return c.oauth
+}
+
+// Reactions returns the Service object for `reactions.*` endpoints
+func (c *Client) Reactions() *ReactionsService {
+	return c.reactions
 }
 
 // RTM returns the Service object for `rtm.*` endpoints
