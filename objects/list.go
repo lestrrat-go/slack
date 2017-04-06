@@ -10,7 +10,7 @@ func (l *AttachmentList) Append(a *Attachment) *AttachmentList {
 	return l
 }
 
-func (l *FieldList) Append(a *Field) *FieldList {
+func (l *AttachmentFieldList) Append(a *AttachmentField) *AttachmentFieldList {
 	*l = append(*l, a)
 	return l
 }

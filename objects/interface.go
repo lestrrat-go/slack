@@ -56,24 +56,24 @@ type Action struct {
 type ActionList []*Action
 
 type Attachment struct {
-	Actions        ActionList `json:"actions,omitempty"` // for buttons
-	AttachmentType string     `json:"attachment_type"`
-	AuthorName     string     `json:"author_name"`
-	AuthorLink     string     `json:"author_link"`
-	AuthorIcon     string     `json:"author_icon"`
-	CallbackID     string     `json:"callback_id,omitempty"` // for buttons
-	Color          string     `json:"color,omitempty"`
-	Fallback       string     `json:"fallback"`
-	Fields         FieldList  `json:"fields"`
-	Footer         string     `json:"footer"`
-	FooterIcon     string     `json:"footer_icon"`
-	ImageURL       string     `json:"image_url"`
-	ThumbURL       string     `json:"thumb_url"`
-	Pretext        string     `json:"pretext,omitempty"`
-	Text           string     `json:"text"`
-	Timestamp      Timestamp  `json:"ts"`
-	Title          string     `json:"title"`
-	TitleLink      string     `json:"title_link"`
+	Actions        ActionList          `json:"actions,omitempty"` // for buttons
+	AttachmentType string              `json:"attachment_type"`
+	AuthorName     string              `json:"author_name"`
+	AuthorLink     string              `json:"author_link"`
+	AuthorIcon     string              `json:"author_icon"`
+	CallbackID     string              `json:"callback_id,omitempty"` // for buttons
+	Color          string              `json:"color,omitempty"`
+	Fallback       string              `json:"fallback"`
+	Fields         AttachmentFieldList `json:"fields"`
+	Footer         string              `json:"footer"`
+	FooterIcon     string              `json:"footer_icon"`
+	ImageURL       string              `json:"image_url"`
+	ThumbURL       string              `json:"thumb_url"`
+	Pretext        string              `json:"pretext,omitempty"`
+	Text           string              `json:"text"`
+	Timestamp      Timestamp           `json:"ts"`
+	Title          string              `json:"title"`
+	TitleLink      string              `json:"title_link"`
 }
 type AttachmentList []*Attachment
 
@@ -109,12 +109,12 @@ type Edited struct {
 	User      string `json:"user"`
 }
 
-type Field struct {
+type AttachmentField struct {
 	Title string `json:"title"`
 	Value string `json:"value"`
 	Short bool   `json:"short"`
 }
-type FieldList []*Field
+type AttachmentFieldList []*AttachmentField
 
 // Message is a representation of a message, as obtained
 // by the RTM or Events API. This is NOT what you use when
