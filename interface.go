@@ -178,3 +178,29 @@ type Paging struct {
 	Page  int `json:"page"`
 	Pages int `json:"pages"`
 }
+
+// InteractiveButtonRequest is a request that is sent when a user
+// hits a Slack button. Note: this is experimental
+type InteractiveButtonRequest struct {
+	ActionTimestamp string             `json:"action_ts"`
+	Actions         objects.ActionList `json:"actions"`
+	AttachmentID    string             `json:"attachment_id"`
+	CallbackID      string             `json:"callback_id"`
+	Channel         struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	} `json:"channel"`
+	IsAppUnfurl      bool             `json:"is_app_unfurl"`
+	MessageTimestamp string           `json:"message_ts"`
+	OriginalMessage  *objects.Message `json:"original_message"`
+	ResponseURL      string           `json:"response_url"`
+	Team             struct {
+		Domain string `json:"domain"`
+		ID     string `json:"id"`
+	} `json:"team"`
+	Token string `json:"token"`
+	User  struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	} `json:"user"`
+}
