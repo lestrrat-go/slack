@@ -281,7 +281,19 @@ type Team struct {
 }
 
 type Group interface{}
-type Bot interface{}
+type Bot struct {
+	ID      string `json:"id"`
+	AppID   string `json:"app_id"`
+	Deleted bool   `json:"deleted"`
+	Name    string `json:"name"`
+	Icons   Icons  `json:"icons"`
+}
+
+type Icons struct {
+	Image36 string `json:"image_36"`
+	Image48 string `json:"image_48"`
+	Image72 string `json:"image_72"`
+}
 
 // File represents a file object (https://api.slack.com/types/file)
 type File struct {
