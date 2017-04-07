@@ -4,6 +4,15 @@
 
 [![GoDoc](https://godoc.org/github.com/lestrrat/go-slack?status.svg)](https://godoc.org/github.com/lestrrat/go-slack)
 
+# Status
+
+* Many APIs are still unimplemented (please file an issue!)
+* RTM events are not covered entirely yet (please file an issue!)
+
+Missing parts are missing only because the author does not have immediate need for them. With proper prodding, I will gladly take on implementing them.
+
+Please see #4 for a list of currently known unimplemented methods.
+
 # Synopsis
 
 Simple REST Client:
