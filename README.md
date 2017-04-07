@@ -11,7 +11,7 @@
 
 Missing parts are missing only because the author does not have immediate need for them. With proper prodding, I will gladly take on implementing them.
 
-Please see #4 for a list of currently known unimplemented methods.
+Please see [#4](https://github.com/lestrrat/go-slack/issues/4) for a list of currently known unimplemented methods.
 
 # Synopsis
 
