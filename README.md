@@ -13,6 +13,11 @@ Missing parts are missing only because the author does not have immediate need f
 
 Please see [#4](https://github.com/lestrrat/go-slack/issues/4) for a list of currently known unimplemented methods.
 
+# Features
+
+* Google API style library
+* Full support for context.Context
+
 # Synopsis
 
 Simple REST Client:
