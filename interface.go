@@ -184,7 +184,7 @@ type Paging struct {
 type InteractiveButtonRequest struct {
 	ActionTimestamp string             `json:"action_ts"`
 	Actions         objects.ActionList `json:"actions"`
-	AttachmentID    string             `json:"attachment_id"`
+	AttachmentID    int                `json:"attachment_id,string"`
 	CallbackID      string             `json:"callback_id"`
 	Channel         struct {
 		ID   string `json:"id"`
