@@ -8,14 +8,15 @@ import (
 
 	"github.com/cenkalti/backoff"
 	"github.com/gorilla/websocket"
+	pdebug "github.com/lestrrat/go-pdebug"
 	"github.com/lestrrat/go-slack"
 	"github.com/pkg/errors"
 )
 
 func New(cl *slack.Client) *Client {
 	return &Client{
-		client:       cl,
-		eventsCh:     make(chan *Event),
+		client:   cl,
+		eventsCh: make(chan *Event),
 	}
 }
 
@@ -89,11 +90,21 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) {
 			typ, data, err := conn.ReadMessage()
 			if err != nil {
 				// There was an error. we need to bail out
+				if pdebug.Enabled {
+					pdebug.Printf("error while reading message from websocket: %s", err)
+				}
 				return
 			}
+
 			// we only understand text messages
 			if typ != websocket.TextMessage {
+				if pdebug.Enabled {
+					pdebug.Printf("received websocket message, but it is not a text payload. refusing to process")
+				}
 				continue
+			}
+			if pdebug.Enabled {
+				pdebug.Printf("forwarding new websocket message")
 			}
 			ch <- data
 		}
@@ -105,15 +116,26 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) {
 			return
 		case payload, ok := <-in:
 			if !ok {
+				if pdebug.Enabled {
+					pdebug.Printf("websocket proxy: detected incoming channel close.")
+				}
 				// if the channel is closed, we probably had some
 				// problems in the ReadMessage proxy. bail out
 				return
 			}
-			log.Printf("raw payload: %s", payload)
+
+			if pdebug.Enabled {
+				pdebug.Printf("websocket proxy: received raw payload: %s", payload)
+			}
+
 			var event Event
 			if err := json.Unmarshal(payload, &event); err != nil {
-				log.Printf("failed to unmarshal: %s", err)
+				if pdebug.Enabled {
+					pdebug.Printf("websocket proxy: failed to unmarshal payload: %s", err)
+				}
 			}
+
+			ctx.inbuf <- &event
 		}
 	}
 }
