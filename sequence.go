@@ -2,9 +2,9 @@ package slack
 
 import (
 	"bytes"
-	"log"
 	"strings"
 
+	pdebug "github.com/lestrrat/go-pdebug"
 	"github.com/pkg/errors"
 )
 
@@ -56,11 +56,11 @@ func (l *ChannelLink) String() string {
 	return stringifyLink(l.ID, l.Channel)
 }
 
+const ltmark = '<'
+const gtmark = '>'
+
 // https://api.slack.com/docs/message-formatting#control_sequences
 func ExtractControlSequences(s string) ([]ControlSequence, error) {
-	const ltmark = '<'
-	const gtmark = '>'
-
 	var list []ControlSequence
 	for len(s) > 0 {
 		start := strings.IndexByte(s, ltmark)
@@ -76,10 +76,9 @@ func ExtractControlSequences(s string) ([]ControlSequence, error) {
 		// Note that end is relative to start, so we need to
 		// do `end + start` in order to move the string start
 		// to the end of the control sequence
-		rawseq := s[start+1 : end+start]
+		rawseq := s[start : end+start+1]
 		s = s[end+start:]
 
-		log.Printf("rawseq: %s", rawseq)
 		seq, err := ParseControlSequence(rawseq)
 		if err != nil {
 			return nil, errors.Wrapf(err, `failed to parse '%s'`, rawseq)
@@ -90,14 +89,31 @@ func ExtractControlSequences(s string) ([]ControlSequence, error) {
 	return list, nil
 }
 
-var invalidLink = errors.New("invalid link format")
+var invalidSequence = errors.New("invalid control sequence format")
 
 func ParseControlSequence(s string) (ControlSequence, error) {
-	if len(s) == 0 {
-		return nil, invalidLink
+	if pdebug.Enabled {
+		pdebug.Printf("parsing control sequence %s", s)
 	}
 
+	if len(s) < 3 {
+		return nil, invalidSequence
+	}
+
+	if s[0] != ltmark {
+		return nil, invalidSequence
+	}
+
+	s = s[1:]
+
+	if s[len(s)-1] != gtmark {
+		return nil, invalidSequence
+	}
+	s = s[:len(s)-1]
+
 	switch s[0] {
+	case ltmark, gtmark:
+		return nil, invalidSequence
 	case '@':
 		return parseUser(s)
 	case '#':

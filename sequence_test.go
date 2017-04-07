@@ -7,9 +7,47 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestParseControlSequence(t *testing.T) {
+	data := []struct {
+		Text     string
+		Error    bool
+		Expected slack.ControlSequence
+	}{
+		{
+			Text:     `<@U12345678|bob>`,
+			Expected: &slack.UserLink{ID: `@U12345678`, Username: `bob`},
+		},
+		{
+			Text:  `<foo|bar`,
+			Error: true,
+		},
+	}
+
+	for _, testcase := range data {
+		t.Run(testcase.Text, func(t *testing.T) {
+			l, err := slack.ParseControlSequence(testcase.Text)
+			if testcase.Error {
+				if !assert.Error(t, err, `should fail to parse sequence`) {
+					return
+				}
+				return
+			}
+
+			if !assert.NoError(t, err, `failed to parse sequences`) {
+				return
+			}
+
+			if !assert.Equal(t, testcase.Expected, l, `sequences should match`) {
+				return
+			}
+		})
+	}
+}
+
 func TestExtractControlSequences(t *testing.T) {
 	data := []struct {
 		Text     string
+		Error    bool
 		Expected []slack.ControlSequence
 	}{
 		{
@@ -31,7 +69,7 @@ func TestExtractControlSequences(t *testing.T) {
 			},
 		},
 		{
-			Text:`So does this one: <http://www.foo.com|www.foo.com>`,
+			Text: `So does this one: <http://www.foo.com|www.foo.com>`,
 			Expected: []slack.ControlSequence{
 				&slack.ExternalLink{URL: `http://www.foo.com`, Text: `www.foo.com`},
 			},
@@ -47,6 +85,13 @@ func TestExtractControlSequences(t *testing.T) {
 	for _, testcase := range data {
 		t.Run(testcase.Text, func(t *testing.T) {
 			l, err := slack.ExtractControlSequences(testcase.Text)
+			if testcase.Error {
+				if !assert.Error(t, err, `should fail to extract sequences`) {
+					return
+				}
+				return
+			}
+
 			if !assert.NoError(t, err, `failed to extract sequences`) {
 				return
 			}
