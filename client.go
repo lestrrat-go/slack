@@ -102,6 +102,7 @@ func New(token string, options ...Option) *Client {
 	}
 	return &Client{
 		auth:      &AuthService{client: wrappedcl, token: token},
+		bots:      &BotsService{client: wrappedcl, token: token},
 		channels:  &ChannelsService{client: wrappedcl, token: token},
 		chat:      &ChatService{client: wrappedcl, token: token},
 		oauth:     &OAuthService{client: wrappedcl},
@@ -115,6 +116,11 @@ func New(token string, options ...Option) *Client {
 // Auth returns the Service object for `auth.*` endpoints
 func (c *Client) Auth() *AuthService {
 	return c.auth
+}
+
+// Bots returns the Service object for `bots.*` endpoints
+func (c *Client) Bots() *BotsService {
+	return c.bots
 }
 
 // Channels returns the Service object for `channels.*` endpoints
