@@ -34,13 +34,8 @@ func (c *ChannelsArchiveCall) Do(ctx context.Context) error {
 	const endpoint = "channels.archive"
 
 	var res SlackResponse
-
-	if err := c.service.client.postForm(ctx, endpoint, c.Values(), &res); err != nil {
-		return errors.Wrapf(err, `failed to post to %s`, endpoint)
-	}
-
-	if !res.OK {
-		return errors.New(res.Error.String())
+	if err := genericPost(ctx, c.service.client, endpoint, c.Values(), &res); err != nil {
+		return err
 	}
 
 	return nil
@@ -78,17 +73,10 @@ func (c *ChannelsCreateCall) Validate(b bool) *ChannelsCreateCall {
 
 func (c *ChannelsCreateCall) Do(ctx context.Context) error {
 	const endpoint = "channels.archive"
-
 	var res SlackResponse
-
-	if err := c.service.client.postForm(ctx, endpoint, c.Values(), &res); err != nil {
-		return errors.Wrapf(err, `failed to post to %s`, endpoint)
+	if err := genericPost(ctx, c.service.client, endpoint, c.Values(), &res); err != nil {
+		return err
 	}
-
-	if !res.OK {
-		return errors.New(res.Error.String())
-	}
-
 	return nil
 }
 
@@ -177,12 +165,8 @@ func (c *ChannelsHistoryCall) Do(ctx context.Context) (*ChannelsHistoryResponse,
 		*ChannelsHistoryResponse
 	}
 
-	if err := c.service.client.postForm(ctx, endpoint, c.Values(), &res); err != nil {
-		return nil, errors.Wrapf(err, `failed to post to %s`, endpoint)
-	}
-
-	if !res.OK {
-		return nil, errors.New(res.Error.String())
+	if err := genericPost(ctx, c.service.client, endpoint, c.Values(), &res); err != nil {
+		return nil, err
 	}
 
 	return res.ChannelsHistoryResponse, nil
@@ -216,7 +200,7 @@ func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
 		*objects.Channel `json:"channel"`
 	}
 
-	if err := c.service.client.postForm(ctx, endpoint, c.Values(), &res); err != nil {
+	if err := genericPost(ctx, c.service.client, endpoint, c.Values(), &res); err != nil {
 		return nil, errors.Wrapf(err, `failed to post to %s`, endpoint)
 	}
 
@@ -225,6 +209,30 @@ func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
 	}
 
 	return res.Channel, nil
+}
+
+// ChannelsInviteCall is created via Channels.Invite() method
+type ChannelsInviteCall struct {
+	service *ChannelsService
+	channel string
+	user    string
+}
+
+func (s *ChannelsService) Invite(channelID, userID string) *ChannelsInviteCall {
+	return &ChannelsInviteCall{
+		service: s,
+		channel: channelID,
+		user:    userID,
+	}
+}
+
+func (c *ChannelsInviteCall) Values() url.Values {
+	v := url.Values{
+		"token":   {c.service.token},
+		"channel": {c.channel},
+		"user":    {c.user},
+	}
+	return v
 }
 
 // ChannelsListCall is created via Channels.List() method
@@ -262,13 +270,8 @@ func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) 
 		objects.ChannelList `json:"channels"`
 	}
 
-	if err := c.service.client.postForm(ctx, endpoint, c.Values(), &res); err != nil {
-		return nil, errors.Wrapf(err, `failed to post to %s`, endpoint)
+	if err := genericPost(ctx, c.service.client, endpoint, c.Values(), &res); err != nil {
+		return nil, err
 	}
-
-	if !res.OK {
-		return nil, errors.New(res.Error.String())
-	}
-
 	return res.ChannelList, nil
 }
