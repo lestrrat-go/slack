@@ -46,12 +46,17 @@ type Topic struct {
 
 // Action is used in conjunction with message buttons
 type Action struct {
-	Confirm *Confirmation `json:"confirm"`
-	Name    string        `json:"name"`
-	Style   string        `json:"style"`
-	Text    string        `json:"text"`
-	Type    string        `json:"type"`
-	Value   string        `json:"value"`
+	Confirm         *Confirmation   `json:"confirm"`
+	DataSource      string          `json:"data_source"`
+	MinQueryLength  int             `json:"min_query_length"`
+	Name            string          `json:"name"`
+	OptionGroups    OptionGroupList `json:"option_groups"`
+	Options         OptionList      `json:"options"`
+	SelectedOptions OptionList      `json:"selected_options"`
+	Style           string          `json:"style"`
+	Text            string          `json:"text"`
+	Type            string          `json:"type"`
+	Value           string          `json:"value"`
 }
 type ActionList []*Action
 
@@ -359,3 +364,16 @@ type File struct {
 	NumStars        int      `json:"num_stars"`
 	IsStarred       bool     `json:"is_starred"`
 }
+
+type Option struct {
+	Text        string `json:"text"`
+	Value       string `json:"value"`
+	Description string `json:"description"`
+}
+type OptionList []*Option
+
+type OptionGroup struct {
+	Text    string     `json:"text"`
+	Options OptionList `json:"options"`
+}
+type OptionGroupList []*OptionGroup

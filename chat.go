@@ -58,20 +58,46 @@ func (c *ChatUpdateCall) AsUser(b bool) *ChatUpdateCall {
 	return c
 }
 
-func (c *ChatUpdateCall) Values() url.Values {
+func (c *ChatUpdateCall) Values() (url.Values, error) {
 	v := url.Values{
 		"token":   {c.service.token},
 		"text":    {c.text},
 		"channel": {c.channel},
 		"ts":      {c.timestamp},
 	}
-	return v
+
+	if len(c.attachments) > 0 {
+		var buf bytes.Buffer
+		if err := json.NewEncoder(&buf).Encode(c.attachments); err != nil {
+			return nil, errors.Wrap(err, `failed to serialize attachments`)
+		}
+		v.Set("attachments", buf.String())
+	}
+
+	if c.parse != "" {
+		v.Set("parse", c.parse)
+	}
+
+	if c.linkNames {
+		v.Set("link_names", "true")
+	}
+
+	if c.asUser {
+		v.Set("as_user", "true")
+	}
+
+	return v, nil
 }
 
 func (c *ChatUpdateCall) Do(ctx context.Context) (*ChatResponse, error) {
 	const endpoint = "chat.update"
+	v, err := c.Values()
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to serialize params for chat.update call`)
+	}
+
 	var res fullChatResponse
-	if err := c.service.client.postForm(ctx, endpoint, c.Values(), &res); err != nil {
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.delete`)
 	}
 

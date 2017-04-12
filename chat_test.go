@@ -75,6 +75,7 @@ func TestChatMessage(t *testing.T) {
 			})
 
 		res, err := c.Chat().PostMessage(testDmUser).
+			AsUser(true).
 			Attachment(&attachment).
 			Text("Would you like to play a game?").
 			Do(ctx)
