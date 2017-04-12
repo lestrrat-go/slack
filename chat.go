@@ -12,10 +12,14 @@ import (
 )
 
 type ChatUpdateCall struct {
-	service   *ChatService
-	channel   string
-	timestamp string
-	text      string
+	service     *ChatService
+	asUser      bool
+	attachments objects.AttachmentList
+	channel     string
+	linkNames   bool
+	parse       string
+	timestamp   string
+	text        string
 }
 
 // Update returns the result of chat.update API
@@ -26,6 +30,32 @@ func (s *ChatService) Update(channel, text, ts string) *ChatUpdateCall {
 		text:      text,
 		timestamp: ts,
 	}
+}
+
+// SetAttachments replaces the attachment list
+func (c *ChatUpdateCall) SetAttachments(l objects.AttachmentList) *ChatUpdateCall {
+	c.attachments = l
+	return c
+}
+
+func (c *ChatUpdateCall) Attachment(a *objects.Attachment) *ChatUpdateCall {
+	c.attachments.Append(a)
+	return c
+}
+
+func (c *ChatUpdateCall) Parse(s string) *ChatUpdateCall {
+	c.parse = s
+	return c
+}
+
+func (c *ChatUpdateCall) LinkNames(b bool) *ChatUpdateCall {
+	c.linkNames = b
+	return c
+}
+
+func (c *ChatUpdateCall) AsUser(b bool) *ChatUpdateCall {
+	c.asUser = b
+	return c
 }
 
 func (c *ChatUpdateCall) Values() url.Values {
