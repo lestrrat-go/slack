@@ -233,3 +233,27 @@ func (c *httpClient) get(octx context.Context, path string, f url.Values, data i
 	defer res.Body.Close()
 	return c.parseResponse(path, res.Body, data)
 }
+
+func (r SlackResponse) err() error {
+	return errors.New(r.Error.String())
+}
+
+func (r SlackResponse) ok() bool {
+	return r.OK
+}
+
+type genericResponse interface {
+	ok() bool
+	err() error
+}
+
+func genericPost(ctx context.Context, client *httpClient, endpoint string, v url.Values, res genericResponse) error {
+	if err := client.postForm(ctx, endpoint, v, res); err != nil {
+		return errors.Wrapf(err, `failed to post to %s`, endpoint)
+	}
+
+	if !res.ok() {
+		return res.err()
+	}
+	return nil
+}
