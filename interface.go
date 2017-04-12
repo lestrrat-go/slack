@@ -190,10 +190,12 @@ type InteractiveButtonRequest struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
 	} `json:"channel"`
-	IsAppUnfurl      bool             `json:"is_app_unfurl"`
-	MessageTimestamp string           `json:"message_ts"`
-	OriginalMessage  *objects.Message `json:"original_message"`
-	ResponseURL      string           `json:"response_url"`
+	IsAppUnfurl      bool                    `json:"is_app_unfurl"`
+	MessageTimestamp string                  `json:"message_ts"`
+	OriginalMessage  *objects.Message        `json:"original_message"`
+	Options          objects.OptionList      `json:"options"`
+	OptionGroups     objects.OptionGroupList `json:"option_groups"`
+	ResponseURL      string                  `json:"response_url"`
 	Team             struct {
 		Domain string `json:"domain"`
 		ID     string `json:"id"`
