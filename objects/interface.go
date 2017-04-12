@@ -46,14 +46,14 @@ type Topic struct {
 
 // Action is used in conjunction with message buttons
 type Action struct {
-	Confirm         *Confirmation   `json:"confirm"`
-	DataSource      string          `json:"data_source"`
-	MinQueryLength  int             `json:"min_query_length"`
+	Confirm         *Confirmation   `json:"confirm,omitempty"`
+	DataSource      string          `json:"data_source,omitempty"`
+	MinQueryLength  int             `json:"min_query_length,omitempty"`
 	Name            string          `json:"name"`
-	OptionGroups    OptionGroupList `json:"option_groups"`
-	Options         OptionList      `json:"options"`
-	SelectedOptions OptionList      `json:"selected_options"`
-	Style           string          `json:"style"`
+	OptionGroups    OptionGroupList `json:"option_groups,omitempty"`
+	Options         OptionList      `json:"options,omitempty"`
+	SelectedOptions OptionList      `json:"selected_options,omitempty"`
+	Style           string          `json:"style,omitempty"`
 	Text            string          `json:"text"`
 	Type            string          `json:"type"`
 	Value           string          `json:"value"`
