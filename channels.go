@@ -9,6 +9,43 @@ import (
 	"github.com/pkg/errors"
 )
 
+// ChannelsArchiveCall is created via Channels.Archive() method
+type ChannelsArchiveCall struct {
+	service   *ChannelsService
+	channel   string // channel ID
+}
+
+func (s *ChannelsService) Archive(id string) *ChannelsArchiveCall {
+	return &ChannelsArchiveCall{
+		service: s,
+		channel: id,
+	}
+}
+
+func (c *ChannelsArchiveCall) Values() url.Values {
+	v := url.Values{
+		"token":   {c.service.token},
+		"channel": {c.channel},
+	}
+	return v
+}
+
+func (c *ChannelsArchiveCall) Do(ctx context.Context) error {
+	const endpoint = "channels.archive"
+
+	var res SlackResponse
+
+	if err := c.service.client.postForm(ctx, endpoint, c.Values(), &res); err != nil {
+		return errors.Wrapf(err, `failed to post to %s`, endpoint)
+	}
+
+	if !res.OK {
+		return errors.New(res.Error.String())
+	}
+
+	return nil
+}
+
 // ChannelsHistoryCall is created via Channels.History() method
 type ChannelsHistoryCall struct {
 	service   *ChannelsService
