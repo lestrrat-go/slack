@@ -11,8 +11,8 @@ import (
 
 // ChannelsArchiveCall is created via Channels.Archive() method
 type ChannelsArchiveCall struct {
-	service   *ChannelsService
-	channel   string // channel ID
+	service *ChannelsService
+	channel string // channel ID
 }
 
 func (s *ChannelsService) Archive(id string) *ChannelsArchiveCall {
@@ -31,6 +31,52 @@ func (c *ChannelsArchiveCall) Values() url.Values {
 }
 
 func (c *ChannelsArchiveCall) Do(ctx context.Context) error {
+	const endpoint = "channels.archive"
+
+	var res SlackResponse
+
+	if err := c.service.client.postForm(ctx, endpoint, c.Values(), &res); err != nil {
+		return errors.Wrapf(err, `failed to post to %s`, endpoint)
+	}
+
+	if !res.OK {
+		return errors.New(res.Error.String())
+	}
+
+	return nil
+}
+
+// ChannelsCreateCall is created via Channels.Create() method
+type ChannelsCreateCall struct {
+	service  *ChannelsService
+	name     string // channel name
+	validate bool
+}
+
+func (s *ChannelsService) Create(name string) *ChannelsCreateCall {
+	return &ChannelsCreateCall{
+		service: s,
+		name:    name,
+	}
+}
+
+func (c *ChannelsCreateCall) Values() url.Values {
+	v := url.Values{
+		"token": {c.service.token},
+		"name":  {c.name},
+	}
+	if c.validate {
+		v.Set("validate", "true")
+	}
+	return v
+}
+
+func (c *ChannelsCreateCall) Validate(b bool) *ChannelsCreateCall {
+	c.validate = b
+	return c
+}
+
+func (c *ChannelsCreateCall) Do(ctx context.Context) error {
 	const endpoint = "channels.archive"
 
 	var res SlackResponse
