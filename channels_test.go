@@ -2,6 +2,7 @@ package slack_test
 
 import (
 	"context"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -54,5 +55,18 @@ func TestChannelsList_Info(t *testing.T) {
 			return
 		}
 		t.Logf("%#v", history)
+	}
+}
+
+func TestChannelsKick(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy("foo", s)
+	if !assert.NoError(t, c.Channels().Kick("bar", "baz").Do(ctx), "kick should succeed") {
+		return
 	}
 }
