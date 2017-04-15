@@ -72,7 +72,7 @@ func (c *ChannelsCreateCall) Validate(b bool) *ChannelsCreateCall {
 }
 
 func (c *ChannelsCreateCall) Do(ctx context.Context) error {
-	const endpoint = "channels.archive"
+	const endpoint = "channels.create"
 	var res SlackResponse
 	if err := genericPost(ctx, c.service.client, endpoint, c.Values(), &res); err != nil {
 		return err
@@ -233,6 +233,97 @@ func (c *ChannelsInviteCall) Values() url.Values {
 		"user":    {c.user},
 	}
 	return v
+}
+
+func (c *ChannelsInviteCall) Do(ctx context.Context) (*objects.Channel, error) {
+	const endpoint = "channels.invite"
+	var res struct {
+		SlackResponse
+		*objects.Channel `json:"channel"`
+	}
+
+	if err := genericPost(ctx, c.service.client, endpoint, c.Values(), &res); err != nil {
+		return nil, err
+	}
+	return res.Channel, nil
+}
+
+// ChannelsJoinCall is created via Channels.Join() method
+type ChannelsJoinCall struct {
+	service  *ChannelsService
+	name     string // channel name
+	validate bool
+}
+
+func (s *ChannelsService) Join(name string) *ChannelsJoinCall {
+	return &ChannelsJoinCall{
+		service: s,
+		name:    name,
+	}
+}
+
+func (c *ChannelsJoinCall) Values() url.Values {
+	v := url.Values{
+		"token": {c.service.token},
+		"name":  {c.name},
+	}
+	if c.validate {
+		v.Set("validate", "true")
+	}
+	return v
+}
+
+func (c *ChannelsJoinCall) Validate(b bool) *ChannelsJoinCall {
+	c.validate = b
+	return c
+}
+
+func (c *ChannelsJoinCall) Do(ctx context.Context) (*objects.Channel, error) {
+	const endpoint = "channels.join"
+	var res struct {
+		SlackResponse
+		*objects.Channel `json:"channel"`
+	}
+
+	if err := genericPost(ctx, c.service.client, endpoint, c.Values(), &res); err != nil {
+		return nil, err
+	}
+	return res.Channel, nil
+}
+
+// ChannelsKickCall is created via Channels.Kick() method
+type ChannelsKickCall struct {
+	service *ChannelsService
+	channel string // channel ID
+	user    string
+}
+
+func (s *ChannelsService) Kick(id, user string) *ChannelsKickCall {
+	return &ChannelsKickCall{
+		service: s,
+		channel: id,
+		user:    user,
+	}
+}
+
+func (c *ChannelsKickCall) Values() url.Values {
+	v := url.Values{
+		"token":   {c.service.token},
+		"channel": {c.channel},
+		"user":    {c.user},
+	}
+	return v
+}
+
+func (c *ChannelsKickCall) Do(ctx context.Context) error {
+	const endpoint = "channels.kick"
+
+	var res SlackResponse
+	if err := genericPost(ctx, c.service.client, endpoint, c.Values(), &res); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // ChannelsListCall is created via Channels.List() method

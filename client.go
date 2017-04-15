@@ -172,6 +172,7 @@ func (c *httpClient) parseResponse(path string, rdr io.Reader, res interface{}) 
 		var m map[string]interface{}
 		if err := json.Unmarshal(buf.Bytes(), &m); err != nil {
 			log.Printf("failed to unmarshal payload: %s", err)
+			log.Println(buf.String())
 		} else {
 			formatted, _ := json.MarshalIndent(m, "", "  ")
 			log.Printf("%s", formatted)
@@ -188,6 +189,9 @@ func (c *httpClient) postForm(ctx context.Context, path string, f url.Values, da
 
 func (c *httpClient) post(octx context.Context, path, ct string, body io.Reader, data interface{}) error {
 	u := c.makeSlackURL(path)
+	if c.debug {
+		log.Printf("posting to %s", u)
+	}
 	req, err := http.NewRequest(http.MethodPost, u, body)
 	if err != nil {
 		return errors.New(`failed to create new POST request`)
