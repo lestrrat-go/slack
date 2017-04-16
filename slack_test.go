@@ -167,8 +167,10 @@ func newDummyServer() *dummyServer {
 	mux := newMux()
 	mux.HandleFunc("/api/channels.archive", required(tokenArg), required(channelArg))
 	mux.HandleFunc("/api/channels.create", required(tokenArg), required(nameArg), newArg("validate", nil))
-	mux.HandleFunc("/api/channels.kick", required(tokenArg), required(channelArg), required(userArg))
 	mux.HandleFunc("/api/channels.history", required(tokenArg), required(channelArg), intArg("count"), newArg("includesive", nil), newArg("latest", nil), newArg("oldest", nil), newArg("ts", nil), newArg("unreads", nil))
+	mux.HandleFunc("/api/channels.info", required(tokenArg), required(channelArg))
+	mux.HandleFunc("/api/channels.invite", required(tokenArg), required(channelArg), required(userArg))
+	mux.HandleFunc("/api/channels.kick", required(tokenArg), required(channelArg), required(userArg))
 
 	mux.ServeMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")

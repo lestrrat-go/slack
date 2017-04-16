@@ -97,11 +97,39 @@ func TestChannelsHistoryUnit(t *testing.T) {
 
 	c := newSlackWithDummy(s)
 	_, err := c.Channels().History("foo").Count(100).Inclusive(true).Latest("dummy").Oldest("dummy").Timestamp("dummy").Unreads(true).Do(ctx)
-if !assert.NoError(t, err, "History should succeed") {
+	if !assert.NoError(t, err, "History should succeed") {
 		return
 	}
 	_, err = c.Channels().History("foo").Do(ctx)
 	if !assert.NoError(t, err, "History should succeed") {
+		return
+	}
+}
+
+func TestChannelsInfoUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	_, err := c.Channels().Info("foo").Do(ctx)
+	if !assert.NoError(t, err, "Info should succeed") {
+		return
+	}
+}
+
+func TestChannelsInviteUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	_, err := c.Channels().Invite("foo", "bar").Do(ctx)
+	if !assert.NoError(t, err, "Invite should succeed") {
 		return
 	}
 }
