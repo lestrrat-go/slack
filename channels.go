@@ -152,6 +152,11 @@ func (c *ChannelsHistoryCall) Count(i int) *ChannelsHistoryCall {
 	return c
 }
 
+func (c *ChannelsHistoryCall) Timestamp(s string) *ChannelsHistoryCall {
+	c.timestamp = s
+	return c
+}
+
 func (c *ChannelsHistoryCall) Unreads(b bool) *ChannelsHistoryCall {
 	c.unreads = b
 	return c
