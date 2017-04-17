@@ -101,15 +101,16 @@ func New(token string, options ...Option) *Client {
 		slackURL: slackURL,
 	}
 	return &Client{
-		auth:      &AuthService{client: wrappedcl, token: token},
-		bots:      &BotsService{client: wrappedcl, token: token},
-		channels:  &ChannelsService{client: wrappedcl, token: token},
-		chat:      &ChatService{client: wrappedcl, token: token},
-		oauth:     &OAuthService{client: wrappedcl},
-		reactions: &ReactionsService{client: wrappedcl, token: token},
-		rtm:       &RTMService{client: wrappedcl, token: token},
-		users:     &UsersService{client: wrappedcl, token: token},
-		debug:     debug,
+		auth:         &AuthService{client: wrappedcl, token: token},
+		bots:         &BotsService{client: wrappedcl, token: token},
+		channels:     &ChannelsService{client: wrappedcl, token: token},
+		chat:         &ChatService{client: wrappedcl, token: token},
+		oauth:        &OAuthService{client: wrappedcl},
+		reactions:    &ReactionsService{client: wrappedcl, token: token},
+		rtm:          &RTMService{client: wrappedcl, token: token},
+		users:        &UsersService{client: wrappedcl, token: token},
+		usersProfile: &UsersProfileService{client: wrappedcl, token: token},
+		debug:        debug,
 	}
 }
 
@@ -150,6 +151,11 @@ func (c *Client) RTM() *RTMService {
 
 // Users returns the Service object for `users.*` endpoints
 func (c *Client) Users() *UsersService {
+	return c.users
+}
+
+// UsersProfile returns the Service object for `users.profile.*` endpoints
+func (c *Client) UsersProfile() *UsersService {
 	return c.users
 }
 
