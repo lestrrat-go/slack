@@ -206,19 +206,19 @@ type ItemReaction struct {
 }
 
 type UserProfile struct {
-	AlwaysActive       bool   `json:"always_active"`
-	AvatarHash         string `json:"avatar_hash"`
-	Email              string `json:"email"`
-	FirstName          string `json:"first_name"`
-	Image24            string `json:"image_24"`
-	Image32            string `json:"image_32"`
-	Image48            string `json:"image_48"`
-	Image72            string `json:"image_72"`
-	Image192           string `json:"image_192"`
-	Image512           string `json:"image_512"`
-	LastName           string `json:"last_name"`
-	RealName           string `json:"real_name"`
-	RealNameNormalized string `json:"real_name_normalized"`
+	AlwaysActive       bool   `json:"always_active,omitempty"`
+	AvatarHash         string `json:"avatar_hash,omitempty"`
+	Email              string `json:"email,omitempty"`
+	FirstName          string `json:"first_name,omitempty"`
+	Image24            string `json:"image_24,omitempty"`
+	Image32            string `json:"image_32,omitempty"`
+	Image48            string `json:"image_48,omitempty"`
+	Image72            string `json:"image_72,omitempty"`
+	Image192           string `json:"image_192,omitempty"`
+	Image512           string `json:"image_512,omitempty"`
+	LastName           string `json:"last_name,omitempty"`
+	RealName           string `json:"real_name,omitempty"`
+	RealNameNormalized string `json:"real_name_normalized,omitempty"`
 	StatusText         string `json:"status_text,omitempty"`
 	StatusEmoji        string `json:"status_emoji,omitempty"`
 }
