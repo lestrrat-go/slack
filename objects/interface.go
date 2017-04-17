@@ -219,6 +219,8 @@ type UserProfile struct {
 	LastName           string `json:"last_name"`
 	RealName           string `json:"real_name"`
 	RealNameNormalized string `json:"real_name_normalized"`
+	StatusText         string `json:"status_text,omitempty"`
+	StatusEmoji        string `json:"status_emoji,omitempty"`
 }
 
 type User struct {

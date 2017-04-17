@@ -58,15 +58,91 @@ func TestChannelsList_Info(t *testing.T) {
 	}
 }
 
-func TestChannelsKick(t *testing.T) {
+func TestChannelsArchiveUnit(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	s := httptest.NewServer(newDummyServer())
 	defer s.Close()
 
-	c := newSlackWithDummy("foo", s)
-	if !assert.NoError(t, c.Channels().Kick("bar", "baz").Do(ctx), "kick should succeed") {
+	c := newSlackWithDummy(s)
+	if !assert.NoError(t, c.Channels().Archive("foo").Do(ctx), "Archive should succeed") {
+		return
+	}
+}
+
+func TestChannelsCreateUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	if !assert.NoError(t, c.Channels().Create("foo").Validate(true).Do(ctx), "Create should succeed") {
+		return
+	}
+
+	if !assert.NoError(t, c.Channels().Create("foo").Do(ctx), "Create should succeed") {
+		return
+	}
+}
+
+func TestChannelsHistoryUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	_, err := c.Channels().History("foo").Count(100).Inclusive(true).Latest("dummy").Oldest("dummy").Timestamp("dummy").Unreads(true).Do(ctx)
+	if !assert.NoError(t, err, "History should succeed") {
+		return
+	}
+	_, err = c.Channels().History("foo").Do(ctx)
+	if !assert.NoError(t, err, "History should succeed") {
+		return
+	}
+}
+
+func TestChannelsInfoUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	_, err := c.Channels().Info("foo").Do(ctx)
+	if !assert.NoError(t, err, "Info should succeed") {
+		return
+	}
+}
+
+func TestChannelsInviteUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	_, err := c.Channels().Invite("foo", "bar").Do(ctx)
+	if !assert.NoError(t, err, "Invite should succeed") {
+		return
+	}
+}
+
+func TestChannelsKickUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	if !assert.NoError(t, c.Channels().Kick("foo", "bar").Do(ctx), "Kick should succeed") {
 		return
 	}
 }

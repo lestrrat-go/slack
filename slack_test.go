@@ -72,80 +72,115 @@ func debuggingClient(tok string, options ...slack.Option) *slack.Client {
 }
 
 type dummyServer struct {
-	mux *http.ServeMux
+	mux http.Handler
 }
 
 type expectedArg struct {
-	name  string
-	check func([]string) error
+	name     string
+	required bool
+	check    func([]string) error
 }
 
 func nilcheck(_ []string) error { return nil }
 func newArg(name string, check func([]string) error) *expectedArg {
-	if check == nil {
-		check = nilcheck
-	}
 	return &expectedArg{
-		name:  name,
-		check: check,
+		name:     name,
+		check:    check,
 	}
+}
+func intArg(name string) *expectedArg {
+	return newArg(name, func(l []string) error {
+		_, err := strconv.ParseInt(l[0], 10, 64)
+		return err
+	})
 }
 
 func (s *dummyServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.mux.ServeHTTP(w, r)
 }
 
-func requireArguments(w http.ResponseWriter, r *http.Request, args ...*expectedArg) error {
-	r.ParseForm()
-	for _, arg := range args {
-		if err := arg.check(r.Form[arg.name]); err != nil {
-			return errors.Wrapf(err, `validation for argument %s failed`, arg.name)
-		}
-	}
-	return nil
+type mux struct {
+	*http.ServeMux
 }
 
-func makeArgCheckHandler(args ...*expectedArg) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if err := requireArguments(w, r, args...); err != nil {
+func newMux() *mux {
+	return &mux{
+		ServeMux: http.NewServeMux(),
+	}
+}
+
+func (m *mux) HandleFunc(path string, args ...*expectedArg) {
+	checker := func(r *http.Request) error {
+		for _, arg := range args {
+			v, ok := r.Form[arg.name]
+			if !ok || len(v) == 0 {
+				if arg.required {
+					return errors.Errorf("required argument %s was not present", arg.name)
+				}
+				return nil
+			}
+
+			if check := arg.check; check != nil {
+				if err := check(v); err != nil {
+					return errors.Wrapf(err, "check for %s failed", arg.name)
+				}
+			}
+			delete(r.Form, arg.name)
+		}
+
+		for name := range r.Form {
+			return errors.Errorf("extra argument %s found", name)
+		}
+
+		return nil
+	}
+	f := func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		if err := checker(r); err != nil {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(w, `{"error": %s}`, strconv.Quote(err.Error()))
 			return
 		}
-
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		io.WriteString(w, `{"ok":true}`)
-	})
+	}
+	m.ServeMux.HandleFunc(path, f)
 }
 
-func makeExactlyOneCheck(name string, allowEmpty bool) func([]string)error {
-	return func(in []string) error {
-		if len(in) != 1 {
-			return errors.Errorf("expected 1 %s (got %d)", name, len(in))
-		}
-		if !allowEmpty && len(in[0]) <= 0 {
-			return errors.Errorf("empty %s not allowed", name)
-		}
-		return nil
-	}
+func required(arg *expectedArg) *expectedArg {
+	var newArg expectedArg
+	newArg = *arg
+	newArg.required = true
+	return &newArg
 }
 
 func newDummyServer() *dummyServer {
 	var s dummyServer
-	tokenArg := newArg("token", makeExactlyOneCheck("token", false))
-	channelIDArg := newArg("channel", makeExactlyOneCheck("channel", false))
-	userIDArg := newArg("user", makeExactlyOneCheck("user", false))
-	mux := http.NewServeMux()
-	mux.HandleFunc(
-		"/api/channels.kick",
-		makeArgCheckHandler(tokenArg, channelIDArg, userIDArg),
-	)
+
+	tokenArg := newArg("token", nil)
+	channelArg := newArg("channel", nil)
+	nameArg := newArg("name", nil)
+	userArg := newArg("user", nil)
+
+	mux := newMux()
+	mux.HandleFunc("/api/channels.archive", required(tokenArg), required(channelArg))
+	mux.HandleFunc("/api/channels.create", required(tokenArg), required(nameArg), newArg("validate", nil))
+	mux.HandleFunc("/api/channels.history", required(tokenArg), required(channelArg), intArg("count"), newArg("includesive", nil), newArg("latest", nil), newArg("oldest", nil), newArg("ts", nil), newArg("unreads", nil))
+	mux.HandleFunc("/api/channels.info", required(tokenArg), required(channelArg))
+	mux.HandleFunc("/api/channels.invite", required(tokenArg), required(channelArg), required(userArg))
+	mux.HandleFunc("/api/channels.kick", required(tokenArg), required(channelArg), required(userArg))
+
+	mux.ServeMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, `{"error": "handler does not implement %s"}`, r.URL.Path)
+	})
 	s.mux = mux
 	return &s
 }
 
-func newSlackWithDummy(token string, s *httptest.Server) *slack.Client {
-	return slack.New(token, slack.WithAPIEndpoint(s.URL+"/api/"))
+func newSlackWithDummy(s *httptest.Server) *slack.Client {
+	return slack.New("random-token", slack.WithAPIEndpoint(s.URL+"/api/"))
 }
