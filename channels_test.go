@@ -146,3 +146,17 @@ func TestChannelsKickUnit(t *testing.T) {
 		return
 	}
 }
+
+func TestChannelsLeaveUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	if !assert.NoError(t, c.Channels().Leave("foo").Do(ctx), "Leave should succeed") {
+		return
+	}
+}
+
