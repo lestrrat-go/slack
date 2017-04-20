@@ -331,6 +331,38 @@ func (c *ChannelsKickCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// ChannelsLeaveCall is created via Channels.Leave() method
+type ChannelsLeaveCall struct {
+	service *ChannelsService
+	channel string // channel ID
+}
+
+func (s *ChannelsService) Leave(id string) *ChannelsLeaveCall {
+	return &ChannelsLeaveCall{
+		service: s,
+		channel: id,
+	}
+}
+
+func (c *ChannelsLeaveCall) Values() url.Values {
+	v := url.Values{
+		"token":   {c.service.token},
+		"channel": {c.channel},
+	}
+	return v
+}
+
+func (c *ChannelsLeaveCall) Do(ctx context.Context) error {
+	const endpoint = "channels.leave"
+
+	var res SlackResponse
+	if err := genericPost(ctx, c.service.client, endpoint, c.Values(), &res); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ChannelsListCall is created via Channels.List() method
 type ChannelsListCall struct {
 	service      *ChannelsService

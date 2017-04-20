@@ -171,6 +171,7 @@ func newDummyServer() *dummyServer {
 	mux.HandleFunc("/api/channels.info", required(tokenArg), required(channelArg))
 	mux.HandleFunc("/api/channels.invite", required(tokenArg), required(channelArg), required(userArg))
 	mux.HandleFunc("/api/channels.kick", required(tokenArg), required(channelArg), required(userArg))
+	mux.HandleFunc("/api/channels.leave", required(tokenArg), required(channelArg))
 
 	mux.ServeMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
