@@ -26,7 +26,7 @@ func (s *RTMService) Start() *RTMStartCall {
 	return &call
 }
 
-// Values() returns the RTMStartCall object as url.Values
+// Values returns the RTMStartCall object as url.Values
 func (c *RTMStartCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)

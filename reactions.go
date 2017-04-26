@@ -85,7 +85,7 @@ func (c *ReactionsAddCall) Timestamp(timestamp string) *ReactionsAddCall {
 	return c
 }
 
-// Values() returns the ReactionsAddCall object as url.Values
+// Values returns the ReactionsAddCall object as url.Values
 func (c *ReactionsAddCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -170,7 +170,7 @@ func (c *ReactionsGetCall) Timestamp(timestamp string) *ReactionsGetCall {
 	return c
 }
 
-// Values() returns the ReactionsGetCall object as url.Values
+// Values returns the ReactionsGetCall object as url.Values
 func (c *ReactionsGetCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -249,7 +249,7 @@ func (c *ReactionsListCall) User(user string) *ReactionsListCall {
 	return c
 }
 
-// Values() returns the ReactionsListCall object as url.Values
+// Values returns the ReactionsListCall object as url.Values
 func (c *ReactionsListCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -325,7 +325,7 @@ func (c *ReactionsRemoveCall) Timestamp(timestamp string) *ReactionsRemoveCall {
 	return c
 }
 
-// Values() returns the ReactionsRemoveCall object as url.Values
+// Values returns the ReactionsRemoveCall object as url.Values
 func (c *ReactionsRemoveCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)

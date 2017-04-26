@@ -40,7 +40,7 @@ func (s *UsersService) GetPresence(user string) *UsersGetPresenceCall {
 	return &call
 }
 
-// Values() returns the UsersGetPresenceCall object as url.Values
+// Values returns the UsersGetPresenceCall object as url.Values
 func (c *UsersGetPresenceCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -81,7 +81,7 @@ func (s *UsersService) Info(user string) *UsersInfoCall {
 	return &call
 }
 
-// Values() returns the UsersInfoCall object as url.Values
+// Values returns the UsersInfoCall object as url.Values
 func (c *UsersInfoCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -127,7 +127,7 @@ func (c *UsersListCall) Presence(presence bool) *UsersListCall {
 	return c
 }
 
-// Values() returns the UsersListCall object as url.Values
+// Values returns the UsersListCall object as url.Values
 func (c *UsersListCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)

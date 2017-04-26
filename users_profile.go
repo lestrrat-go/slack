@@ -49,7 +49,7 @@ func (c *UsersProfileGetCall) User(user string) *UsersProfileGetCall {
 	return c
 }
 
-// Values() returns the UsersProfileGetCall object as url.Values
+// Values returns the UsersProfileGetCall object as url.Values
 func (c *UsersProfileGetCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -116,7 +116,7 @@ func (c *UsersProfileSetCall) Value(value string) *UsersProfileSetCall {
 	return c
 }
 
-// Values() returns the UsersProfileSetCall object as url.Values
+// Values returns the UsersProfileSetCall object as url.Values
 func (c *UsersProfileSetCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)

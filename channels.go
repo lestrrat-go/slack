@@ -86,7 +86,7 @@ func (s *ChannelsService) Archive(channel string) *ChannelsArchiveCall {
 	return &call
 }
 
-// Values() returns the ChannelsArchiveCall object as url.Values
+// Values returns the ChannelsArchiveCall object as url.Values
 func (c *ChannelsArchiveCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -132,7 +132,7 @@ func (c *ChannelsCreateCall) Validate(validate bool) *ChannelsCreateCall {
 	return c
 }
 
-// Values() returns the ChannelsCreateCall object as url.Values
+// Values returns the ChannelsCreateCall object as url.Values
 func (c *ChannelsCreateCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -212,7 +212,7 @@ func (c *ChannelsHistoryCall) Unreads(unreads bool) *ChannelsHistoryCall {
 	return c
 }
 
-// Values() returns the ChannelsHistoryCall object as url.Values
+// Values returns the ChannelsHistoryCall object as url.Values
 func (c *ChannelsHistoryCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -277,7 +277,7 @@ func (s *ChannelsService) Info(channel string) *ChannelsInfoCall {
 	return &call
 }
 
-// Values() returns the ChannelsInfoCall object as url.Values
+// Values returns the ChannelsInfoCall object as url.Values
 func (c *ChannelsInfoCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -319,7 +319,7 @@ func (s *ChannelsService) Invite(channel string, user string) *ChannelsInviteCal
 	return &call
 }
 
-// Values() returns the ChannelsInviteCall object as url.Values
+// Values returns the ChannelsInviteCall object as url.Values
 func (c *ChannelsInviteCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -371,7 +371,7 @@ func (c *ChannelsJoinCall) Validate(validate bool) *ChannelsJoinCall {
 	return c
 }
 
-// Values() returns the ChannelsJoinCall object as url.Values
+// Values returns the ChannelsJoinCall object as url.Values
 func (c *ChannelsJoinCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -417,7 +417,7 @@ func (s *ChannelsService) Kick(channel string, user string) *ChannelsKickCall {
 	return &call
 }
 
-// Values() returns the ChannelsKickCall object as url.Values
+// Values returns the ChannelsKickCall object as url.Values
 func (c *ChannelsKickCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -462,7 +462,7 @@ func (s *ChannelsService) Leave(channel string) *ChannelsLeaveCall {
 	return &call
 }
 
-// Values() returns the ChannelsLeaveCall object as url.Values
+// Values returns the ChannelsLeaveCall object as url.Values
 func (c *ChannelsLeaveCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -507,7 +507,7 @@ func (c *ChannelsListCall) ExclArchived(exclArchived bool) *ChannelsListCall {
 	return c
 }
 
-// Values() returns the ChannelsListCall object as url.Values
+// Values returns the ChannelsListCall object as url.Values
 func (c *ChannelsListCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)

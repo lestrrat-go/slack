@@ -194,7 +194,7 @@ func generateFile(file string, endpoints []Endpoint) error {
 			}
 		}
 
-		fmt.Fprintf(&buf, "\n\n// Values() returns the %s%sCall object as url.Values", endpoint.Group, endpoint.methodName)
+		fmt.Fprintf(&buf, "\n\n// Values returns the %s%sCall object as url.Values", endpoint.Group, endpoint.methodName)
 		fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) Values() (url.Values, error) {", endpoint.Group, endpoint.methodName)
 		buf.WriteString("\nv := url.Values{}")
 		if !endpoint.SkipToken {

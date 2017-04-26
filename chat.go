@@ -79,7 +79,7 @@ func (c *ChatDeleteCall) Timestamp(timestamp string) *ChatDeleteCall {
 	return c
 }
 
-// Values() returns the ChatDeleteCall object as url.Values
+// Values returns the ChatDeleteCall object as url.Values
 func (c *ChatDeleteCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -134,7 +134,7 @@ func (c *ChatMeMessageCall) Text(text string) *ChatMeMessageCall {
 	return c
 }
 
-// Values() returns the ChatMeMessageCall object as url.Values
+// Values returns the ChatMeMessageCall object as url.Values
 func (c *ChatMeMessageCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -257,7 +257,7 @@ func (c *ChatPostMessageCall) Username(username string) *ChatPostMessageCall {
 	return c
 }
 
-// Values() returns the ChatPostMessageCall object as url.Values
+// Values returns the ChatPostMessageCall object as url.Values
 func (c *ChatPostMessageCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -392,7 +392,7 @@ func (c *ChatUpdateCall) Timestamp(timestamp string) *ChatUpdateCall {
 	return c
 }
 
-// Values() returns the ChatUpdateCall object as url.Values
+// Values returns the ChatUpdateCall object as url.Values
 func (c *ChatUpdateCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)

@@ -39,7 +39,7 @@ func (c *OAuthAccessCall) RedirectURI(redirectURI string) *OAuthAccessCall {
 	return c
 }
 
-// Values() returns the OAuthAccessCall object as url.Values
+// Values returns the OAuthAccessCall object as url.Values
 func (c *OAuthAccessCall) Values() (url.Values, error) {
 	v := url.Values{}
 

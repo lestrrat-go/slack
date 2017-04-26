@@ -38,7 +38,7 @@ func (c *AuthRevokeCall) Test(test bool) *AuthRevokeCall {
 	return c
 }
 
-// Values() returns the AuthRevokeCall object as url.Values
+// Values returns the AuthRevokeCall object as url.Values
 func (c *AuthRevokeCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -76,7 +76,7 @@ func (s *AuthService) Test() *AuthTestCall {
 	return &call
 }
 
-// Values() returns the AuthTestCall object as url.Values
+// Values returns the AuthTestCall object as url.Values
 func (c *AuthTestCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
