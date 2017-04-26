@@ -86,7 +86,7 @@ func (s *ChannelsService) Archive(channel string) *ChannelsArchiveCall {
 	return &call
 }
 
-// Values() returns the ChannelsArchiveCall object as url.Values
+// Values returns the ChannelsArchiveCall object as url.Values
 func (c *ChannelsArchiveCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -126,12 +126,13 @@ func (s *ChannelsService) Create(name string) *ChannelsCreateCall {
 	return &call
 }
 
+// Validate sets the value for optional validate parameter
 func (c *ChannelsCreateCall) Validate(validate bool) *ChannelsCreateCall {
 	c.validate = validate
 	return c
 }
 
-// Values() returns the ChannelsCreateCall object as url.Values
+// Values returns the ChannelsCreateCall object as url.Values
 func (c *ChannelsCreateCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -175,37 +176,43 @@ func (s *ChannelsService) History(channel string) *ChannelsHistoryCall {
 	return &call
 }
 
+// Count sets the value for optional count parameter
 func (c *ChannelsHistoryCall) Count(count int) *ChannelsHistoryCall {
 	c.count = count
 	return c
 }
 
+// Inclusive sets the value for optional inclusive parameter
 func (c *ChannelsHistoryCall) Inclusive(inclusive bool) *ChannelsHistoryCall {
 	c.inclusive = inclusive
 	return c
 }
 
+// Latest sets the value for optional latest parameter
 func (c *ChannelsHistoryCall) Latest(latest string) *ChannelsHistoryCall {
 	c.latest = latest
 	return c
 }
 
+// Oldest sets the value for optional oldest parameter
 func (c *ChannelsHistoryCall) Oldest(oldest string) *ChannelsHistoryCall {
 	c.oldest = oldest
 	return c
 }
 
+// Timestamp sets the value for optional timestamp parameter
 func (c *ChannelsHistoryCall) Timestamp(timestamp string) *ChannelsHistoryCall {
 	c.timestamp = timestamp
 	return c
 }
 
+// Unreads sets the value for optional unreads parameter
 func (c *ChannelsHistoryCall) Unreads(unreads bool) *ChannelsHistoryCall {
 	c.unreads = unreads
 	return c
 }
 
-// Values() returns the ChannelsHistoryCall object as url.Values
+// Values returns the ChannelsHistoryCall object as url.Values
 func (c *ChannelsHistoryCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -270,7 +277,7 @@ func (s *ChannelsService) Info(channel string) *ChannelsInfoCall {
 	return &call
 }
 
-// Values() returns the ChannelsInfoCall object as url.Values
+// Values returns the ChannelsInfoCall object as url.Values
 func (c *ChannelsInfoCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -312,7 +319,7 @@ func (s *ChannelsService) Invite(channel string, user string) *ChannelsInviteCal
 	return &call
 }
 
-// Values() returns the ChannelsInviteCall object as url.Values
+// Values returns the ChannelsInviteCall object as url.Values
 func (c *ChannelsInviteCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -358,12 +365,13 @@ func (s *ChannelsService) Join(name string) *ChannelsJoinCall {
 	return &call
 }
 
+// Validate sets the value for optional validate parameter
 func (c *ChannelsJoinCall) Validate(validate bool) *ChannelsJoinCall {
 	c.validate = validate
 	return c
 }
 
-// Values() returns the ChannelsJoinCall object as url.Values
+// Values returns the ChannelsJoinCall object as url.Values
 func (c *ChannelsJoinCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -409,7 +417,7 @@ func (s *ChannelsService) Kick(channel string, user string) *ChannelsKickCall {
 	return &call
 }
 
-// Values() returns the ChannelsKickCall object as url.Values
+// Values returns the ChannelsKickCall object as url.Values
 func (c *ChannelsKickCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -454,7 +462,7 @@ func (s *ChannelsService) Leave(channel string) *ChannelsLeaveCall {
 	return &call
 }
 
-// Values() returns the ChannelsLeaveCall object as url.Values
+// Values returns the ChannelsLeaveCall object as url.Values
 func (c *ChannelsLeaveCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
@@ -493,12 +501,13 @@ func (s *ChannelsService) List() *ChannelsListCall {
 	return &call
 }
 
+// ExclArchived sets the value for optional exclArchived parameter
 func (c *ChannelsListCall) ExclArchived(exclArchived bool) *ChannelsListCall {
 	c.exclArchived = exclArchived
 	return c
 }
 
-// Values() returns the ChannelsListCall object as url.Values
+// Values returns the ChannelsListCall object as url.Values
 func (c *ChannelsListCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)

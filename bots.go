@@ -28,7 +28,7 @@ func (s *BotsService) Info(bot string) *BotsInfoCall {
 	return &call
 }
 
-// Values() returns the BotsInfoCall object as url.Values
+// Values returns the BotsInfoCall object as url.Values
 func (c *BotsInfoCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)

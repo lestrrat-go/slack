@@ -16,9 +16,9 @@ var _ = objects.EpochTime(0)
 
 // UsersProfileGetCall is created by UsersProfileService.Get method call
 type UsersProfileGetCall struct {
-	service        *UsersProfileService
-	include_labels bool
-	user           string
+	service       *UsersProfileService
+	includeLabels bool
+	user          string
 }
 
 // UsersProfileSetCall is created by UsersProfileService.Set method call
@@ -37,22 +37,24 @@ func (s *UsersProfileService) Get() *UsersProfileGetCall {
 	return &call
 }
 
-func (c *UsersProfileGetCall) IncludeLabels(include_labels bool) *UsersProfileGetCall {
-	c.include_labels = include_labels
+// IncludeLabels sets the value for optional includeLabels parameter
+func (c *UsersProfileGetCall) IncludeLabels(includeLabels bool) *UsersProfileGetCall {
+	c.includeLabels = includeLabels
 	return c
 }
 
+// User sets the value for optional user parameter
 func (c *UsersProfileGetCall) User(user string) *UsersProfileGetCall {
 	c.user = user
 	return c
 }
 
-// Values() returns the UsersProfileGetCall object as url.Values
+// Values returns the UsersProfileGetCall object as url.Values
 func (c *UsersProfileGetCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if c.include_labels {
+	if c.includeLabels {
 		v.Set("include_labels", "true")
 	}
 
@@ -90,27 +92,31 @@ func (s *UsersProfileService) Set() *UsersProfileSetCall {
 	return &call
 }
 
+// Name sets the value for optional name parameter
 func (c *UsersProfileSetCall) Name(name string) *UsersProfileSetCall {
 	c.name = name
 	return c
 }
 
+// Profile sets the value for optional profile parameter
 func (c *UsersProfileSetCall) Profile(profile *objects.UserProfile) *UsersProfileSetCall {
 	c.profile = profile
 	return c
 }
 
+// User sets the value for optional user parameter
 func (c *UsersProfileSetCall) User(user string) *UsersProfileSetCall {
 	c.user = user
 	return c
 }
 
+// Value sets the value for optional value parameter
 func (c *UsersProfileSetCall) Value(value string) *UsersProfileSetCall {
 	c.value = value
 	return c
 }
 
-// Values() returns the UsersProfileSetCall object as url.Values
+// Values returns the UsersProfileSetCall object as url.Values
 func (c *UsersProfileSetCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)

@@ -33,12 +33,13 @@ func (s *OAuthService) Access(clientID string, clientSecret string, code string)
 	return &call
 }
 
+// RedirectURI sets the value for optional redirectURI parameter
 func (c *OAuthAccessCall) RedirectURI(redirectURI string) *OAuthAccessCall {
 	c.redirectURI = redirectURI
 	return c
 }
 
-// Values() returns the OAuthAccessCall object as url.Values
+// Values returns the OAuthAccessCall object as url.Values
 func (c *OAuthAccessCall) Values() (url.Values, error) {
 	v := url.Values{}
 
