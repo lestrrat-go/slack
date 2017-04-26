@@ -1,0 +1,501 @@
+[
+  {
+    "name": "auth.revoke",
+    "args": [
+      {
+        "name": "test",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "auth.test",
+    "return": "AuthTestResponse"
+  },
+  {
+    "name": "bots.info",
+    "return": "objects.Bot",
+    "args": [
+      {
+        "name": "bot",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "channels.archive",
+    "args": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "channels.create",
+    "args": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "validate",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "channels.history",
+    "return": "ChannelsHistoryResponse",
+    "args": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "count",
+        "type": "int",
+        "comment": "1 - 1000"
+      },
+      {
+        "name": "inclusive",
+        "type": "bool"
+      },
+      {
+        "name": "latest",
+        "type": "string",
+        "comment": "Range of time (end)"
+      },
+      {
+        "name": "oldest",
+        "type": "string",
+        "comment": "Range of time (start)"
+      },
+      {
+        "name": "timestamp",
+        "query_name": "ts",
+        "type": "string",
+        "comment": "Used only when retrieving a single message"
+      },
+      {
+        "name": "unreads",
+        "type": "bool",
+        "comment": "Include unread_count_display in the output"
+      }
+    ]
+  },
+  {
+    "name": "channels.info",
+    "return": "objects.Channel",
+    "args": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "channels.invite",
+    "return": "objects.Channel",
+    "args": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "user",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "channels.join",
+    "return": "objects.Channel",
+    "args": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "validate",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "channels.kick",
+    "args": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "user",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "channels.leave",
+    "args": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "channels.list",
+    "return": "objects.ChannelList",
+    "args": [
+      {
+        "name": "exclArchived",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "chat.postMessage",
+    "return": "ChatResponse",
+    "args": [
+      {
+	"name": "asUser",
+        "type": "bool"
+      },
+      {
+        "name": "attachments",
+        "type": "objects.AttachmentList"
+      },
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "escapeText",
+        "type": "bool"
+      },
+      {
+        "name": "iconEmoji",
+        "type": "string"
+      },
+      {
+        "name": "iconURL",
+        "type": "string"
+      },
+      {
+        "name": "linkNames",
+        "type": "bool"
+      },
+      {
+        "name": "markdown",
+        "type": "bool"
+      },
+      {
+        "name": "parse",
+        "type": "string"
+      },
+      {
+        "name": "text",
+        "type": "string"
+      },
+      {
+        "name": "unfurlLinks",
+        "type": "bool"
+      },
+      {
+        "name": "unfurlMedia",
+        "type": "bool"
+      },
+      {
+        "name": "username",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "chat.update",
+    "return": "ChatResponse",
+    "args": [
+      {
+	"name": "asUser",
+        "type": "bool"
+      },
+      {
+        "name": "attachments",
+        "type": "objects.AttachmentList"
+      },
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "linkNames",
+        "type": "bool"
+      },
+      {
+        "name": "parse",
+        "type": "string"
+      },
+      {
+        "name": "timestamp",
+        "query_name": "ts",
+        "type": "string"
+      },
+      {
+        "name": "text",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "chat.delete",
+    "return": "ChatResponse",
+    "args": [
+      {
+	"name": "asUser",
+        "type": "bool"
+      },
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "timestamp",
+        "query_name": "ts",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "chat.meMessage",
+    "return": "ChatResponse",
+    "args": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "text",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "oauth.access",
+    "skip_token": true,
+    "group": "OAuth",
+    "return": "OAuthAccessResponse",
+    "args": [
+      {
+        "name": "clientID",
+        "type": "string",
+        "query_name": "client_id",
+        "required": true
+      },
+      {
+        "name": "clientSecret",
+        "type": "string",
+        "query_name": "client_secret",
+        "required": true
+      },
+      {
+        "name": "code",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "redirectURI",
+        "type": "string",
+        "query_name": "redirect_uri"
+      }
+    ]
+  },
+  {
+    "name": "reactions.add",
+    "args": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "file",
+        "type": "string"
+      },
+      {
+        "name": "fileComment",
+        "type": "string"
+      },
+      {
+        "name": "channel",
+        "type": "string"
+      },
+      {
+        "name": "timestamp",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "reactions.get",
+    "return": "ReactionsGetResponse",
+    "args": [
+      {
+        "name": "file",
+        "type": "string"
+      },
+      {
+        "name": "fileComment",
+        "type": "string"
+      },
+      {
+        "name": "channel",
+        "type": "string"
+      },
+      {
+        "name": "timestamp",
+        "type": "string"
+      },
+      {
+        "name": "full",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "reactions.list",
+    "return": "ReactionsListResponse",
+    "args": [
+      {
+        "name": "user",
+        "type": "string"
+      },
+      {
+        "name": "full",
+        "type": "bool"
+      },
+      {
+        "name": "count",
+        "type": "int"
+      },
+      {
+        "name": "page",
+        "type": "int"
+      }
+    ]
+  },
+  {
+    "name": "reactions.remove",
+    "args": [
+      {
+        "name": "name",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "file",
+        "type": "string"
+      },
+      {
+        "name": "fileComment",
+        "type": "string"
+      },
+      {
+        "name": "channel",
+        "type": "string"
+      },
+      {
+        "name": "timestamp",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "rtm.start",
+    "return": "RTMResponse",
+    "group": "RTM"
+  },
+  {
+    "name": "users.getPresence",
+    "return": "objects.UserPresence",
+    "args": [
+      {
+        "name": "user",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "users.info",
+    "return": "objects.User",
+    "args": [
+      {
+        "name": "user",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "users.list",
+    "return": "objects.UserList",
+    "args": [
+      {
+        "name": "presence",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "users.profile.get",
+    "return": "objects.UserProfile",
+    "args": [
+      {
+        "name": "user",
+        "type": "string"
+      },
+      {
+        "name": "include_labels",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "users.profile.set",
+    "return": "objects.UserProfile",
+    "args": [
+      {
+        "name": "user",
+        "type": "string"
+      },
+      {
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "name": "value",
+        "type": "string"
+      },
+      {
+        "name": "profile",
+        "type": "*objects.UserProfile"
+      }
+    ]
+  }
+]

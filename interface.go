@@ -125,7 +125,7 @@ type OAuthService struct {
 	client *httpClient
 }
 
-type OAuthStartResponse struct {
+type OAuthAccessResponse struct {
 	AccessToken string
 	Scope       string
 }

@@ -155,8 +155,8 @@ func (c *Client) Users() *UsersService {
 }
 
 // UsersProfile returns the Service object for `users.profile.*` endpoints
-func (c *Client) UsersProfile() *UsersService {
-	return c.users
+func (c *Client) UsersProfile() *UsersProfileService {
+	return c.usersProfile
 }
 
 type httpClient struct {

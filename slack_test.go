@@ -165,6 +165,8 @@ func newDummyServer() *dummyServer {
 	userArg := newArg("user", nil)
 
 	mux := newMux()
+	mux.HandleFunc("/api/auth.revoke", required(tokenArg), newArg("test", nil))
+	mux.HandleFunc("/api/auth.test", required(tokenArg))
 	mux.HandleFunc("/api/channels.archive", required(tokenArg), required(channelArg))
 	mux.HandleFunc("/api/channels.create", required(tokenArg), required(nameArg), newArg("validate", nil))
 	mux.HandleFunc("/api/channels.history", required(tokenArg), required(channelArg), intArg("count"), newArg("includesive", nil), newArg("latest", nil), newArg("oldest", nil), newArg("ts", nil), newArg("unreads", nil))
@@ -172,6 +174,69 @@ func newDummyServer() *dummyServer {
 	mux.HandleFunc("/api/channels.invite", required(tokenArg), required(channelArg), required(userArg))
 	mux.HandleFunc("/api/channels.kick", required(tokenArg), required(channelArg), required(userArg))
 	mux.HandleFunc("/api/channels.leave", required(tokenArg), required(channelArg))
+	mux.HandleFunc("/api/oauth.access", 
+		required(newArg("client_id", nil)),
+		required(newArg("client_secret", nil)),
+		required(newArg("code", nil)),
+		newArg("redirect_uri", nil),
+	)
+	mux.HandleFunc("/api/reactions.add",
+		required(tokenArg),
+		required(nameArg),
+		channelArg,
+		newArg("file", nil),
+		newArg("fileComment", nil),
+		newArg("timestamp", nil),
+	)
+	mux.HandleFunc("/api/reactions.get",
+		required(tokenArg),
+		channelArg,
+		newArg("file", nil),
+		newArg("fileComment", nil),
+		newArg("timestamp", nil),
+		newArg("full", nil),
+	)
+	mux.HandleFunc("/api/reactions.list",
+		required(tokenArg),
+		channelArg,
+		newArg("user", nil),
+		newArg("full", nil),
+		newArg("count", nil),
+		newArg("page", nil),
+	)
+	mux.HandleFunc("/api/reactions.remove",
+		required(tokenArg),
+		required(nameArg),
+		channelArg,
+		newArg("file", nil),
+		newArg("fileComment", nil),
+		newArg("timestamp", nil),
+	)
+	mux.HandleFunc("/api/rtm.start", required(tokenArg))
+	mux.HandleFunc("/api/users.getPresence",
+		required(tokenArg),
+		required(userArg),
+	)
+	mux.HandleFunc("/api/users.info",
+		required(tokenArg),
+		required(userArg),
+	)
+	mux.HandleFunc("/api/users.list",
+		required(tokenArg),
+		newArg("presence", nil),
+	)
+	mux.HandleFunc("/api/users.profile.get",
+		required(tokenArg),
+		userArg,
+		newArg("include_labels", nil),
+	)
+	mux.HandleFunc("/api/users.profile.set",
+		required(tokenArg),
+		userArg,
+		newArg("profile", nil),
+		newArg("name", nil),
+		newArg("value", nil),
+	)
 
 	mux.ServeMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
