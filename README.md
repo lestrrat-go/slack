@@ -15,7 +15,7 @@ Please see [#4](https://github.com/lestrrat/go-slack/issues/4) for a list of cur
 
 # Features
 
-* Google API style library
+* Auto-generated, Google API style library
 * Full support for context.Context
 
 # Synopsis
@@ -112,6 +112,14 @@ Also, for your convenience these `call` object methods can all be chained. So th
 
 ```go
   res, err := client.Users().PostMessage(channel).Text(yourMessage).Do(ctx)
+```
+
+# Hacking
+
+To add REST endpoints, edit [endpoints.json](endpoints.json), and then run 
+
+```
+make generate
 ```
 
 # Acknowledgements

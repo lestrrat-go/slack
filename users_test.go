@@ -2,6 +2,7 @@ package slack_test
 
 import (
 	"context"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -55,3 +56,32 @@ func TestUsersList_Info_Presence(t *testing.T) {
 		t.Logf("%#v", presence)
 	}
 }
+
+func TestUsersGetPresenceUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	_, err := c.Users().GetPresence("foo").Do(ctx)
+	if !assert.NoError(t, err, "Users.GetPresence should succeed") {
+		return
+	}
+}
+
+func TestUsersInfoUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	_, err := c.Users().Info("foo").Do(ctx)
+	if !assert.NoError(t, err, "Users.GetPresence should succeed") {
+		return
+	}
+}
+
