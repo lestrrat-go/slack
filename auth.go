@@ -32,6 +32,7 @@ func (s *AuthService) Revoke() *AuthRevokeCall {
 	return &call
 }
 
+// Test sets the value for optional test parameter
 func (c *AuthRevokeCall) Test(test bool) *AuthRevokeCall {
 	c.test = test
 	return c

@@ -126,6 +126,7 @@ func (s *ChannelsService) Create(name string) *ChannelsCreateCall {
 	return &call
 }
 
+// Validate sets the value for optional validate parameter
 func (c *ChannelsCreateCall) Validate(validate bool) *ChannelsCreateCall {
 	c.validate = validate
 	return c
@@ -175,31 +176,37 @@ func (s *ChannelsService) History(channel string) *ChannelsHistoryCall {
 	return &call
 }
 
+// Count sets the value for optional count parameter
 func (c *ChannelsHistoryCall) Count(count int) *ChannelsHistoryCall {
 	c.count = count
 	return c
 }
 
+// Inclusive sets the value for optional inclusive parameter
 func (c *ChannelsHistoryCall) Inclusive(inclusive bool) *ChannelsHistoryCall {
 	c.inclusive = inclusive
 	return c
 }
 
+// Latest sets the value for optional latest parameter
 func (c *ChannelsHistoryCall) Latest(latest string) *ChannelsHistoryCall {
 	c.latest = latest
 	return c
 }
 
+// Oldest sets the value for optional oldest parameter
 func (c *ChannelsHistoryCall) Oldest(oldest string) *ChannelsHistoryCall {
 	c.oldest = oldest
 	return c
 }
 
+// Timestamp sets the value for optional timestamp parameter
 func (c *ChannelsHistoryCall) Timestamp(timestamp string) *ChannelsHistoryCall {
 	c.timestamp = timestamp
 	return c
 }
 
+// Unreads sets the value for optional unreads parameter
 func (c *ChannelsHistoryCall) Unreads(unreads bool) *ChannelsHistoryCall {
 	c.unreads = unreads
 	return c
@@ -358,6 +365,7 @@ func (s *ChannelsService) Join(name string) *ChannelsJoinCall {
 	return &call
 }
 
+// Validate sets the value for optional validate parameter
 func (c *ChannelsJoinCall) Validate(validate bool) *ChannelsJoinCall {
 	c.validate = validate
 	return c
@@ -493,6 +501,7 @@ func (s *ChannelsService) List() *ChannelsListCall {
 	return &call
 }
 
+// ExclArchived sets the value for optional exclArchived parameter
 func (c *ChannelsListCall) ExclArchived(exclArchived bool) *ChannelsListCall {
 	c.exclArchived = exclArchived
 	return c

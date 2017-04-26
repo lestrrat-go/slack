@@ -61,21 +61,25 @@ func (s *ReactionsService) Add(name string) *ReactionsAddCall {
 	return &call
 }
 
+// Channel sets the value for optional channel parameter
 func (c *ReactionsAddCall) Channel(channel string) *ReactionsAddCall {
 	c.channel = channel
 	return c
 }
 
+// File sets the value for optional file parameter
 func (c *ReactionsAddCall) File(file string) *ReactionsAddCall {
 	c.file = file
 	return c
 }
 
+// FileComment sets the value for optional fileComment parameter
 func (c *ReactionsAddCall) FileComment(fileComment string) *ReactionsAddCall {
 	c.fileComment = fileComment
 	return c
 }
 
+// Timestamp sets the value for optional timestamp parameter
 func (c *ReactionsAddCall) Timestamp(timestamp string) *ReactionsAddCall {
 	c.timestamp = timestamp
 	return c
@@ -136,26 +140,31 @@ func (s *ReactionsService) Get() *ReactionsGetCall {
 	return &call
 }
 
+// Channel sets the value for optional channel parameter
 func (c *ReactionsGetCall) Channel(channel string) *ReactionsGetCall {
 	c.channel = channel
 	return c
 }
 
+// File sets the value for optional file parameter
 func (c *ReactionsGetCall) File(file string) *ReactionsGetCall {
 	c.file = file
 	return c
 }
 
+// FileComment sets the value for optional fileComment parameter
 func (c *ReactionsGetCall) FileComment(fileComment string) *ReactionsGetCall {
 	c.fileComment = fileComment
 	return c
 }
 
+// Full sets the value for optional full parameter
 func (c *ReactionsGetCall) Full(full bool) *ReactionsGetCall {
 	c.full = full
 	return c
 }
 
+// Timestamp sets the value for optional timestamp parameter
 func (c *ReactionsGetCall) Timestamp(timestamp string) *ReactionsGetCall {
 	c.timestamp = timestamp
 	return c
@@ -216,21 +225,25 @@ func (s *ReactionsService) List() *ReactionsListCall {
 	return &call
 }
 
+// Count sets the value for optional count parameter
 func (c *ReactionsListCall) Count(count int) *ReactionsListCall {
 	c.count = count
 	return c
 }
 
+// Full sets the value for optional full parameter
 func (c *ReactionsListCall) Full(full bool) *ReactionsListCall {
 	c.full = full
 	return c
 }
 
+// Page sets the value for optional page parameter
 func (c *ReactionsListCall) Page(page int) *ReactionsListCall {
 	c.page = page
 	return c
 }
 
+// User sets the value for optional user parameter
 func (c *ReactionsListCall) User(user string) *ReactionsListCall {
 	c.user = user
 	return c
@@ -288,21 +301,25 @@ func (s *ReactionsService) Remove(name string) *ReactionsRemoveCall {
 	return &call
 }
 
+// Channel sets the value for optional channel parameter
 func (c *ReactionsRemoveCall) Channel(channel string) *ReactionsRemoveCall {
 	c.channel = channel
 	return c
 }
 
+// File sets the value for optional file parameter
 func (c *ReactionsRemoveCall) File(file string) *ReactionsRemoveCall {
 	c.file = file
 	return c
 }
 
+// FileComment sets the value for optional fileComment parameter
 func (c *ReactionsRemoveCall) FileComment(fileComment string) *ReactionsRemoveCall {
 	c.fileComment = fileComment
 	return c
 }
 
+// Timestamp sets the value for optional timestamp parameter
 func (c *ReactionsRemoveCall) Timestamp(timestamp string) *ReactionsRemoveCall {
 	c.timestamp = timestamp
 	return c

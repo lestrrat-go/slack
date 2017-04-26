@@ -121,6 +121,7 @@ func (s *UsersService) List() *UsersListCall {
 	return &call
 }
 
+// Presence sets the value for optional presence parameter
 func (c *UsersListCall) Presence(presence bool) *UsersListCall {
 	c.presence = presence
 	return c

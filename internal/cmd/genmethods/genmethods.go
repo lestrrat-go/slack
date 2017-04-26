@@ -163,7 +163,8 @@ func generateFile(file string, endpoints []Endpoint) error {
 			// If the type is *List, then we provide a SetXXX method. Similarly, a
 			// singular XXX method is provided as a proxy to append to the list
 			if strings.HasSuffix(arg.Type, "List") {
-				fmt.Fprintf(&buf, "\n\nfunc (c *%s%sCall) Set%s(%s %s) *%s%sCall {",
+				fmt.Fprintf(&buf, "\n\n// Set%s sets the %s list", camelit(arg.Name), arg.Name)
+				fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) Set%s(%s %s) *%s%sCall {",
 					endpoint.Group, endpoint.methodName, camelit(arg.Name), arg.Name, arg.Type, endpoint.Group, endpoint.methodName)
 				fmt.Fprintf(&buf, "\nc.%s = %s", arg.Name, arg.Name)
 				buf.WriteString("\nreturn c")
@@ -177,13 +178,15 @@ func generateFile(file string, endpoints []Endpoint) error {
 				}
 
 				var singularType = strings.TrimSuffix(arg.Type, "List")
-				fmt.Fprintf(&buf, "\n\nfunc (c *%s%sCall) %s(%s *%s) *%s%sCall {",
+				fmt.Fprintf(&buf, "\n\n// %s appends to the %s list", camelit(singularName), arg.Name)
+				fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) %s(%s *%s) *%s%sCall {",
 					endpoint.Group, endpoint.methodName, camelit(singularName), singularName, singularType, endpoint.Group, endpoint.methodName)
 				fmt.Fprintf(&buf, "\nc.%s.Append(%s)", arg.Name, singularName)
 				buf.WriteString("\nreturn c")
 				buf.WriteString("\n}")
 			} else {
-				fmt.Fprintf(&buf, "\n\nfunc (c *%s%sCall) %s(%s %s) *%s%sCall {",
+				fmt.Fprintf(&buf, "\n\n// %s sets the value for optional %s parameter", camelit(arg.Name), arg.Name)
+				fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) %s(%s %s) *%s%sCall {",
 					endpoint.Group, endpoint.methodName, camelit(arg.Name), arg.Name, arg.Type, endpoint.Group, endpoint.methodName)
 				fmt.Fprintf(&buf, "\nc.%s = %s", arg.Name, arg.Name)
 				buf.WriteString("\nreturn c")

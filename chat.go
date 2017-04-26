@@ -67,11 +67,13 @@ func (s *ChatService) Delete(channel string) *ChatDeleteCall {
 	return &call
 }
 
+// AsUser sets the value for optional asUser parameter
 func (c *ChatDeleteCall) AsUser(asUser bool) *ChatDeleteCall {
 	c.asUser = asUser
 	return c
 }
 
+// Timestamp sets the value for optional timestamp parameter
 func (c *ChatDeleteCall) Timestamp(timestamp string) *ChatDeleteCall {
 	c.timestamp = timestamp
 	return c
@@ -126,6 +128,7 @@ func (s *ChatService) MeMessage(channel string) *ChatMeMessageCall {
 	return &call
 }
 
+// Text sets the value for optional text parameter
 func (c *ChatMeMessageCall) Text(text string) *ChatMeMessageCall {
 	c.text = text
 	return c
@@ -176,66 +179,79 @@ func (s *ChatService) PostMessage(channel string) *ChatPostMessageCall {
 	return &call
 }
 
+// AsUser sets the value for optional asUser parameter
 func (c *ChatPostMessageCall) AsUser(asUser bool) *ChatPostMessageCall {
 	c.asUser = asUser
 	return c
 }
 
+// SetAttachments sets the attachments list
 func (c *ChatPostMessageCall) SetAttachments(attachments objects.AttachmentList) *ChatPostMessageCall {
 	c.attachments = attachments
 	return c
 }
 
+// Attachment appends to the attachments list
 func (c *ChatPostMessageCall) Attachment(attachment *objects.Attachment) *ChatPostMessageCall {
 	c.attachments.Append(attachment)
 	return c
 }
 
+// EscapeText sets the value for optional escapeText parameter
 func (c *ChatPostMessageCall) EscapeText(escapeText bool) *ChatPostMessageCall {
 	c.escapeText = escapeText
 	return c
 }
 
+// IconEmoji sets the value for optional iconEmoji parameter
 func (c *ChatPostMessageCall) IconEmoji(iconEmoji string) *ChatPostMessageCall {
 	c.iconEmoji = iconEmoji
 	return c
 }
 
+// IconURL sets the value for optional iconURL parameter
 func (c *ChatPostMessageCall) IconURL(iconURL string) *ChatPostMessageCall {
 	c.iconURL = iconURL
 	return c
 }
 
+// LinkNames sets the value for optional linkNames parameter
 func (c *ChatPostMessageCall) LinkNames(linkNames bool) *ChatPostMessageCall {
 	c.linkNames = linkNames
 	return c
 }
 
+// Markdown sets the value for optional markdown parameter
 func (c *ChatPostMessageCall) Markdown(markdown bool) *ChatPostMessageCall {
 	c.markdown = markdown
 	return c
 }
 
+// Parse sets the value for optional parse parameter
 func (c *ChatPostMessageCall) Parse(parse string) *ChatPostMessageCall {
 	c.parse = parse
 	return c
 }
 
+// Text sets the value for optional text parameter
 func (c *ChatPostMessageCall) Text(text string) *ChatPostMessageCall {
 	c.text = text
 	return c
 }
 
+// UnfurlLinks sets the value for optional unfurlLinks parameter
 func (c *ChatPostMessageCall) UnfurlLinks(unfurlLinks bool) *ChatPostMessageCall {
 	c.unfurlLinks = unfurlLinks
 	return c
 }
 
+// UnfurlMedia sets the value for optional unfurlMedia parameter
 func (c *ChatPostMessageCall) UnfurlMedia(unfurlMedia bool) *ChatPostMessageCall {
 	c.unfurlMedia = unfurlMedia
 	return c
 }
 
+// Username sets the value for optional username parameter
 func (c *ChatPostMessageCall) Username(username string) *ChatPostMessageCall {
 	c.username = username
 	return c
@@ -334,36 +350,43 @@ func (s *ChatService) Update(channel string) *ChatUpdateCall {
 	return &call
 }
 
+// AsUser sets the value for optional asUser parameter
 func (c *ChatUpdateCall) AsUser(asUser bool) *ChatUpdateCall {
 	c.asUser = asUser
 	return c
 }
 
+// SetAttachments sets the attachments list
 func (c *ChatUpdateCall) SetAttachments(attachments objects.AttachmentList) *ChatUpdateCall {
 	c.attachments = attachments
 	return c
 }
 
+// Attachment appends to the attachments list
 func (c *ChatUpdateCall) Attachment(attachment *objects.Attachment) *ChatUpdateCall {
 	c.attachments.Append(attachment)
 	return c
 }
 
+// LinkNames sets the value for optional linkNames parameter
 func (c *ChatUpdateCall) LinkNames(linkNames bool) *ChatUpdateCall {
 	c.linkNames = linkNames
 	return c
 }
 
+// Parse sets the value for optional parse parameter
 func (c *ChatUpdateCall) Parse(parse string) *ChatUpdateCall {
 	c.parse = parse
 	return c
 }
 
+// Text sets the value for optional text parameter
 func (c *ChatUpdateCall) Text(text string) *ChatUpdateCall {
 	c.text = text
 	return c
 }
 
+// Timestamp sets the value for optional timestamp parameter
 func (c *ChatUpdateCall) Timestamp(timestamp string) *ChatUpdateCall {
 	c.timestamp = timestamp
 	return c

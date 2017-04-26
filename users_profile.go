@@ -37,11 +37,13 @@ func (s *UsersProfileService) Get() *UsersProfileGetCall {
 	return &call
 }
 
+// IncludeLabels sets the value for optional include_labels parameter
 func (c *UsersProfileGetCall) IncludeLabels(include_labels bool) *UsersProfileGetCall {
 	c.include_labels = include_labels
 	return c
 }
 
+// User sets the value for optional user parameter
 func (c *UsersProfileGetCall) User(user string) *UsersProfileGetCall {
 	c.user = user
 	return c
@@ -90,21 +92,25 @@ func (s *UsersProfileService) Set() *UsersProfileSetCall {
 	return &call
 }
 
+// Name sets the value for optional name parameter
 func (c *UsersProfileSetCall) Name(name string) *UsersProfileSetCall {
 	c.name = name
 	return c
 }
 
+// Profile sets the value for optional profile parameter
 func (c *UsersProfileSetCall) Profile(profile *objects.UserProfile) *UsersProfileSetCall {
 	c.profile = profile
 	return c
 }
 
+// User sets the value for optional user parameter
 func (c *UsersProfileSetCall) User(user string) *UsersProfileSetCall {
 	c.user = user
 	return c
 }
 
+// Value sets the value for optional value parameter
 func (c *UsersProfileSetCall) Value(value string) *UsersProfileSetCall {
 	c.value = value
 	return c
