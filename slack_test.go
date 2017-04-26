@@ -174,6 +174,7 @@ func newDummyServer() *dummyServer {
 	mux.HandleFunc("/api/channels.invite", required(tokenArg), required(channelArg), required(userArg))
 	mux.HandleFunc("/api/channels.kick", required(tokenArg), required(channelArg), required(userArg))
 	mux.HandleFunc("/api/channels.leave", required(tokenArg), required(channelArg))
+	mux.HandleFunc("/api/emoji.list", required(tokenArg))
 	mux.HandleFunc("/api/oauth.access", 
 		required(newArg("client_id", nil)),
 		required(newArg("client_secret", nil)),

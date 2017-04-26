@@ -49,6 +49,7 @@ type Client struct {
 	bots         *BotsService
 	channels     *ChannelsService
 	chat         *ChatService
+	emoji        *EmojiService
 	oauth        *OAuthService
 	reactions    *ReactionsService
 	rtm          *RTMService
