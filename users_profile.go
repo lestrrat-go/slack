@@ -16,9 +16,9 @@ var _ = objects.EpochTime(0)
 
 // UsersProfileGetCall is created by UsersProfileService.Get method call
 type UsersProfileGetCall struct {
-	service        *UsersProfileService
-	include_labels bool
-	user           string
+	service       *UsersProfileService
+	includeLabels bool
+	user          string
 }
 
 // UsersProfileSetCall is created by UsersProfileService.Set method call
@@ -37,9 +37,9 @@ func (s *UsersProfileService) Get() *UsersProfileGetCall {
 	return &call
 }
 
-// IncludeLabels sets the value for optional include_labels parameter
-func (c *UsersProfileGetCall) IncludeLabels(include_labels bool) *UsersProfileGetCall {
-	c.include_labels = include_labels
+// IncludeLabels sets the value for optional includeLabels parameter
+func (c *UsersProfileGetCall) IncludeLabels(includeLabels bool) *UsersProfileGetCall {
+	c.includeLabels = includeLabels
 	return c
 }
 
@@ -54,7 +54,7 @@ func (c *UsersProfileGetCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if c.include_labels {
+	if c.includeLabels {
 		v.Set("include_labels", "true")
 	}
 
