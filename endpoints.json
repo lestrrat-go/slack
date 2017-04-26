@@ -296,6 +296,10 @@
     ]
   },
   {
+    "name": "emoji.list",
+    "return": "EmojiListResponse"
+  },
+  {
     "name": "oauth.access",
     "skip_token": true,
     "group": "OAuth",

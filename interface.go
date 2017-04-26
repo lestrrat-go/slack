@@ -49,6 +49,7 @@ type Client struct {
 	bots         *BotsService
 	channels     *ChannelsService
 	chat         *ChatService
+	emoji        *EmojiService
 	oauth        *OAuthService
 	reactions    *ReactionsService
 	rtm          *RTMService
@@ -76,18 +77,6 @@ type ErrorResponse struct {
 	Message string `json:"msg"`
 }
 
-// AuthService handles all `auth.*` API endpoints
-type AuthService struct {
-	client *httpClient
-	token  string
-}
-
-// BotsService handles all `bots.*` API endpoints
-type BotsService struct {
-	client *httpClient
-	token  string
-}
-
 // AuthTestResponse is the data structure response from auth.test
 type AuthTestResponse struct {
 	URL    string `json:"url"`
@@ -97,22 +86,10 @@ type AuthTestResponse struct {
 	UserID string `json:"user_id"`
 }
 
-// ChannelsService handles all `channel.*` API endpoints
-type ChannelsService struct {
-	client *httpClient
-	token  string
-}
-
 type ChannelsHistoryResponse struct {
 	HasMore  bool                `json:"has_more"`
 	Latest   string              `json:"latest"`
 	Messages objects.MessageList `json:"messages"`
-}
-
-// ChatService handles all `chat.*` API endpoints
-type ChatService struct {
-	client *httpClient
-	token  string
 }
 
 type ChatResponse struct {
@@ -121,18 +98,11 @@ type ChatResponse struct {
 	Message   interface{} `json:"message"` // TODO
 }
 
-type OAuthService struct {
-	client *httpClient
-}
+type EmojiListResponse map[string]string
 
 type OAuthAccessResponse struct {
 	AccessToken string
 	Scope       string
-}
-
-type ReactionsService struct {
-	client *httpClient
-	token  string
 }
 
 // ReactionsGetResponse represents the response obtained from
@@ -150,12 +120,6 @@ type ReactionsListResponse struct {
 	Paging Paging                   `json:"paging"`
 }
 
-// RTMService handles all `rtm.*` API endpoints
-type RTMService struct {
-	client *httpClient
-	token  string
-}
-
 type RTMResponse struct {
 	URL      string               `json:"url"`
 	Self     *objects.UserDetails `json:"self"`
@@ -165,18 +129,6 @@ type RTMResponse struct {
 	Groups   []*objects.Group     `json:"groups"`
 	Bots     []*objects.Bot       `json:"bots"`
 	IMs      []*objects.IM        `json:"ims"`
-}
-
-// UsersService handles all `users.*` API endpoints
-type UsersService struct {
-	client *httpClient
-	token  string
-}
-
-// UsersProfileService handles all `users.profile.*` API endpoints
-type UsersProfileService struct {
-	client *httpClient
-	token  string
 }
 
 type Paging struct {
