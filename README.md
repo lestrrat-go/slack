@@ -84,8 +84,9 @@ which can be obtained by calling the `Chat()` method:
 
 The `ChatService` object can construct an intermediate object, which are called
 the `Call` objects. These objects exist to accumulate parameters that you want to
-ultimately call the API endpoint with. In the initial call to construct the objects, you will have to enter the mandatory parameters. For example, to start a
-`PostMessage` call (which is supposed to access `chat.postMessage` endpoint), you do:
+ultimately call the API endpoint with.
+
+In the initial call to construct the objects, you will have to enter the **mandatory** parameters. For example, to start a `PostMessage` call (which is supposed to access `chat.postMessage` endpoint), you do:
 
 ```go
   call := service.PostMessage(channel)
