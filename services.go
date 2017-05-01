@@ -50,6 +50,12 @@ type ReactionsService struct {
 	token  string
 }
 
+// StarsService handles Stars related endpoints
+type StarsService struct {
+	client *httpClient
+	token  string
+}
+
 // UsersService handles Users related endpoints
 type UsersService struct {
 	client *httpClient

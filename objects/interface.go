@@ -166,7 +166,7 @@ type Message struct {
 	Members []string `json:"members,omitempty"`
 
 	// file_share, file_comment, file_mention
-	//	File *File `json:"file,omitempty"`
+	File *File `json:"file,omitempty"`
 
 	// file_share
 	Upload bool `json:"upload,omitempty"`

@@ -2,6 +2,7 @@ package slack_test
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/lestrrat/go-slack"
 	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 var testDmUser string
@@ -84,8 +86,8 @@ type expectedArg struct {
 func nilcheck(_ []string) error { return nil }
 func newArg(name string, check func([]string) error) *expectedArg {
 	return &expectedArg{
-		name:     name,
-		check:    check,
+		name:  name,
+		check: check,
 	}
 }
 func intArg(name string) *expectedArg {
@@ -175,7 +177,7 @@ func newDummyServer() *dummyServer {
 	mux.HandleFunc("/api/channels.kick", required(tokenArg), required(channelArg), required(userArg))
 	mux.HandleFunc("/api/channels.leave", required(tokenArg), required(channelArg))
 	mux.HandleFunc("/api/emoji.list", required(tokenArg))
-	mux.HandleFunc("/api/oauth.access", 
+	mux.HandleFunc("/api/oauth.access",
 		required(newArg("client_id", nil)),
 		required(newArg("client_secret", nil)),
 		required(newArg("code", nil)),
@@ -214,6 +216,26 @@ func newDummyServer() *dummyServer {
 		newArg("timestamp", nil),
 	)
 	mux.HandleFunc("/api/rtm.start", required(tokenArg))
+	mux.HandleFunc("/api/stars.add",
+		required(tokenArg),
+		channelArg,
+		newArg("file", nil),
+		newArg("fileComment", nil),
+		newArg("timestamp", nil),
+	)
+	mux.HandleFunc("/api/stars.list",
+		required(tokenArg),
+		channelArg,
+		newArg("count", nil),
+		newArg("page", nil),
+	)
+	mux.HandleFunc("/api/stars.remove",
+		required(tokenArg),
+		channelArg,
+		newArg("file", nil),
+		newArg("fileComment", nil),
+		newArg("timestamp", nil),
+	)
 	mux.HandleFunc("/api/users.getPresence",
 		required(tokenArg),
 		required(userArg),
@@ -250,4 +272,17 @@ func newDummyServer() *dummyServer {
 
 func newSlackWithDummy(s *httptest.Server) *slack.Client {
 	return slack.New("random-token", slack.WithAPIEndpoint(s.URL+"/api/"))
+}
+
+func TestStarredItemList(t *testing.T) {
+	const src = `[
+		{ "type": "message", "channel": "foo", "message": { "user": "me" } }
+	]`
+
+	var l slack.StarredItemList
+	if !assert.NoError(t, json.Unmarshal([]byte(src), &l), "json.Unmarshal should succeed") {
+		return
+	}
+
+	// XXX TODO
 }

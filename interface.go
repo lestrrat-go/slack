@@ -53,6 +53,7 @@ type Client struct {
 	oauth        *OAuthService
 	reactions    *ReactionsService
 	rtm          *RTMService
+	stars        *StarsService
 	users        *UsersService
 	usersProfile *UsersProfileService
 	debug        bool
@@ -165,3 +166,10 @@ type InteractiveButtonRequest struct {
 		Name string `json:"name"`
 	} `json:"user"`
 }
+
+type StarsListResponse struct {
+	Items StarredItemList `json:"items"`
+	Paging Paging `json:"paging"`
+}
+type StarredItem interface{}
+type StarredItemList []StarredItem

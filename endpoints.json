@@ -435,6 +435,62 @@
     "group": "RTM"
   },
   {
+    "name": "stars.add",
+    "args": [
+      {
+        "name": "file",
+        "type": "string"
+      },
+      {
+        "name": "fileComment",
+        "type": "string"
+      },
+      {
+        "name": "channel",
+        "type": "string"
+      },
+      {
+        "name": "timestamp",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "stars.list",
+    "return": "StarsListResponse",
+    "args": [
+      {
+        "name": "count",
+        "type": "int"
+      },
+      {
+        "name": "page",
+        "type": "int"
+      }
+    ]
+  },
+  {
+    "name": "stars.remove",
+    "args": [
+      {
+        "name": "file",
+        "type": "string"
+      },
+      {
+        "name": "fileComment",
+        "type": "string"
+      },
+      {
+        "name": "channel",
+        "type": "string"
+      },
+      {
+        "name": "timestamp",
+        "type": "string"
+      }
+    ]
+  },
+  {
     "name": "users.getPresence",
     "return": "objects.UserPresence",
     "args": [
