@@ -27,6 +27,7 @@ type Endpoint struct {
 	methodName string
 	Group      string     `json:"group,omitempty"`
 	Name       string     `json:"name"` // e.g. "chat.PostMessage"
+	JSON       string     `json:"json"`
 	Args       []Argument `json:"args,omitempty"`
 	ReturnType string     `json:"return,omitempty"`
 	SkipToken  bool       `json:"skip_token,omitempty"`
@@ -104,7 +105,7 @@ func _main() error {
 func generateServicesFile(groups map[string]struct{}) error {
 	var list []string
 	for k := range groups {
-		list =append(list, k)
+		list = append(list, k)
 	}
 	sort.Strings(list)
 
@@ -334,6 +335,9 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		if hasReturn {
 			buf.WriteByte('\n')
 			buf.WriteString(returnType)
+			if endpoint.JSON != "" {
+				buf.WriteString(fmt.Sprintf(" `json:\"%s\"`", endpoint.JSON))
+			}
 		}
 		buf.WriteString("\n}")
 		buf.WriteString("\nif err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {")

@@ -102,7 +102,7 @@ func (c *UsersInfoCall) Do(ctx context.Context) (*objects.User, error) {
 	}
 	var res struct {
 		SlackResponse
-		*objects.User
+		*objects.User `json:"user"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.info`)
@@ -147,7 +147,7 @@ func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
 	}
 	var res struct {
 		SlackResponse
-		objects.UserList
+		objects.UserList `json:"members"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.list`)
