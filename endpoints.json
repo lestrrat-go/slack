@@ -448,6 +448,7 @@
   {
     "name": "users.info",
     "return": "objects.User",
+    "json": "user",
     "args": [
       {
         "name": "user",
@@ -459,6 +460,7 @@
   {
     "name": "users.list",
     "return": "objects.UserList",
+    "json": "members",
     "args": [
       {
         "name": "presence",
