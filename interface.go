@@ -1,9 +1,21 @@
 package slack
 
 import (
+	"context"
+
 	"github.com/lestrrat/go-slack/objects"
 	"golang.org/x/oauth2"
 )
+
+// Logger is an interface for logging/tracing the client's
+// execution.
+//
+// In particular, `Debugf` will only be called if `WithDebug`
+// is provided to the constructor.
+type Logger interface {
+	Debugf(context.Context, string, ...interface{})
+	Infof(context.Context, string, ...interface{})
+}
 
 const (
 	ParseFull = "full"
@@ -165,3 +177,10 @@ type InteractiveButtonRequest struct {
 		Name string `json:"name"`
 	} `json:"user"`
 }
+
+type StarsListResponse struct {
+	Items  StarredItemList `json:"items"`
+	Paging Paging          `json:"paging"`
+}
+type StarredItem interface{}
+type StarredItemList []StarredItem
