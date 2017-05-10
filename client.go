@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"io"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -37,41 +36,9 @@ func (o *option) Value() interface{} {
 const (
 	debugkey    = "debug"
 	httpclkey   = "httpclient"
+	loggerkey   = "logger"
 	slackurlkey = "slackurl"
 )
-
-// WithClient allows you to specify an net/http.Client object to
-// use to communicate with the Slack endpoints. For example, if you
-// need to use this in Google App Engine, you can pass it the
-// result of `urlfetch.Client`
-func WithClient(cl *http.Client) Option {
-	return &option{
-		name:  httpclkey,
-		value: cl,
-	}
-}
-
-// WithAPIEndpoint allows you to specify an alternate API endpoint.
-// The default is DefaultAPIEndpoint.
-func WithAPIEndpoint(s string) Option {
-	return &option{
-		name:  slackurlkey,
-		value: s,
-	}
-}
-
-// WithDebug specifies that we want to run in debugging mode.
-// You can set this value manually to override any existing global
-// defaults.
-//
-// If one is not specified, the default value is false, or the
-// value specified in SLACK_DEBUG environment variable
-func WithDebug(b bool) Option {
-	return &option{
-		name:  debugkey,
-		value: b,
-	}
-}
 
 // New creates a new REST Slack API client. The `token` is
 // required. Other optional parameters can be passed using the
@@ -80,12 +47,15 @@ func New(token string, options ...Option) *Client {
 	slackURL := DefaultAPIEndpoint
 	httpcl := http.DefaultClient
 	debug, _ := strconv.ParseBool(os.Getenv("SLACK_DEBUG"))
+	var logger Logger = nilLogger{}
 	for _, o := range options {
 		switch o.Name() {
 		case httpclkey:
 			httpcl = o.Value().(*http.Client)
 		case debugkey:
 			debug = o.Value().(bool)
+		case loggerkey:
+			logger = o.Value().(Logger)
 		case slackurlkey:
 			slackURL = o.Value().(string)
 		}
@@ -95,10 +65,15 @@ func New(token string, options ...Option) *Client {
 		slackURL = slackURL + "/"
 	}
 
+	if _, ok := logger.(nilLogger); debug && ok {
+		logger = traceLogger{dst: os.Stderr}
+	}
+
 	wrappedcl := &httpClient{
 		client:   httpcl,
 		debug:    debug,
 		slackURL: slackURL,
+		logger:   logger,
 	}
 	return &Client{
 		auth:         &AuthService{client: wrappedcl, token: token},
@@ -169,6 +144,7 @@ type httpClient struct {
 	client   *http.Client
 	debug    bool
 	slackURL string
+	logger   Logger
 }
 
 func (c *httpClient) makeSlackURL(path string) string {
@@ -176,33 +152,52 @@ func (c *httpClient) makeSlackURL(path string) string {
 }
 
 // path is only passed for debugging purposes
-func (c *httpClient) parseResponse(path string, rdr io.Reader, res interface{}) error {
+func (c *httpClient) parseResponse(ctx context.Context, path string, rdr io.Reader, res interface{}) error {
 	if c.debug {
 		var buf bytes.Buffer
 		io.Copy(&buf, rdr)
-		log.Printf("-----> %s", path)
+
+		c.logger.Debugf(ctx, "-----> %s (response)", path)
 		var m map[string]interface{}
 		if err := json.Unmarshal(buf.Bytes(), &m); err != nil {
-			log.Printf("failed to unmarshal payload: %s", err)
-			log.Println(buf.String())
+			c.logger.Debugf(ctx, "failed to unmarshal payload: %s", err)
+			c.logger.Debugf(ctx, buf.String())
 		} else {
 			formatted, _ := json.MarshalIndent(m, "", "  ")
-			log.Printf("%s", formatted)
+			c.logger.Debugf(ctx, "%s", formatted)
 		}
-		log.Printf("<----- %s", path)
+		c.logger.Debugf(ctx, "<----- %s (response)", path)
 		rdr = &buf
 	}
 	return json.NewDecoder(rdr).Decode(res)
 }
 
 func (c *httpClient) postForm(ctx context.Context, path string, f url.Values, data interface{}) error {
+	if c.debug {
+		c.logger.Debugf(ctx, "-----> %s (request)", path)
+		for k, list := range f {
+			var buf bytes.Buffer
+			if k == "token" {
+				buf.WriteString("xxxxxxxxxxxx (redacted)")
+			} else {
+				for i, v := range list {
+					buf.WriteString(v)
+					if i < len(list)-1 {
+						buf.WriteString(", ")
+					}
+				}
+			}
+			c.logger.Debugf(ctx, "%s = %s", k, buf.String())
+		}
+		c.logger.Debugf(ctx, "<----- %s (request)", path)
+	}
 	return c.post(ctx, path, "application/x-www-form-urlencoded", strings.NewReader(f.Encode()), data)
 }
 
 func (c *httpClient) post(octx context.Context, path, ct string, body io.Reader, data interface{}) error {
 	u := c.makeSlackURL(path)
 	if c.debug {
-		log.Printf("posting to %s", u)
+		c.logger.Debugf(octx, "posting to %s", u)
 	}
 	req, err := http.NewRequest(http.MethodPost, u, body)
 	if err != nil {
@@ -219,7 +214,7 @@ func (c *httpClient) post(octx context.Context, path, ct string, body io.Reader,
 		return errors.Wrap(err, `failed to post to slack`)
 	}
 	defer res.Body.Close()
-	return c.parseResponse(path, res.Body, data)
+	return c.parseResponse(octx, path, res.Body, data)
 }
 
 func (c *httpClient) get(octx context.Context, path string, f url.Values, data interface{}) error {
@@ -231,7 +226,7 @@ func (c *httpClient) get(octx context.Context, path string, f url.Values, data i
 	u.RawQuery = f.Encode()
 
 	if c.debug {
-		log.Printf("> GET %s", u.String())
+		c.logger.Debugf(octx, "> GET %s", u.String())
 	}
 	req, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
@@ -247,7 +242,7 @@ func (c *httpClient) get(octx context.Context, path string, f url.Values, data i
 		return errors.Wrap(err, `failed to get slack`)
 	}
 	defer res.Body.Close()
-	return c.parseResponse(path, res.Body, data)
+	return c.parseResponse(octx, path, res.Body, data)
 }
 
 func (r SlackResponse) err() error {
