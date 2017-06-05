@@ -85,7 +85,7 @@ func (c *ChatDeleteCall) Values() (url.Values, error) {
 	v.Set(`token`, c.service.token)
 
 	if c.asUser {
-		v.Set("asUser", "true")
+		v.Set("as_user", "true")
 	}
 
 	if len(c.channel) <= 0 {
@@ -263,7 +263,7 @@ func (c *ChatPostMessageCall) Values() (url.Values, error) {
 	v.Set(`token`, c.service.token)
 
 	if c.asUser {
-		v.Set("asUser", "true")
+		v.Set("as_user", "true")
 	}
 
 	if len(c.attachments) > 0 {
@@ -398,7 +398,7 @@ func (c *ChatUpdateCall) Values() (url.Values, error) {
 	v.Set(`token`, c.service.token)
 
 	if c.asUser {
-		v.Set("asUser", "true")
+		v.Set("as_user", "true")
 	}
 
 	if len(c.attachments) > 0 {
