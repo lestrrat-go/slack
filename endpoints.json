@@ -461,6 +461,11 @@
     ]
   },
   {
+    "name": "users.identity",
+    "return": ["objects.UserProfile", "objects.Team"],
+    "json": ["user", "team"]
+  },
+  {
     "name": "users.list",
     "return": "objects.UserList",
     "json": "members",
