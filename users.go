@@ -32,6 +32,11 @@ type UsersListCall struct {
 	presence bool
 }
 
+// UsersSetActiveCall is created by UsersService.SetActive method call
+type UsersSetActiveCall struct {
+	service *UsersService
+}
+
 // UsersSetPresenceCall is created by UsersService.SetPresence method call
 type UsersSetPresenceCall struct {
 	service  *UsersService
@@ -163,6 +168,40 @@ func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
 	}
 
 	return res.UserList, nil
+}
+
+// SetActive creates a UsersSetActiveCall object in preparation for accessing the users.setActive endpoint
+func (s *UsersService) SetActive() *UsersSetActiveCall {
+	var call UsersSetActiveCall
+	call.service = s
+	return &call
+}
+
+// Values returns the UsersSetActiveCall object as url.Values
+func (c *UsersSetActiveCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+	return v, nil
+}
+
+// Do executes the call to access users.setActive endpoint
+func (c *UsersSetActiveCall) Do(ctx context.Context) error {
+	const endpoint = "users.setActive"
+	v, err := c.Values()
+	if err != nil {
+		return err
+	}
+	var res struct {
+		SlackResponse
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return errors.Wrap(err, `failed to post to users.setActive`)
+	}
+	if !res.OK {
+		return errors.New(res.Error.String())
+	}
+
+	return nil
 }
 
 // SetPresence creates a UsersSetPresenceCall object in preparation for accessing the users.setPresence endpoint
