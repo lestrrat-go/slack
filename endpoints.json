@@ -472,6 +472,9 @@
     ]
   },
   {
+    "name": "users.setActive"
+  },
+  {
     "name": "users.setPresence",
     "args": [
       {
