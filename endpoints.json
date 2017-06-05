@@ -472,6 +472,16 @@
     ]
   },
   {
+    "name": "users.setPresence",
+    "args": [
+      {
+        "name": "presence",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
     "name": "users.profile.get",
     "return": "objects.UserProfile",
     "args": [

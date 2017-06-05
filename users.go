@@ -32,6 +32,12 @@ type UsersListCall struct {
 	presence bool
 }
 
+// UsersSetPresenceCall is created by UsersService.SetPresence method call
+type UsersSetPresenceCall struct {
+	service  *UsersService
+	presence string
+}
+
 // GetPresence creates a UsersGetPresenceCall object in preparation for accessing the users.getPresence endpoint
 func (s *UsersService) GetPresence(user string) *UsersGetPresenceCall {
 	var call UsersGetPresenceCall
@@ -157,4 +163,44 @@ func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
 	}
 
 	return res.UserList, nil
+}
+
+// SetPresence creates a UsersSetPresenceCall object in preparation for accessing the users.setPresence endpoint
+func (s *UsersService) SetPresence(presence string) *UsersSetPresenceCall {
+	var call UsersSetPresenceCall
+	call.service = s
+	call.presence = presence
+	return &call
+}
+
+// Values returns the UsersSetPresenceCall object as url.Values
+func (c *UsersSetPresenceCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	if len(c.presence) <= 0 {
+		return nil, errors.New(`missing required parameter presence`)
+	}
+	v.Set("presence", c.presence)
+	return v, nil
+}
+
+// Do executes the call to access users.setPresence endpoint
+func (c *UsersSetPresenceCall) Do(ctx context.Context) error {
+	const endpoint = "users.setPresence"
+	v, err := c.Values()
+	if err != nil {
+		return err
+	}
+	var res struct {
+		SlackResponse
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return errors.Wrap(err, `failed to post to users.setPresence`)
+	}
+	if !res.OK {
+		return errors.New(res.Error.String())
+	}
+
+	return nil
 }
