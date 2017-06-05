@@ -20,6 +20,11 @@ type UsersGetPresenceCall struct {
 	user    string
 }
 
+// UsersIdentityCall is created by UsersService.Identity method call
+type UsersIdentityCall struct {
+	service *UsersService
+}
+
 // UsersInfoCall is created by UsersService.Info method call
 type UsersInfoCall struct {
 	service *UsersService
@@ -82,6 +87,42 @@ func (c *UsersGetPresenceCall) Do(ctx context.Context) (*objects.UserPresence, e
 	}
 
 	return res.UserPresence, nil
+}
+
+// Identity creates a UsersIdentityCall object in preparation for accessing the users.identity endpoint
+func (s *UsersService) Identity() *UsersIdentityCall {
+	var call UsersIdentityCall
+	call.service = s
+	return &call
+}
+
+// Values returns the UsersIdentityCall object as url.Values
+func (c *UsersIdentityCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+	return v, nil
+}
+
+// Do executes the call to access users.identity endpoint
+func (c *UsersIdentityCall) Do(ctx context.Context) (*objects.UserProfile, *objects.Team, error) {
+	const endpoint = "users.identity"
+	v, err := c.Values()
+	if err != nil {
+		return nil, nil, err
+	}
+	var res struct {
+		SlackResponse
+		*objects.UserProfile `json:"user"`
+		*objects.Team        `json:"team"`
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return nil, nil, errors.Wrap(err, `failed to post to users.identity`)
+	}
+	if !res.OK {
+		return nil, nil, errors.New(res.Error.String())
+	}
+
+	return res.UserProfile, res.Team, nil
 }
 
 // Info creates a UsersInfoCall object in preparation for accessing the users.info endpoint

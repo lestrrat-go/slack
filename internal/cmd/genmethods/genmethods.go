@@ -22,14 +22,34 @@ func main() {
 	}
 }
 
+type stringList []string
+
+func (s *stringList) UnmarshalJSON(data []byte) error {
+	if data[0] == '"' {
+		var v string
+		if err := json.Unmarshal(data, &v); err != nil {
+			return errors.Wrap(err, `failed to unmarshal string for stringList`)
+		}
+		*s = []string{v}
+		return nil
+	}
+
+	var v []string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return errors.Wrap(err, `failed to unmarshal string list for stringList`)
+	}
+	*s = v
+	return nil
+}
+
 type Endpoint struct {
 	file       string
 	methodName string
 	Group      string     `json:"group,omitempty"`
 	Name       string     `json:"name"` // e.g. "chat.PostMessage"
-	JSON       string     `json:"json"`
+	JSON       stringList `json:"json"`
 	Args       []Argument `json:"args,omitempty"`
-	ReturnType string     `json:"return,omitempty"`
+	ReturnType stringList `json:"return,omitempty"`
 	SkipToken  bool       `json:"skip_token,omitempty"`
 }
 
@@ -302,14 +322,22 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		buf.WriteString("\nreturn v, nil")
 		buf.WriteString("\n}")
 
-		hasReturn := len(endpoint.ReturnType) > 0
 		var returnType string
+
+		hasReturn := len(endpoint.ReturnType) > 0
 		if hasReturn {
 			var rtbuf bytes.Buffer
-			if !strings.HasSuffix(endpoint.ReturnType, "List") {
-				rtbuf.WriteByte('*')
+
+			for i, typ := range endpoint.ReturnType {
+				if !strings.HasSuffix(typ, "List") {
+					rtbuf.WriteByte('*')
+				}
+				rtbuf.WriteString(typ)
+
+				if i < len(endpoint.ReturnType)-1 {
+					rtbuf.WriteByte(',')
+				}
 			}
-			rtbuf.WriteString(endpoint.ReturnType)
 			returnType = rtbuf.String()
 		}
 
@@ -326,7 +354,9 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		buf.WriteString("\nif err != nil {")
 		buf.WriteString("\nreturn ")
 		if hasReturn {
-			buf.WriteString("nil, ")
+			for i := 0 ; i < len(endpoint.ReturnType); i++ {
+				buf.WriteString("nil, ")
+			}
 		}
 		buf.WriteString("err")
 		buf.WriteString("\n}")
@@ -334,16 +364,29 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		buf.WriteString("\nSlackResponse")
 		if hasReturn {
 			buf.WriteByte('\n')
-			buf.WriteString(returnType)
-			if endpoint.JSON != "" {
-				buf.WriteString(fmt.Sprintf(" `json:\"%s\"`", endpoint.JSON))
+			for i, typ := range endpoint.ReturnType {
+				if !strings.HasSuffix(typ, "List") {
+					buf.WriteByte('*')
+				}
+				buf.WriteString(typ)
+
+				if len(endpoint.JSON) <= i {
+					continue
+				}
+
+				if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
+					buf.WriteString(fmt.Sprintf(" `json:\"%s\"`", jtyp))
+				}
+				buf.WriteByte('\n')
 			}
 		}
 		buf.WriteString("\n}")
 		buf.WriteString("\nif err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {")
 		buf.WriteString("\nreturn ")
 		if hasReturn {
-			buf.WriteString("nil, ")
+			for i := 0 ; i < len(endpoint.ReturnType); i++ {
+				buf.WriteString("nil, ")
+			}
 		}
 		fmt.Fprintf(&buf, "errors.Wrap(err, `failed to post to %s`)", endpoint.Name)
 		buf.WriteString("\n}")
@@ -351,20 +394,24 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		buf.WriteString("\nif !res.OK {")
 		buf.WriteString("\nreturn ")
 		if hasReturn {
-			buf.WriteString("nil, ")
+			for i := 0 ; i < len(endpoint.ReturnType); i++ {
+				buf.WriteString("nil, ")
+			}
 		}
 		buf.WriteString("errors.New(res.Error.String())")
 		buf.WriteString("\n}")
 
 		buf.WriteString("\n\nreturn ")
 		if hasReturn {
-			buf.WriteString("res.")
-			if i := strings.LastIndexByte(endpoint.ReturnType, '.'); i > -1 {
-				buf.WriteString(endpoint.ReturnType[i+1:])
-			} else {
-				buf.WriteString(endpoint.ReturnType)
+			for _, typ := range endpoint.ReturnType {
+				buf.WriteString("res.")
+				if i := strings.LastIndexByte(typ, '.'); i > -1 {
+					buf.WriteString(typ[i+1:])
+				} else {
+					buf.WriteString(typ)
+				}
+				buf.WriteString(", ")
 			}
-			buf.WriteString(", ")
 		}
 		buf.WriteString("nil")
 		buf.WriteString("\n}")
