@@ -166,6 +166,23 @@
     ]
   },
   {
+    "name": "channels.setPurpose",
+    "return": "string",
+    "json": "purpose",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "purpose",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
     "name": "chat.postMessage",
     "return": "ChatResponse",
     "args": [

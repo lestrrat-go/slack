@@ -78,6 +78,13 @@ type ChannelsListCall struct {
 	exclArchived bool
 }
 
+// ChannelsSetPurposeCall is created by ChannelsService.SetPurpose method call
+type ChannelsSetPurposeCall struct {
+	service *ChannelsService
+	channel string
+	purpose string
+}
+
 // Archive creates a ChannelsArchiveCall object in preparation for accessing the channels.archive endpoint
 func (s *ChannelsService) Archive(channel string) *ChannelsArchiveCall {
 	var call ChannelsArchiveCall
@@ -537,4 +544,51 @@ func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) 
 	}
 
 	return res.ChannelList, nil
+}
+
+// SetPurpose creates a ChannelsSetPurposeCall object in preparation for accessing the channels.setPurpose endpoint
+func (s *ChannelsService) SetPurpose(channel string, purpose string) *ChannelsSetPurposeCall {
+	var call ChannelsSetPurposeCall
+	call.service = s
+	call.channel = channel
+	call.purpose = purpose
+	return &call
+}
+
+// Values returns the ChannelsSetPurposeCall object as url.Values
+func (c *ChannelsSetPurposeCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	if len(c.channel) <= 0 {
+		return nil, errors.New(`missing required parameter channel`)
+	}
+	v.Set("channel", c.channel)
+
+	if len(c.purpose) <= 0 {
+		return nil, errors.New(`missing required parameter purpose`)
+	}
+	v.Set("purpose", c.purpose)
+	return v, nil
+}
+
+// Do executes the call to access channels.setPurpose endpoint
+func (c *ChannelsSetPurposeCall) Do(ctx context.Context) (*string, error) {
+	const endpoint = "channels.setPurpose"
+	v, err := c.Values()
+	if err != nil {
+		return nil, err
+	}
+	var res struct {
+		SlackResponse
+		*string `json:"purpose"`
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return nil, errors.Wrap(err, `failed to post to channels.setPurpose`)
+	}
+	if !res.OK {
+		return nil, errors.New(res.Error.String())
+	}
+
+	return res.string, nil
 }
