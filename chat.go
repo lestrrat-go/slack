@@ -47,6 +47,15 @@ type ChatPostMessageCall struct {
 	username    string
 }
 
+// ChatUnfurlCall is created by ChatService.Unfurl method call
+type ChatUnfurlCall struct {
+	service          *ChatService
+	channel          string
+	timestamp        string
+	unfurls          string
+	userAuthRequired bool
+}
+
 // ChatUpdateCall is created by ChatService.Update method call
 type ChatUpdateCall struct {
 	service     *ChatService
@@ -340,6 +349,68 @@ func (c *ChatPostMessageCall) Do(ctx context.Context) (*ChatResponse, error) {
 	}
 
 	return res.ChatResponse, nil
+}
+
+// Unfurl creates a ChatUnfurlCall object in preparation for accessing the chat.unfurl endpoint
+func (s *ChatService) Unfurl(channel string, timestamp string, unfurls string) *ChatUnfurlCall {
+	var call ChatUnfurlCall
+	call.service = s
+	call.channel = channel
+	call.timestamp = timestamp
+	call.unfurls = unfurls
+	return &call
+}
+
+// UserAuthRequired sets the value for optional userAuthRequired parameter
+func (c *ChatUnfurlCall) UserAuthRequired(userAuthRequired bool) *ChatUnfurlCall {
+	c.userAuthRequired = userAuthRequired
+	return c
+}
+
+// Values returns the ChatUnfurlCall object as url.Values
+func (c *ChatUnfurlCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	if len(c.channel) <= 0 {
+		return nil, errors.New(`missing required parameter channel`)
+	}
+	v.Set("channel", c.channel)
+
+	if len(c.timestamp) <= 0 {
+		return nil, errors.New(`missing required parameter timestamp`)
+	}
+	v.Set("ts", c.timestamp)
+
+	if len(c.unfurls) <= 0 {
+		return nil, errors.New(`missing required parameter unfurls`)
+	}
+	v.Set("unfurls", c.unfurls)
+
+	if c.userAuthRequired {
+		v.Set("user_auth_required", "true")
+	}
+	return v, nil
+}
+
+// Do executes the call to access chat.unfurl endpoint
+func (c *ChatUnfurlCall) Do(ctx context.Context) error {
+	const endpoint = "chat.unfurl"
+	v, err := c.Values()
+	if err != nil {
+		return err
+	}
+	var res struct {
+		SlackResponse
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return errors.Wrap(err, `failed to post to chat.unfurl`)
+	}
+	if !res.OK {
+		return errors.New(res.Error.String())
+	}
+
+	return nil
 }
 
 // Update creates a ChatUpdateCall object in preparation for accessing the chat.update endpoint
