@@ -243,6 +243,32 @@
     ]
   },
   {
+    "name": "chat.unfurl",
+    "args": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "timestamp",
+        "query_name": "ts",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "unfurls",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "userAuthRequired",
+        "query_name": "user_auth_required",
+        "type": "bool"
+      }
+    ]
+  },
+  {
     "name": "chat.update",
     "return": "ChatResponse",
     "args": [
