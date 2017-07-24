@@ -34,22 +34,35 @@ func (o *option) Value() interface{} {
 }
 
 const (
-	pingIntervalKey = "ping_interval"
+	backoffStrategyKey = "backoff_strategy"
+	pingIntervalKey    = "ping_interval"
 )
 
 func New(cl *slack.Client, options ...Option) *Client {
 	pingInterval := 5 * time.Minute
+	var strategy backoff.BackOff
 	for _, o := range options {
 		switch o.Name() {
 		case pingIntervalKey:
 			pingInterval = o.Value().(time.Duration)
+		case backoffStrategyKey:
+			strategy = o.Value().(backoff.BackOff)
 		}
 	}
 
+	if strategy == nil {
+		expback := backoff.NewExponentialBackOff()
+		expback.InitialInterval = 100 * time.Millisecond
+		expback.MaxInterval = 5 * time.Second
+		expback.MaxElapsedTime = 0
+		strategy = expback
+	}
+
 	return &Client{
-		client:   cl,
-		eventsCh: make(chan *Event),
-		pingInterval: pingInterval,
+		backoffStrategy: strategy,
+		client:          cl,
+		eventsCh:        make(chan *Event),
+		pingInterval:    pingInterval,
 	}
 }
 
@@ -67,6 +80,7 @@ func (c *Client) Run(octx context.Context) error {
 	defer cancel()
 
 	ctx := newRtmCtx(octxwc, c.eventsCh)
+	ctx.backoffStrategy = c.backoffStrategy
 	ctx.pingInterval = c.pingInterval
 	go ctx.run()
 
@@ -104,10 +118,7 @@ func (c *Client) Run(octx context.Context) error {
 
 		var conn *websocket.Conn
 
-		strategy := backoff.NewExponentialBackOff()
-		strategy.InitialInterval = 100 * time.Millisecond
-		strategy.MaxInterval = 5 * time.Second
-		strategy.MaxElapsedTime = 0
+		strategy := ctx.backoffStrategy
 		err := backoff.Retry(func() error {
 			res, err := c.client.RTM().Start().Do(ctx)
 			if err != nil {
@@ -246,11 +257,12 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) error {
 
 type rtmCtx struct {
 	context.Context
-	inbuf        chan *Event
-	msgidCh      chan int
-	outbuf       chan<- *Event
-	pingInterval time.Duration
-	writeTimeout time.Duration
+	backoffStrategy backoff.BackOff
+	inbuf           chan *Event
+	msgidCh         chan int
+	outbuf          chan<- *Event
+	pingInterval    time.Duration
+	writeTimeout    time.Duration
 }
 
 func newRtmCtx(octx context.Context, outch chan<- *Event) *rtmCtx {

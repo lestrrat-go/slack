@@ -3,6 +3,7 @@ package rtm
 import (
 	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/lestrrat/go-slack"
 	"github.com/lestrrat/go-slack/objects"
 )
@@ -10,9 +11,10 @@ import (
 type EventType int
 
 type Client struct {
-	client       *slack.Client
-	eventsCh     chan *Event
-	pingInterval time.Duration
+	backoffStrategy backoff.BackOff
+	client          *slack.Client
+	eventsCh        chan *Event
+	pingInterval    time.Duration
 }
 
 type Event struct {
