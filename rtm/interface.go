@@ -37,7 +37,7 @@ type ChannelCreatedEvent struct {
 
 type ChannelJoinedEvent struct {
 	Channel        *objects.Channel `json:"channel"`
-	EventTimestamp string         `json:"event_ts"`
+	EventTimestamp string           `json:"event_ts"`
 }
 
 // This event is... not in the events list... (as of Apr 3, 2017) https://api.slack.com/events
@@ -91,4 +91,15 @@ type MemberJoinedchannel struct {
 	Channel        string `json:"channel"`
 	ChannelType    string `json:"channel_type"`
 	User           string `json:"user"`
+}
+
+type PongEvent struct {
+	ReplyTo int `json:"reply_to"`
+	Time    int `json:"time""`
+	// TODO exstra parameters
+}
+
+type ErrorEvent struct {
+	Message string `json:"msg"`
+	Code    int    `json:"code"`
 }

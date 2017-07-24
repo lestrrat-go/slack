@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"math"
 	"time"
 
 	"github.com/cenkalti/backoff"
@@ -26,11 +27,36 @@ func (c *Client) Events() <-chan *Event {
 
 // Run starts the RTM run loop.
 func (c *Client) Run(octx context.Context) error {
+	if pdebug.Enabled {
+		pdebug.Printf("rtm client: Run()")
+		defer pdebug.Printf("rtm client: end Run()")
+	}
 	octxwc, cancel := context.WithCancel(octx)
 	defer cancel()
 
 	ctx := newRtmCtx(octxwc, c.eventsCh)
 	go ctx.run()
+
+	// start a message ID generator
+	go func(ctx context.Context, ch chan int) {
+		defer close(ch)
+
+		msgid := 1
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case ch <- int(msgid):
+				// max is defined as int32, just to be small enough to not
+				// overflow the server side (which, we can't know about)
+				if msgid == math.MaxInt32 {
+					msgid = 0
+				} else {
+					msgid++
+				}
+			}
+		}
+	}(ctx, ctx.msgidCh)
 
 	for {
 		select {
@@ -39,7 +65,9 @@ func (c *Client) Run(octx context.Context) error {
 		default:
 		}
 
-		ctx.emit(&Event{typ: ClientConnectingEventType})
+		if err := emitTimeout(ctx, &Event{typ: ClientConnectingEventType}, 5*time.Second); err != nil {
+			return errors.Wrap(err, `failed to emit connecting event`)
+		}
 
 		var conn *websocket.Conn
 
@@ -66,16 +94,15 @@ func (c *Client) Run(octx context.Context) error {
 		}
 
 		ctx.handleConn(conn)
-		// we get here if we manually canceled the context
-		// of if the websocket ReadMessage returned an error
-		ctx.emit(&Event{typ: ClientDisconnectedEventType})
-
 	}
 
 	return nil
 }
 
-func (ctx *rtmCtx) handleConn(conn *websocket.Conn) {
+func (ctx *rtmCtx) handleConn(conn *websocket.Conn) error {
+	// we get here if we manually canceled the context
+	// of if the websocket ReadMessage returned an error
+	defer emitTimeout(ctx, &Event{typ: ClientDisconnectedEventType}, time.Second)
 	defer conn.Close()
 
 	in := make(chan []byte)
@@ -110,10 +137,41 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) {
 		}
 	}(in, conn)
 
+	pingTick := time.NewTicker(5 * time.Minute)
+	var pingMessage struct {
+		ID    int    `json:"id"`
+		Type  string `json:"type"`
+		acked bool
+	}
+	pingMessage.Type = "ping"
+
 	for {
 		select {
 		case <-ctx.Done():
-			return
+			return ctx.Err()
+		case <-pingTick.C:
+			// it's time to ping.
+			if pingMessage.ID != 0 {
+				if !pingMessage.acked {
+					if pdebug.Enabled {
+						pdebug.Printf("websocket proxy: did not get pong in time")
+					}
+					return errors.New("websocket proxy: did not get pong in time") // can't continue
+				}
+			}
+			// Send the ping request, and wait for the pong
+			pingMessage.ID = <-ctx.msgidCh
+			pingMessage.acked = false
+			if pdebug.Enabled {
+				pdebug.Printf("websocket proxy: sending ping %d", pingMessage.ID)
+			}
+			if err := conn.WriteJSON(pingMessage); err != nil {
+				if pdebug.Enabled {
+					pdebug.Printf("websocket proxy: failed to write ping JSON: %s", err)
+				}
+				return errors.Wrap(err, `websocket proxy: failed to write ping JSON`) // can't continue
+			}
+			continue
 		case payload, ok := <-in:
 			if !ok {
 				if pdebug.Enabled {
@@ -121,7 +179,7 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) {
 				}
 				// if the channel is closed, we probably had some
 				// problems in the ReadMessage proxy. bail out
-				return
+				return errors.New(`websocket proxy: detected incoming channel close`)
 			}
 
 			if pdebug.Enabled {
@@ -133,16 +191,30 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) {
 				if pdebug.Enabled {
 					pdebug.Printf("websocket proxy: failed to unmarshal payload: %s", err)
 				}
+				continue
 			}
 
-			ctx.inbuf <- &event
+			// intercept pong replies
+			if pong, ok := event.Data().(*PongEvent); ok {
+				if pong.ReplyTo == pingMessage.ID {
+					if pdebug.Enabled {
+						pdebug.Printf("websocket proxy: got pong for message ID %d", pingMessage.ID)
+					}
+					pingMessage.acked = true
+				}
+				continue
+			}
+
+			emit(ctx, &event)
 		}
 	}
+	return nil
 }
 
 type rtmCtx struct {
 	context.Context
 	inbuf        chan *Event
+	msgidCh      chan int
 	outbuf       chan<- *Event
 	writeTimeout time.Duration
 }
@@ -151,6 +223,7 @@ func newRtmCtx(octx context.Context, outch chan<- *Event) *rtmCtx {
 	return &rtmCtx{
 		Context:      octx,
 		inbuf:        make(chan *Event),
+		msgidCh:      make(chan int),
 		outbuf:       outch,
 		writeTimeout: 500 * time.Millisecond,
 	}
@@ -214,21 +287,41 @@ func (ctx *rtmCtx) run() {
 			events = events[1:]
 		}
 
-		// shink the slice if we're too big
+		// shrink the slice if we're too big
 		if l := len(events); l > 16 && cap(events) > 2*l {
 			events = append([]*Event(nil), events...)
 		}
 	}
 }
 
+func (ctx *rtmCtx) WithTimeout(t time.Duration) (*rtmCtx, func()) {
+	octx, cancel := context.WithTimeout(ctx, t)
+
+	var newCtx rtmCtx
+	newCtx.Context = octx
+	newCtx.inbuf = ctx.inbuf
+	newCtx.msgidCh = ctx.msgidCh
+	newCtx.outbuf = ctx.outbuf
+	newCtx.writeTimeout = ctx.writeTimeout
+
+	return &newCtx, cancel
+}
+
+func emitTimeout(ctx *rtmCtx, e *Event, t time.Duration) error {
+	newCtx, cancel := ctx.WithTimeout(t)
+	defer cancel()
+
+	return emit(newCtx, e)
+}
+
 // emit sends the event e to a channel. This method doesn't "fail" to
 // write because we expect the the proxy loop in run() to read these
 // requests as quickly as possible under normal circumstances
-func (ctx *rtmCtx) emit(e *Event) {
+func emit(ctx *rtmCtx, e *Event) error {
 	select {
 	case <-ctx.Done():
-		return
+		return ctx.Err()
 	case ctx.inbuf <- e:
-		return
+		return nil
 	}
 }

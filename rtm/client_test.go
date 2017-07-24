@@ -3,6 +3,7 @@ package rtm_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/lestrrat/go-slack"
 	"github.com/lestrrat/go-slack/rtm"
@@ -14,7 +15,7 @@ func TestClient(t *testing.T) {
 		return
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	cl := slack.New(slackToken)
@@ -28,11 +29,16 @@ func TestClient(t *testing.T) {
 
 	for {
 		select {
+		case <-ctx.Done():
+			return
 		case err := <-ch:
 			assert.NoError(t, err, "rtm.Run returned an error")
 			return
 		case e := <-rtm.Events():
 			t.Logf("%#v", e)
+			if !assert.NotNil(t, e, "events should not be nil") {
+				return
+			}
 		}
 	}
 }
