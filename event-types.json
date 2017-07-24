@@ -102,6 +102,12 @@
       "rtm" : true
    },
    {
+      "value" : "error",
+      "name" : "ErrorType",
+      "events" : true,
+      "rtm" : true
+   },
+   {
       "rtm" : true,
       "value" : "file_change",
       "name" : "FileChangeType",
@@ -316,6 +322,12 @@
       "name" : "PresenceChangeType",
       "events" : false,
       "value" : "presence_change"
+   },
+   {
+      "value" : "pong",
+      "name" : "PongType",
+      "events" : true,
+      "rtm" : true
    },
    {
       "value" : "reaction_added",

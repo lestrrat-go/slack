@@ -52,6 +52,12 @@ func (e *Event) UnmarshalJSON(data []byte) error {
 	case UserTypingTypeKey:
 		typ = UserTypingType
 		item = &UserTypingEvent{}
+	case PongTypeKey:
+		typ = PongType
+		item = &PongEvent{}
+	case ErrorTypeKey:
+		typ = ErrorType
+		item = &ErrorEvent{}
 	default:
 		return errors.Errorf("unknown RTM event type: %s", m["type"])
 	}

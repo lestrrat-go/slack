@@ -5,6 +5,7 @@ use JSON;
 # https://api.slack.com/events/api
 # Slack doesn't allow us to scrape this page. bummer.
 # Data as of Apr 3, 2017
+# Note: need to add Pong and Error types. currently added manually
 my $content = do { local $/; <DATA> };
 
 # This is really silly, but it works for now

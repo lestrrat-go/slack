@@ -21,6 +21,7 @@ const (
 	DndUpdatedUserTypeKey        = "dnd_updated_user"
 	EmailDomainChangedTypeKey    = "email_domain_changed"
 	EmojiChangedTypeKey          = "emoji_changed"
+	ErrorTypeKey                 = "error"
 	FileChangeTypeKey            = "file_change"
 	FileCommentAddedTypeKey      = "file_comment_added"
 	FileCommentDeletedTypeKey    = "file_comment_deleted"
@@ -52,6 +53,7 @@ const (
 	PinRemovedTypeKey            = "pin_removed"
 	PrefChangeTypeKey            = "pref_change"
 	PresenceChangeTypeKey        = "presence_change"
+	PongTypeKey                  = "pong"
 	ReactionAddedTypeKey         = "reaction_added"
 	ReactionRemovedTypeKey       = "reaction_removed"
 	ReconnectURLTypeKey          = "reconnect_url"
@@ -94,6 +96,7 @@ const (
 	DndUpdatedUserType
 	EmailDomainChangedType
 	EmojiChangedType
+	ErrorType
 	FileChangeType
 	FileCommentAddedType
 	FileCommentDeletedType
@@ -125,6 +128,7 @@ const (
 	PinRemovedType
 	PrefChangeType
 	PresenceChangeType
+	PongType
 	ReactionAddedType
 	ReactionRemovedType
 	ReconnectURLType
