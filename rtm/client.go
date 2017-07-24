@@ -14,10 +14,42 @@ import (
 	"github.com/pkg/errors"
 )
 
-func New(cl *slack.Client) *Client {
+// Option defines an interface of optional parameters to the
+// `rtm.New` constructor.
+type Option interface {
+	Name() string
+	Value() interface{}
+}
+
+type option struct {
+	name  string
+	value interface{}
+}
+
+func (o *option) Name() string {
+	return o.name
+}
+func (o *option) Value() interface{} {
+	return o.value
+}
+
+const (
+	pingIntervalKey = "ping_interval"
+)
+
+func New(cl *slack.Client, options ...Option) *Client {
+	pingInterval := 5 * time.Minute
+	for _, o := range options {
+		switch o.Name() {
+		case pingIntervalKey:
+			pingInterval = o.Value().(time.Duration)
+		}
+	}
+
 	return &Client{
 		client:   cl,
 		eventsCh: make(chan *Event),
+		pingInterval: pingInterval,
 	}
 }
 
@@ -35,6 +67,7 @@ func (c *Client) Run(octx context.Context) error {
 	defer cancel()
 
 	ctx := newRtmCtx(octxwc, c.eventsCh)
+	ctx.pingInterval = c.pingInterval
 	go ctx.run()
 
 	// start a message ID generator
@@ -137,7 +170,7 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) error {
 		}
 	}(in, conn)
 
-	pingTick := time.NewTicker(5 * time.Minute)
+	pingTick := time.NewTicker(ctx.pingInterval)
 	var pingMessage struct {
 		ID    int    `json:"id"`
 		Type  string `json:"type"`
@@ -216,6 +249,7 @@ type rtmCtx struct {
 	inbuf        chan *Event
 	msgidCh      chan int
 	outbuf       chan<- *Event
+	pingInterval time.Duration
 	writeTimeout time.Duration
 }
 

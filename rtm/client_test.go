@@ -19,7 +19,7 @@ func TestClient(t *testing.T) {
 	defer cancel()
 
 	cl := slack.New(slackToken)
-	rtm := rtm.New(cl)
+	rtm := rtm.New(cl, rtm.WithPingInterval(time.Second))
 
 	ch := make(chan error)
 	go func(ch chan error) {
