@@ -51,9 +51,9 @@ const (
 	MessageTypeKey               = "message"
 	PinAddedTypeKey              = "pin_added"
 	PinRemovedTypeKey            = "pin_removed"
-	PongTypeKey                  = "pong"
 	PrefChangeTypeKey            = "pref_change"
 	PresenceChangeTypeKey        = "presence_change"
+	PongTypeKey                  = "pong"
 	ReactionAddedTypeKey         = "reaction_added"
 	ReactionRemovedTypeKey       = "reaction_removed"
 	ReconnectURLTypeKey          = "reconnect_url"
@@ -126,9 +126,9 @@ const (
 	MessageType
 	PinAddedType
 	PinRemovedType
-	PongType
 	PrefChangeType
 	PresenceChangeType
+	PongType
 	ReactionAddedType
 	ReactionRemovedType
 	ReconnectURLType
