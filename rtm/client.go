@@ -345,9 +345,11 @@ func (ctx *rtmCtx) WithTimeout(t time.Duration) (*rtmCtx, func()) {
 
 	var newCtx rtmCtx
 	newCtx.Context = octx
+	newCtx.backoffStrategy = ctx.backoffStrategy
 	newCtx.inbuf = ctx.inbuf
 	newCtx.msgidCh = ctx.msgidCh
 	newCtx.outbuf = ctx.outbuf
+	newCtx.pingInterval = ctx.pingInterval
 	newCtx.writeTimeout = ctx.writeTimeout
 
 	return &newCtx, cancel
