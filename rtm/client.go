@@ -14,10 +14,55 @@ import (
 	"github.com/pkg/errors"
 )
 
-func New(cl *slack.Client) *Client {
+// Option defines an interface of optional parameters to the
+// `rtm.New` constructor.
+type Option interface {
+	Name() string
+	Value() interface{}
+}
+
+type option struct {
+	name  string
+	value interface{}
+}
+
+func (o *option) Name() string {
+	return o.name
+}
+func (o *option) Value() interface{} {
+	return o.value
+}
+
+const (
+	backoffStrategyKey = "backoff_strategy"
+	pingIntervalKey    = "ping_interval"
+)
+
+func New(cl *slack.Client, options ...Option) *Client {
+	pingInterval := 5 * time.Minute
+	var strategy backoff.BackOff
+	for _, o := range options {
+		switch o.Name() {
+		case pingIntervalKey:
+			pingInterval = o.Value().(time.Duration)
+		case backoffStrategyKey:
+			strategy = o.Value().(backoff.BackOff)
+		}
+	}
+
+	if strategy == nil {
+		expback := backoff.NewExponentialBackOff()
+		expback.InitialInterval = 100 * time.Millisecond
+		expback.MaxInterval = 5 * time.Second
+		expback.MaxElapsedTime = 0
+		strategy = expback
+	}
+
 	return &Client{
-		client:   cl,
-		eventsCh: make(chan *Event),
+		backoffStrategy: strategy,
+		client:          cl,
+		eventsCh:        make(chan *Event),
+		pingInterval:    pingInterval,
 	}
 }
 
@@ -35,6 +80,8 @@ func (c *Client) Run(octx context.Context) error {
 	defer cancel()
 
 	ctx := newRtmCtx(octxwc, c.eventsCh)
+	ctx.backoffStrategy = c.backoffStrategy
+	ctx.pingInterval = c.pingInterval
 	go ctx.run()
 
 	// start a message ID generator
@@ -71,10 +118,7 @@ func (c *Client) Run(octx context.Context) error {
 
 		var conn *websocket.Conn
 
-		strategy := backoff.NewExponentialBackOff()
-		strategy.InitialInterval = 100 * time.Millisecond
-		strategy.MaxInterval = 5 * time.Second
-		strategy.MaxElapsedTime = 0
+		strategy := ctx.backoffStrategy
 		err := backoff.Retry(func() error {
 			res, err := c.client.RTM().Start().Do(ctx)
 			if err != nil {
@@ -137,7 +181,7 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) error {
 		}
 	}(in, conn)
 
-	pingTick := time.NewTicker(5 * time.Minute)
+	pingTick := time.NewTicker(ctx.pingInterval)
 	var pingMessage struct {
 		ID    int    `json:"id"`
 		Type  string `json:"type"`
@@ -213,10 +257,12 @@ func (ctx *rtmCtx) handleConn(conn *websocket.Conn) error {
 
 type rtmCtx struct {
 	context.Context
-	inbuf        chan *Event
-	msgidCh      chan int
-	outbuf       chan<- *Event
-	writeTimeout time.Duration
+	backoffStrategy backoff.BackOff
+	inbuf           chan *Event
+	msgidCh         chan int
+	outbuf          chan<- *Event
+	pingInterval    time.Duration
+	writeTimeout    time.Duration
 }
 
 func newRtmCtx(octx context.Context, outch chan<- *Event) *rtmCtx {
@@ -299,9 +345,11 @@ func (ctx *rtmCtx) WithTimeout(t time.Duration) (*rtmCtx, func()) {
 
 	var newCtx rtmCtx
 	newCtx.Context = octx
+	newCtx.backoffStrategy = ctx.backoffStrategy
 	newCtx.inbuf = ctx.inbuf
 	newCtx.msgidCh = ctx.msgidCh
 	newCtx.outbuf = ctx.outbuf
+	newCtx.pingInterval = ctx.pingInterval
 	newCtx.writeTimeout = ctx.writeTimeout
 
 	return &newCtx, cancel
