@@ -187,7 +187,7 @@
     "return": "ChatResponse",
     "args": [
       {
-	"name": "asUser",
+        "name": "asUser",
         "query_name": "as_user",
         "type": "bool"
       },
