@@ -534,7 +534,7 @@ func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) 
 	}
 	var res struct {
 		SlackResponse
-		objects.ChannelList
+		objects.ChannelList `json:"channels"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.list`)
