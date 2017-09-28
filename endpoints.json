@@ -96,6 +96,11 @@
         "name": "channel",
         "type": "string",
         "required": true
+      },
+      {
+        "name": "includeLocale",
+        "query_name": "include_locale",
+        "type": "bool"
       }
     ]
   },
@@ -161,8 +166,74 @@
     "json": "channels",
     "args": [
       {
-        "name": "exclArchived",
+        "name": "excludeArchive",
+        "query_name": "exclude_archive",
+        "comment": "Exclude archived channels",
         "type": "bool"
+      },
+      {
+        "name": "excludeMembers",
+        "query_name": "exclude_members",
+        "comment": "Exclude the list of members in channels",
+        "type": "bool"
+      },
+      {
+        "name": "limit",
+        "type": "int"
+      }
+    ]
+  },
+  {
+    "name": "channels.mark",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "timestamp",
+        "query_name": "ts",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "channels.rename",
+    "return": "objects.Channel",
+    "json": "channel",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "name",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "validate",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "channels.replies",
+    "return": "objects.MessageList",
+    "json": "messages",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "threadTimestamp",
+        "query_name": "thread_ts",
+        "required": true,
+        "type": "string"
       }
     ]
   },
@@ -178,6 +249,33 @@
       },
       {
         "name": "purpose",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "channels.setTopic",
+    "return": "string",
+    "json": "topic",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "topic",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "channels.unarchive",
+    "args": [
+      {
+        "name": "channel",
         "required": true,
         "type": "string"
       }

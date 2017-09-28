@@ -84,8 +84,8 @@ type expectedArg struct {
 func nilcheck(_ []string) error { return nil }
 func newArg(name string, check func([]string) error) *expectedArg {
 	return &expectedArg{
-		name:     name,
-		check:    check,
+		name:  name,
+		check: check,
 	}
 }
 func intArg(name string) *expectedArg {
@@ -170,12 +170,18 @@ func newDummyServer() *dummyServer {
 	mux.HandleFunc("/api/channels.archive", required(tokenArg), required(channelArg))
 	mux.HandleFunc("/api/channels.create", required(tokenArg), required(nameArg), newArg("validate", nil))
 	mux.HandleFunc("/api/channels.history", required(tokenArg), required(channelArg), intArg("count"), newArg("includesive", nil), newArg("latest", nil), newArg("oldest", nil), newArg("ts", nil), newArg("unreads", nil))
-	mux.HandleFunc("/api/channels.info", required(tokenArg), required(channelArg))
+	mux.HandleFunc("/api/channels.info", required(tokenArg), required(channelArg), newArg("include_locale", nil))
 	mux.HandleFunc("/api/channels.invite", required(tokenArg), required(channelArg), required(userArg))
 	mux.HandleFunc("/api/channels.kick", required(tokenArg), required(channelArg), required(userArg))
 	mux.HandleFunc("/api/channels.leave", required(tokenArg), required(channelArg))
+	mux.HandleFunc("/api/channels.list", required(tokenArg), newArg("exclude_archived", nil), newArg("exclude_members", nil), newArg("limit", nil))
+	mux.HandleFunc("/api/channels.mark", required(tokenArg), required(channelArg), newArg("ts", nil))
+	mux.HandleFunc("/api/channels.rename", required(tokenArg), required(channelArg), required(newArg("name", nil)), newArg("validate", nil))
+	mux.HandleFunc("/api/channels.replies", required(tokenArg), required(channelArg), required(newArg("thread_ts", nil)))
+	mux.HandleFunc("/api/channels.setTopic", required(tokenArg), required(channelArg), required(newArg("topic", nil)))
+	mux.HandleFunc("/api/channels.unarchive", required(tokenArg), required(channelArg))
 	mux.HandleFunc("/api/emoji.list", required(tokenArg))
-	mux.HandleFunc("/api/oauth.access", 
+	mux.HandleFunc("/api/oauth.access",
 		required(newArg("client_id", nil)),
 		required(newArg("client_secret", nil)),
 		required(newArg("code", nil)),
