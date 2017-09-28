@@ -220,13 +220,16 @@ func newDummyServer() *dummyServer {
 		newArg("timestamp", nil),
 	)
 	mux.HandleFunc("/api/rtm.start", required(tokenArg))
+	mux.HandleFunc("/api/users.deletePhoto", required(tokenArg))
 	mux.HandleFunc("/api/users.getPresence",
 		required(tokenArg),
 		required(userArg),
 	)
+	mux.HandleFunc("/api/users.identity", required(tokenArg))
 	mux.HandleFunc("/api/users.info",
 		required(tokenArg),
 		required(userArg),
+		newArg("include_locale", nil),
 	)
 	mux.HandleFunc("/api/users.list",
 		required(tokenArg),

@@ -372,7 +372,7 @@
     "return": "ChatResponse",
     "args": [
       {
-	"name": "asUser",
+        "name": "asUser",
         "query_name": "as_user",
         "type": "bool"
       },
@@ -409,7 +409,7 @@
     "return": "ChatResponse",
     "args": [
       {
-	"name": "asUser",
+        "name": "asUser",
         "query_name": "as_user",
         "type": "bool"
       },
@@ -580,6 +580,9 @@
     "group": "RTM"
   },
   {
+    "name": "users.deletePhoto"
+  },
+  {
     "name": "users.getPresence",
     "return": "objects.UserPresence",
     "args": [
@@ -591,21 +594,31 @@
     ]
   },
   {
-    "name": "users.info",
-    "return": "objects.User",
-    "json": "user",
-    "args": [
-      {
-        "name": "user",
-        "type": "string",
-        "required": true
-      }
+    "name": "users.identity",
+    "return": [
+      "objects.UserProfile",
+      "objects.Team"
+    ],
+    "json": [
+      "user",
+      "team"
     ]
   },
   {
-    "name": "users.identity",
-    "return": ["objects.UserProfile", "objects.Team"],
-    "json": ["user", "team"]
+    "name": "users.info",
+    "return": "objects.User",
+    "args": [
+      {
+        "name": "user",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "includeLocale",
+        "query_name": "include_locale",
+        "type": "bool"
+      }
+    ]
   },
   {
     "name": "users.list",
@@ -614,6 +627,15 @@
     "args": [
       {
         "name": "presence",
+        "type": "bool"
+      },
+      {
+        "name": "limit",
+        "type": "int"
+      },
+      {
+        "name": "includeLocale",
+        "query_name": "include_locale",
         "type": "bool"
       }
     ]

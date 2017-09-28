@@ -14,6 +14,11 @@ import (
 var _ = strconv.Itoa
 var _ = objects.EpochTime(0)
 
+// UsersDeletePhotoCall is created by UsersService.DeletePhoto method call
+type UsersDeletePhotoCall struct {
+	service *UsersService
+}
+
 // UsersGetPresenceCall is created by UsersService.GetPresence method call
 type UsersGetPresenceCall struct {
 	service *UsersService
@@ -27,14 +32,17 @@ type UsersIdentityCall struct {
 
 // UsersInfoCall is created by UsersService.Info method call
 type UsersInfoCall struct {
-	service *UsersService
-	user    string
+	service       *UsersService
+	includeLocale bool
+	user          string
 }
 
 // UsersListCall is created by UsersService.List method call
 type UsersListCall struct {
-	service  *UsersService
-	presence bool
+	service       *UsersService
+	includeLocale bool
+	limit         int
+	presence      bool
 }
 
 // UsersSetActiveCall is created by UsersService.SetActive method call
@@ -46,6 +54,40 @@ type UsersSetActiveCall struct {
 type UsersSetPresenceCall struct {
 	service  *UsersService
 	presence string
+}
+
+// DeletePhoto creates a UsersDeletePhotoCall object in preparation for accessing the users.deletePhoto endpoint
+func (s *UsersService) DeletePhoto() *UsersDeletePhotoCall {
+	var call UsersDeletePhotoCall
+	call.service = s
+	return &call
+}
+
+// Values returns the UsersDeletePhotoCall object as url.Values
+func (c *UsersDeletePhotoCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+	return v, nil
+}
+
+// Do executes the call to access users.deletePhoto endpoint
+func (c *UsersDeletePhotoCall) Do(ctx context.Context) error {
+	const endpoint = "users.deletePhoto"
+	v, err := c.Values()
+	if err != nil {
+		return err
+	}
+	var res struct {
+		SlackResponse
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return errors.Wrap(err, `failed to post to users.deletePhoto`)
+	}
+	if !res.OK {
+		return errors.New(res.Error.String())
+	}
+
+	return nil
 }
 
 // GetPresence creates a UsersGetPresenceCall object in preparation for accessing the users.getPresence endpoint
@@ -133,10 +175,20 @@ func (s *UsersService) Info(user string) *UsersInfoCall {
 	return &call
 }
 
+// IncludeLocale sets the value for optional includeLocale parameter
+func (c *UsersInfoCall) IncludeLocale(includeLocale bool) *UsersInfoCall {
+	c.includeLocale = includeLocale
+	return c
+}
+
 // Values returns the UsersInfoCall object as url.Values
 func (c *UsersInfoCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
+
+	if c.includeLocale {
+		v.Set("include_locale", "true")
+	}
 
 	if len(c.user) <= 0 {
 		return nil, errors.New(`missing required parameter user`)
@@ -154,7 +206,7 @@ func (c *UsersInfoCall) Do(ctx context.Context) (*objects.User, error) {
 	}
 	var res struct {
 		SlackResponse
-		*objects.User `json:"user"`
+		*objects.User
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.info`)
@@ -173,6 +225,18 @@ func (s *UsersService) List() *UsersListCall {
 	return &call
 }
 
+// IncludeLocale sets the value for optional includeLocale parameter
+func (c *UsersListCall) IncludeLocale(includeLocale bool) *UsersListCall {
+	c.includeLocale = includeLocale
+	return c
+}
+
+// Limit sets the value for optional limit parameter
+func (c *UsersListCall) Limit(limit int) *UsersListCall {
+	c.limit = limit
+	return c
+}
+
 // Presence sets the value for optional presence parameter
 func (c *UsersListCall) Presence(presence bool) *UsersListCall {
 	c.presence = presence
@@ -183,6 +247,14 @@ func (c *UsersListCall) Presence(presence bool) *UsersListCall {
 func (c *UsersListCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
+
+	if c.includeLocale {
+		v.Set("include_locale", "true")
+	}
+
+	if c.limit > 0 {
+		v.Set("limit", strconv.Itoa(c.limit))
+	}
 
 	if c.presence {
 		v.Set("presence", "true")
