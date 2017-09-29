@@ -181,6 +181,89 @@ func newDummyServer() *dummyServer {
 	mux.HandleFunc("/api/channels.setTopic", required(tokenArg), required(channelArg), required(newArg("topic", nil)))
 	mux.HandleFunc("/api/channels.unarchive", required(tokenArg), required(channelArg))
 	mux.HandleFunc("/api/emoji.list", required(tokenArg))
+
+	// groups
+	mux.HandleFunc("/api/groups.archive",
+		required(tokenArg),
+		required(channelArg),
+	)
+	mux.HandleFunc("/api/groups.create",
+		required(tokenArg),
+		required(newArg("name", nil)),
+		newArg("validate", nil),
+	)
+	mux.HandleFunc("/api/groups.createChild",
+		required(tokenArg),
+		required(channelArg),
+	)
+	mux.HandleFunc("/api/groups.history",
+		required(tokenArg),
+		required(channelArg),
+		newArg("count", nil),
+		newArg("inclusive", nil),
+		newArg("latest", nil),
+		newArg("oldest", nil),
+		newArg("unreads", nil),
+	)
+	mux.HandleFunc("/api/groups.info",
+		required(tokenArg),
+		required(channelArg),
+		newArg("include_locale", nil),
+	)
+	mux.HandleFunc("/api/groups.invite",
+		required(tokenArg),
+		required(channelArg),
+		required(newArg("user", nil)),
+	)
+	mux.HandleFunc("/api/groups.kick",
+		required(tokenArg),
+		required(channelArg),
+		required(newArg("user", nil)),
+	)
+	mux.HandleFunc("/api/groups.leave",
+		required(tokenArg),
+		required(channelArg),
+	)
+	mux.HandleFunc("/api/groups.list",
+		required(tokenArg),
+		newArg("exclude_archived", nil),
+		newArg("exclude_members", nil),
+	)
+	mux.HandleFunc("/api/groups.mark",
+		required(tokenArg),
+		required(channelArg),
+		required(newArg("ts", nil)),
+	)
+	mux.HandleFunc("/api/groups.open",
+		required(tokenArg),
+		required(channelArg),
+	)
+	mux.HandleFunc("/api/groups.rename",
+		required(tokenArg),
+		required(channelArg),
+		required(newArg("name", nil)),
+		newArg("validate", nil),
+	)
+	mux.HandleFunc("/api/groups.replies",
+		required(tokenArg),
+		required(channelArg),
+		newArg("thread_ts", nil),
+	)
+	mux.HandleFunc("/api/groups.setPurpose",
+		required(tokenArg),
+		required(channelArg),
+		newArg("purpose", nil),
+	)
+	mux.HandleFunc("/api/groups.setTopic",
+		required(tokenArg),
+		required(channelArg),
+		newArg("topic", nil),
+	)
+	mux.HandleFunc("/api/groups.unarchive",
+		required(tokenArg),
+		required(channelArg),
+	)
+
 	mux.HandleFunc("/api/oauth.access",
 		required(newArg("client_id", nil)),
 		required(newArg("client_secret", nil)),
@@ -220,6 +303,55 @@ func newDummyServer() *dummyServer {
 		newArg("timestamp", nil),
 	)
 	mux.HandleFunc("/api/rtm.start", required(tokenArg))
+
+	// usergroups
+	mux.HandleFunc("/api/usergroups.create",
+		required(tokenArg),
+		required(newArg("name", nil)),
+		newArg("channels", nil),
+		newArg("description", nil),
+		newArg("handle", nil),
+		newArg("include_count", nil),
+	)
+	mux.HandleFunc("/api/usergroups.disable",
+		required(tokenArg),
+		required(newArg("usergroup", nil)),
+		newArg("include_count", nil),
+	)
+	mux.HandleFunc("/api/usergroups.enable",
+		required(tokenArg),
+		required(newArg("usergroup", nil)),
+		newArg("include_count", nil),
+	)
+	mux.HandleFunc("/api/usergroups.list",
+		required(tokenArg),
+		newArg("include_count", nil),
+		newArg("include_disabled", nil),
+		newArg("include_users", nil),
+	)
+	mux.HandleFunc("/api/usergroups.update",
+		required(tokenArg),
+		required(newArg("usergroup", nil)),
+		newArg("channels", nil),
+		newArg("description", nil),
+		newArg("handle", nil),
+		newArg("include_count", nil),
+		newArg("name", nil),
+	)
+
+	// usergroups.users
+	mux.HandleFunc("/api/usergroups.users.list",
+		required(tokenArg),
+		required(newArg("usergroup", nil)),
+		newArg("include_disabled", nil),
+	)
+	mux.HandleFunc("/api/usergroups.users.update",
+		required(tokenArg),
+		required(newArg("usergroup", nil)),
+		required(newArg("users", nil)),
+		newArg("include_count", nil),
+	)
+
 	mux.HandleFunc("/api/users.deletePhoto", required(tokenArg))
 	mux.HandleFunc("/api/users.getPresence",
 		required(tokenArg),
@@ -259,4 +391,20 @@ func newDummyServer() *dummyServer {
 
 func newSlackWithDummy(s *httptest.Server) *slack.Client {
 	return slack.New("random-token", slack.WithAPIEndpoint(s.URL+"/api/"))
+}
+
+// testClient is a test helper for creating a new test server, context, client,
+// and closing function.
+func testClient(tb testing.TB) (context.Context, *slack.Client, func()) {
+	tb.Helper()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	s := httptest.NewServer(newDummyServer())
+	client := newSlackWithDummy(s)
+
+	return ctx, client, func() {
+		cancel()
+		s.Close()
+	}
 }

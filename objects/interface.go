@@ -20,17 +20,25 @@ type Conversation struct {
 	UnreadCountDisplay int       `json:"unread_count_display,omitempty"`
 }
 
-type GroupConversation struct {
+// Group contains information about a private channel. Private channels were
+// once known as "private groups."
+type Group struct {
 	Conversation
-	Creator       string   `json:"creator"`
-	IsArchived    bool     `json:"is_archived"`
-	Members       []string `json:"members"`
-	Name          string   `json:"name"`
-	NumMembers    int      `json:"num_members,omitempty"`
-	PreviousNames []string `json:"previous_names"`
-	Purpose       Purpose  `json:"purpose"`
-	Topic         Topic    `json:"topic"`
+	Creator        string   `json:"creator"`
+	IsArchived     bool     `json:"is_archived"`
+	IsGroup        bool     `json:"is_group"`
+	IsMPIM         bool     `json:"is_mpim"`
+	Members        []string `json:"members"`
+	Name           string   `json:"name"`
+	NameNormalized string   `json:"name_normalized"`
+	NumMembers     int      `json:"num_members,omitempty"`
+	PreviousNames  []string `json:"previous_names"`
+	Purpose        Purpose  `json:"purpose"`
+	Topic          Topic    `json:"topic"`
 }
+
+// GroupList is a list of groups.
+type GroupList []*Group
 
 type Purpose struct {
 	Value   string    `json:"value"`
@@ -83,7 +91,7 @@ type Attachment struct {
 type AttachmentList []*Attachment
 
 type Channel struct {
-	GroupConversation
+	Group
 	IsChannel   bool `json:"is_channel"`
 	IsGeneral   bool `json:"is_general"`
 	IsMember    bool `json:"is_member"`
@@ -287,7 +295,6 @@ type Team struct {
 	Plan              string                 `json:"plan"`
 }
 
-type Group interface{}
 type Bot struct {
 	ID      string `json:"id"`
 	AppID   string `json:"app_id"`
@@ -379,3 +386,48 @@ type OptionGroup struct {
 	Options OptionList `json:"options"`
 }
 type OptionGroupList []*OptionGroup
+
+type ThreadInfo struct {
+	Complete bool `json:"complete"`
+	Count    int  `json:"count"`
+}
+
+// Usergroup represents a single UserGroup (like @accounting or @marketing).
+// This should not be confused with private channels or multi-person messages.
+// This is an alias that points to a collection of users and/or channels for
+// notification purposes.
+type Usergroup struct {
+	AutoProvision       bool            `json:"auto_provision"`
+	AutoType            string          `json:"auto_type"`
+	CreatedBy           string          `json:"created_by"`
+	DateCreate          EpochTime       `json:"date_create"`
+	DateDelete          EpochTime       `json:"date_delete"`
+	DateUpdate          EpochTime       `json:"date_update"`
+	DeletedBy           string          `json:"deleted_by"`
+	Description         string          `json:"description"`
+	EnterpriseSubteamID string          `json:"enterprise_subteam_id"`
+	Handle              string          `json:"handle"`
+	ID                  string          `json:"id"`
+	IsExternal          bool            `json:"is_external"`
+	IsSubteam           bool            `json:"is_subteam"`
+	IsUsergroup         bool            `json:"is_usergroup"`
+	Name                string          `json:"name"`
+	Prefs               *UsergroupPrefs `json:"prefs"`
+	TeamID              string          `json:"team_id"`
+	UpdatedBy           string          `json:"updated_by"`
+	Users               []string        `json:"users"`
+	UserCount           int             `json:"user_count"`
+}
+
+// UsergroupList is a list of UserGroup objects.
+type UsergroupList []*Usergroup
+
+// UsergroupPrefs is the list of preferences for channels and groups for a given
+// Usergroup.
+type UsergroupPrefs struct {
+	Channels []string `json:"channels"`
+	Groups   []string `json:"groups"`
+}
+
+// UsergroupUsersList is the list of users in a given Usergroup.
+type UsergroupUsersList []string

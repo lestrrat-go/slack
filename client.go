@@ -76,17 +76,20 @@ func New(token string, options ...Option) *Client {
 		logger:   logger,
 	}
 	return &Client{
-		auth:         &AuthService{client: wrappedcl, token: token},
-		bots:         &BotsService{client: wrappedcl, token: token},
-		channels:     &ChannelsService{client: wrappedcl, token: token},
-		chat:         &ChatService{client: wrappedcl, token: token},
-		emoji:        &EmojiService{client: wrappedcl, token: token},
-		oauth:        &OAuthService{client: wrappedcl},
-		reactions:    &ReactionsService{client: wrappedcl, token: token},
-		rtm:          &RTMService{client: wrappedcl, token: token},
-		users:        &UsersService{client: wrappedcl, token: token},
-		usersProfile: &UsersProfileService{client: wrappedcl, token: token},
-		debug:        debug,
+		auth:            &AuthService{client: wrappedcl, token: token},
+		bots:            &BotsService{client: wrappedcl, token: token},
+		channels:        &ChannelsService{client: wrappedcl, token: token},
+		chat:            &ChatService{client: wrappedcl, token: token},
+		emoji:           &EmojiService{client: wrappedcl, token: token},
+		groups:          &GroupsService{client: wrappedcl, token: token},
+		oauth:           &OAuthService{client: wrappedcl},
+		reactions:       &ReactionsService{client: wrappedcl, token: token},
+		rtm:             &RTMService{client: wrappedcl, token: token},
+		users:           &UsersService{client: wrappedcl, token: token},
+		usersProfile:    &UsersProfileService{client: wrappedcl, token: token},
+		usergroups:      &UsergroupsService{client: wrappedcl, token: token},
+		usergroupsUsers: &UsergroupsUsersService{client: wrappedcl, token: token},
+		debug:           debug,
 	}
 }
 
@@ -115,6 +118,11 @@ func (c *Client) Emoji() *EmojiService {
 	return c.emoji
 }
 
+// Groups returns the Service object for `emoji.*` endpoints
+func (c *Client) Groups() *GroupsService {
+	return c.groups
+}
+
 // OAuth returns the Service object for `oauth.*` endpoints
 func (c *Client) OAuth() *OAuthService {
 	return c.oauth
@@ -138,6 +146,16 @@ func (c *Client) Users() *UsersService {
 // UsersProfile returns the Service object for `users.profile.*` endpoints
 func (c *Client) UsersProfile() *UsersProfileService {
 	return c.usersProfile
+}
+
+// Usergroups returns the Service object for `usergroups.*` endpoints
+func (c *Client) Usergroups() *UsergroupsService {
+	return c.usergroups
+}
+
+// UsergroupsUsers returns the Service object for `usergroups.users.*` endpoints
+func (c *Client) UsergroupsUsers() *UsergroupsUsersService {
+	return c.usergroupsUsers
 }
 
 type httpClient struct {
