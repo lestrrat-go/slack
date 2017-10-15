@@ -3,7 +3,7 @@ package events
 import (
 	"encoding/json"
 
-	"github.com/nlopes/slack"
+	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
@@ -30,7 +30,7 @@ func (p *eventUnmarshalProxy) Populate(e *Event) error {
 	// TODO: Add more types
 	switch p.Type {
 	case MessageChannelsType, MessageGroupsType, MessageImType, MessageMpimType:
-		item = &slack.Message{}
+		item = &objects.Message{}
 	default:
 		return errors.Errorf("unknown event type: %s", p.Type)
 	}
