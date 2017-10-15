@@ -41,8 +41,9 @@ type ChannelsHistoryCall struct {
 
 // ChannelsInfoCall is created by ChannelsService.Info method call
 type ChannelsInfoCall struct {
-	service *ChannelsService
-	channel string
+	service       *ChannelsService
+	channel       string
+	includeLocale bool
 }
 
 // ChannelsInviteCall is created by ChannelsService.Invite method call
@@ -74,8 +75,32 @@ type ChannelsLeaveCall struct {
 
 // ChannelsListCall is created by ChannelsService.List method call
 type ChannelsListCall struct {
-	service      *ChannelsService
-	exclArchived bool
+	service        *ChannelsService
+	excludeArchive bool // Exclude archived channels
+	excludeMembers bool // Exclude the list of members in channels
+	limit          int
+}
+
+// ChannelsMarkCall is created by ChannelsService.Mark method call
+type ChannelsMarkCall struct {
+	service   *ChannelsService
+	channel   string
+	timestamp string
+}
+
+// ChannelsRenameCall is created by ChannelsService.Rename method call
+type ChannelsRenameCall struct {
+	service  *ChannelsService
+	channel  string
+	name     string
+	validate bool
+}
+
+// ChannelsRepliesCall is created by ChannelsService.Replies method call
+type ChannelsRepliesCall struct {
+	service         *ChannelsService
+	channel         string
+	threadTimestamp string
 }
 
 // ChannelsSetPurposeCall is created by ChannelsService.SetPurpose method call
@@ -83,6 +108,19 @@ type ChannelsSetPurposeCall struct {
 	service *ChannelsService
 	channel string
 	purpose string
+}
+
+// ChannelsSetTopicCall is created by ChannelsService.SetTopic method call
+type ChannelsSetTopicCall struct {
+	service *ChannelsService
+	channel string
+	topic   string
+}
+
+// ChannelsUnarchiveCall is created by ChannelsService.Unarchive method call
+type ChannelsUnarchiveCall struct {
+	service *ChannelsService
+	channel string
 }
 
 // Archive creates a ChannelsArchiveCall object in preparation for accessing the channels.archive endpoint
@@ -284,6 +322,12 @@ func (s *ChannelsService) Info(channel string) *ChannelsInfoCall {
 	return &call
 }
 
+// IncludeLocale sets the value for optional includeLocale parameter
+func (c *ChannelsInfoCall) IncludeLocale(includeLocale bool) *ChannelsInfoCall {
+	c.includeLocale = includeLocale
+	return c
+}
+
 // Values returns the ChannelsInfoCall object as url.Values
 func (c *ChannelsInfoCall) Values() (url.Values, error) {
 	v := url.Values{}
@@ -293,6 +337,10 @@ func (c *ChannelsInfoCall) Values() (url.Values, error) {
 		return nil, errors.New(`missing required parameter channel`)
 	}
 	v.Set("channel", c.channel)
+
+	if c.includeLocale {
+		v.Set("include_locale", "true")
+	}
 	return v, nil
 }
 
@@ -508,9 +556,21 @@ func (s *ChannelsService) List() *ChannelsListCall {
 	return &call
 }
 
-// ExclArchived sets the value for optional exclArchived parameter
-func (c *ChannelsListCall) ExclArchived(exclArchived bool) *ChannelsListCall {
-	c.exclArchived = exclArchived
+// ExcludeArchive sets the value for optional excludeArchive parameter
+func (c *ChannelsListCall) ExcludeArchive(excludeArchive bool) *ChannelsListCall {
+	c.excludeArchive = excludeArchive
+	return c
+}
+
+// ExcludeMembers sets the value for optional excludeMembers parameter
+func (c *ChannelsListCall) ExcludeMembers(excludeMembers bool) *ChannelsListCall {
+	c.excludeMembers = excludeMembers
+	return c
+}
+
+// Limit sets the value for optional limit parameter
+func (c *ChannelsListCall) Limit(limit int) *ChannelsListCall {
+	c.limit = limit
 	return c
 }
 
@@ -519,8 +579,16 @@ func (c *ChannelsListCall) Values() (url.Values, error) {
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if c.exclArchived {
-		v.Set("exclArchived", "true")
+	if c.excludeArchive {
+		v.Set("exclude_archive", "true")
+	}
+
+	if c.excludeMembers {
+		v.Set("exclude_members", "true")
+	}
+
+	if c.limit > 0 {
+		v.Set("limit", strconv.Itoa(c.limit))
 	}
 	return v, nil
 }
@@ -544,6 +612,160 @@ func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) 
 	}
 
 	return res.ChannelList, nil
+}
+
+// Mark creates a ChannelsMarkCall object in preparation for accessing the channels.mark endpoint
+func (s *ChannelsService) Mark(channel string) *ChannelsMarkCall {
+	var call ChannelsMarkCall
+	call.service = s
+	call.channel = channel
+	return &call
+}
+
+// Timestamp sets the value for optional timestamp parameter
+func (c *ChannelsMarkCall) Timestamp(timestamp string) *ChannelsMarkCall {
+	c.timestamp = timestamp
+	return c
+}
+
+// Values returns the ChannelsMarkCall object as url.Values
+func (c *ChannelsMarkCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	if len(c.channel) <= 0 {
+		return nil, errors.New(`missing required parameter channel`)
+	}
+	v.Set("channel", c.channel)
+
+	if len(c.timestamp) > 0 {
+		v.Set("ts", c.timestamp)
+	}
+	return v, nil
+}
+
+// Do executes the call to access channels.mark endpoint
+func (c *ChannelsMarkCall) Do(ctx context.Context) error {
+	const endpoint = "channels.mark"
+	v, err := c.Values()
+	if err != nil {
+		return err
+	}
+	var res struct {
+		SlackResponse
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return errors.Wrap(err, `failed to post to channels.mark`)
+	}
+	if !res.OK {
+		return errors.New(res.Error.String())
+	}
+
+	return nil
+}
+
+// Rename creates a ChannelsRenameCall object in preparation for accessing the channels.rename endpoint
+func (s *ChannelsService) Rename(channel string, name string) *ChannelsRenameCall {
+	var call ChannelsRenameCall
+	call.service = s
+	call.channel = channel
+	call.name = name
+	return &call
+}
+
+// Validate sets the value for optional validate parameter
+func (c *ChannelsRenameCall) Validate(validate bool) *ChannelsRenameCall {
+	c.validate = validate
+	return c
+}
+
+// Values returns the ChannelsRenameCall object as url.Values
+func (c *ChannelsRenameCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	if len(c.channel) <= 0 {
+		return nil, errors.New(`missing required parameter channel`)
+	}
+	v.Set("channel", c.channel)
+
+	if len(c.name) <= 0 {
+		return nil, errors.New(`missing required parameter name`)
+	}
+	v.Set("name", c.name)
+
+	if c.validate {
+		v.Set("validate", "true")
+	}
+	return v, nil
+}
+
+// Do executes the call to access channels.rename endpoint
+func (c *ChannelsRenameCall) Do(ctx context.Context) (*objects.Channel, error) {
+	const endpoint = "channels.rename"
+	v, err := c.Values()
+	if err != nil {
+		return nil, err
+	}
+	var res struct {
+		SlackResponse
+		*objects.Channel `json:"channel"`
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return nil, errors.Wrap(err, `failed to post to channels.rename`)
+	}
+	if !res.OK {
+		return nil, errors.New(res.Error.String())
+	}
+
+	return res.Channel, nil
+}
+
+// Replies creates a ChannelsRepliesCall object in preparation for accessing the channels.replies endpoint
+func (s *ChannelsService) Replies(channel string, threadTimestamp string) *ChannelsRepliesCall {
+	var call ChannelsRepliesCall
+	call.service = s
+	call.channel = channel
+	call.threadTimestamp = threadTimestamp
+	return &call
+}
+
+// Values returns the ChannelsRepliesCall object as url.Values
+func (c *ChannelsRepliesCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	if len(c.channel) <= 0 {
+		return nil, errors.New(`missing required parameter channel`)
+	}
+	v.Set("channel", c.channel)
+
+	if len(c.threadTimestamp) <= 0 {
+		return nil, errors.New(`missing required parameter threadTimestamp`)
+	}
+	v.Set("thread_ts", c.threadTimestamp)
+	return v, nil
+}
+
+// Do executes the call to access channels.replies endpoint
+func (c *ChannelsRepliesCall) Do(ctx context.Context) (objects.MessageList, error) {
+	const endpoint = "channels.replies"
+	v, err := c.Values()
+	if err != nil {
+		return nil, err
+	}
+	var res struct {
+		SlackResponse
+		objects.MessageList `json:"messages"`
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return nil, errors.Wrap(err, `failed to post to channels.replies`)
+	}
+	if !res.OK {
+		return nil, errors.New(res.Error.String())
+	}
+
+	return res.MessageList, nil
 }
 
 // SetPurpose creates a ChannelsSetPurposeCall object in preparation for accessing the channels.setPurpose endpoint
@@ -591,4 +813,91 @@ func (c *ChannelsSetPurposeCall) Do(ctx context.Context) (*string, error) {
 	}
 
 	return res.string, nil
+}
+
+// SetTopic creates a ChannelsSetTopicCall object in preparation for accessing the channels.setTopic endpoint
+func (s *ChannelsService) SetTopic(channel string, topic string) *ChannelsSetTopicCall {
+	var call ChannelsSetTopicCall
+	call.service = s
+	call.channel = channel
+	call.topic = topic
+	return &call
+}
+
+// Values returns the ChannelsSetTopicCall object as url.Values
+func (c *ChannelsSetTopicCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	if len(c.channel) <= 0 {
+		return nil, errors.New(`missing required parameter channel`)
+	}
+	v.Set("channel", c.channel)
+
+	if len(c.topic) <= 0 {
+		return nil, errors.New(`missing required parameter topic`)
+	}
+	v.Set("topic", c.topic)
+	return v, nil
+}
+
+// Do executes the call to access channels.setTopic endpoint
+func (c *ChannelsSetTopicCall) Do(ctx context.Context) (*string, error) {
+	const endpoint = "channels.setTopic"
+	v, err := c.Values()
+	if err != nil {
+		return nil, err
+	}
+	var res struct {
+		SlackResponse
+		*string `json:"topic"`
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return nil, errors.Wrap(err, `failed to post to channels.setTopic`)
+	}
+	if !res.OK {
+		return nil, errors.New(res.Error.String())
+	}
+
+	return res.string, nil
+}
+
+// Unarchive creates a ChannelsUnarchiveCall object in preparation for accessing the channels.unarchive endpoint
+func (s *ChannelsService) Unarchive(channel string) *ChannelsUnarchiveCall {
+	var call ChannelsUnarchiveCall
+	call.service = s
+	call.channel = channel
+	return &call
+}
+
+// Values returns the ChannelsUnarchiveCall object as url.Values
+func (c *ChannelsUnarchiveCall) Values() (url.Values, error) {
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	if len(c.channel) <= 0 {
+		return nil, errors.New(`missing required parameter channel`)
+	}
+	v.Set("channel", c.channel)
+	return v, nil
+}
+
+// Do executes the call to access channels.unarchive endpoint
+func (c *ChannelsUnarchiveCall) Do(ctx context.Context) error {
+	const endpoint = "channels.unarchive"
+	v, err := c.Values()
+	if err != nil {
+		return err
+	}
+	var res struct {
+		SlackResponse
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return errors.Wrap(err, `failed to post to channels.unarchive`)
+	}
+	if !res.OK {
+		return errors.New(res.Error.String())
+	}
+
+	return nil
 }

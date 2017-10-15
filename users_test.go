@@ -57,6 +57,33 @@ func TestUsersList_Info_Presence(t *testing.T) {
 	}
 }
 
+func TestUsersListUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	_, err := c.Users().List().Do(ctx)
+	assert.NoError(t, err, "Users.List should succeed")
+
+	_, err = c.Users().List().Limit(100).IncludeLocale(true).Do(ctx)
+	assert.NoError(t, err, "Users.List should succeed")
+}
+
+func TestUsersDeletePhotoUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	err := c.Users().DeletePhoto().Do(ctx)
+	assert.NoError(t, err, "Users.DeletePhoto should succeed")
+}
+
 func TestUsersGetPresenceUnit(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -71,6 +98,18 @@ func TestUsersGetPresenceUnit(t *testing.T) {
 	}
 }
 
+func TestUsersIdentityUnit(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s := httptest.NewServer(newDummyServer())
+	defer s.Close()
+
+	c := newSlackWithDummy(s)
+	_, _, err := c.Users().Identity().Do(ctx)
+	assert.NoError(t, err, "Users.Identity should succeed")
+}
+
 func TestUsersInfoUnit(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -80,8 +119,8 @@ func TestUsersInfoUnit(t *testing.T) {
 
 	c := newSlackWithDummy(s)
 	_, err := c.Users().Info("foo").Do(ctx)
-	if !assert.NoError(t, err, "Users.GetPresence should succeed") {
-		return
-	}
-}
+	assert.NoError(t, err, "Users.Info should succeed")
 
+	_, err = c.Users().Info("foo").IncludeLocale(true).Do(ctx)
+	assert.NoError(t, err, "Users.Info should succeed")
+}

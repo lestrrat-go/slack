@@ -39,9 +39,6 @@ func TestEventPayload(t *testing.T) {
 }`
 
 	var p events.Event
-	if !assert.NoError(t, json.NewDecoder(strings.NewReader(src)).Decode(&p), "decode should suceed") {
-		return
-	}
-
-	t.Logf("%#v", p.Item)
+	err := json.NewDecoder(strings.NewReader(src)).Decode(&p)
+	assert.NoError(t, err, "decode should suceed")
 }
