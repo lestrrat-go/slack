@@ -396,8 +396,6 @@ func newSlackWithDummy(s *httptest.Server) *slack.Client {
 // testClient is a test helper for creating a new test server, context, client,
 // and closing function.
 func testClient(tb testing.TB) (context.Context, *slack.Client, func()) {
-	tb.Helper()
-
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 
 	s := httptest.NewServer(newDummyServer())
