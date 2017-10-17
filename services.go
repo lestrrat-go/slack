@@ -32,6 +32,12 @@ type EmojiService struct {
 	token  string
 }
 
+// GroupsService handles Groups related endpoints
+type GroupsService struct {
+	client *httpClient
+	token  string
+}
+
 // OAuthService handles OAuth related endpoints
 type OAuthService struct {
 	client *httpClient
@@ -46,6 +52,18 @@ type RTMService struct {
 
 // ReactionsService handles Reactions related endpoints
 type ReactionsService struct {
+	client *httpClient
+	token  string
+}
+
+// UsergroupsService handles Usergroups related endpoints
+type UsergroupsService struct {
+	client *httpClient
+	token  string
+}
+
+// UsergroupsUsersService handles UsergroupsUsers related endpoints
+type UsergroupsUsersService struct {
 	client *httpClient
 	token  string
 }

@@ -445,6 +445,279 @@
     "return": "EmojiListResponse"
   },
   {
+    "name": "groups.archive",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "groups.create",
+    "return": "objects.Group",
+    "json": "group",
+    "args": [
+      {
+        "name": "name",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "validate",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "groups.createChild",
+    "return": "objects.Group",
+    "json": "group",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "groups.history",
+    "return": [
+      "string",
+      "objects.MessageList"
+    ],
+    "json": [
+      "latest",
+      "messages"
+    ],
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "count",
+        "type": "int"
+      },
+      {
+        "name": "inclusive",
+        "type": "bool"
+      },
+      {
+        "name": "latest",
+        "type": "string"
+      },
+      {
+        "name": "oldest",
+        "type": "string"
+      },
+      {
+        "name": "unreads",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "groups.info",
+    "return": "objects.Group",
+    "json": "group",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "includeLocale",
+        "query_name": "include_locale",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "groups.invite",
+    "return": [
+      "objects.Group",
+      "bool"
+    ],
+    "json": [
+      "group",
+      "already_in_group"
+    ],
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "user",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "groups.kick",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "user",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "groups.leave",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "groups.list",
+    "return": "objects.GroupList",
+    "json": "groups",
+    "args": [
+      {
+        "name": "excludeArchived",
+        "query_name": "exclude_archived",
+        "type": "bool"
+      },
+      {
+        "name": "excludeMembers",
+        "query_name": "exclude_members",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "groups.mark",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "timestamp",
+        "query_name": "ts",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "groups.open",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "groups.rename",
+    "return": "objects.Group",
+    "json": "group",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "name",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "validate",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "groups.replies",
+    "return": [
+      "objects.MessageList",
+      "objects.ThreadInfo"
+    ],
+    "json": [
+      "messages",
+      "thread_info"
+    ],
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "threadTimestamp",
+        "query_name": "thread_ts",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "groups.setPurpose",
+    "return": "string",
+    "json": "purpose",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "purpose",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "groups.setTopic",
+    "return": "string",
+    "json": "topic",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "topic",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "groups.unarchive",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
     "name": "oauth.access",
     "skip_token": true,
     "group": "OAuth",
@@ -687,6 +960,166 @@
       {
         "name": "profile",
         "type": "*objects.UserProfile"
+      }
+    ]
+  },
+  {
+    "name": "usergroups.create",
+    "return": "objects.Usergroup",
+    "json": "usergroup",
+    "args": [
+      {
+        "name": "name",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "channels",
+        "type": "string",
+        "comment": "Comma-separated list of channels IDs"
+      },
+      {
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "name": "handle",
+        "type": "string"
+      },
+      {
+        "name": "includeCount",
+        "query_name": "include_count",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "usergroups.disable",
+    "return": "objects.Usergroup",
+    "json": "usergroup",
+    "args": [
+      {
+        "name": "usergroup",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "includeCount",
+        "query_name": "include_count",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "usergroups.enable",
+    "return": "objects.Usergroup",
+    "json": "usergroup",
+    "args": [
+      {
+        "name": "usergroup",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "includeCount",
+        "query_name": "include_count",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "usergroups.list",
+    "return": "objects.UsergroupList",
+    "json": "usergroups",
+    "args": [
+      {
+        "name": "includeCount",
+        "query_name": "include_count",
+        "type": "bool"
+      },
+      {
+        "name": "includeDisabled",
+        "query_name": "include_disabled",
+        "type": "bool"
+      },
+      {
+        "name": "includeUsers",
+        "query_name": "include_users",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "usergroups.update",
+    "return": "objects.Usergroup",
+    "json": "usergroup",
+    "args": [
+      {
+        "name": "usergroup",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "channels",
+        "type": "string",
+        "comment": "Comma-separated list of channels IDs"
+      },
+      {
+        "name": "description",
+        "type": "string"
+      },
+      {
+        "name": "handle",
+        "type": "string"
+      },
+      {
+        "name": "includeCount",
+        "query_name": "include_count",
+        "type": "bool"
+      },
+      {
+        "name": "name",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "usergroups.users.list",
+    "return": "objects.UsergroupUsersList",
+    "json": "users",
+    "args": [
+      {
+        "name": "usergroup",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "includeDisabled",
+        "query_name": "include_disabled",
+        "type": "bool"
+      }
+    ]
+  },
+  {
+    "name": "usergroups.users.update",
+    "return": "objects.Usergroup",
+    "json": "usergroup",
+    "args": [
+      {
+        "name": "usergroup",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "users",
+        "required": true,
+        "type": "string",
+        "comment": "Comma-separated list of user IDs"
+      },
+      {
+        "name": "includeCount",
+        "query_name": "include_count",
+        "type": "bool"
       }
     ]
   }

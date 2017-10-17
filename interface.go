@@ -57,19 +57,22 @@ var OAuth2Endpoint = oauth2.Endpoint{
 }
 
 type Client struct {
-	auth         *AuthService
-	bots         *BotsService
-	channels     *ChannelsService
-	chat         *ChatService
-	emoji        *EmojiService
-	oauth        *OAuthService
-	reactions    *ReactionsService
-	rtm          *RTMService
-	users        *UsersService
-	usersProfile *UsersProfileService
-	debug        bool
-	slackURL     string
-	token        string
+	auth            *AuthService
+	bots            *BotsService
+	channels        *ChannelsService
+	chat            *ChatService
+	emoji           *EmojiService
+	groups          *GroupsService
+	oauth           *OAuthService
+	reactions       *ReactionsService
+	rtm             *RTMService
+	users           *UsersService
+	usersProfile    *UsersProfileService
+	usergroups      *UsergroupsService
+	usergroupsUsers *UsergroupsUsersService
+	debug           bool
+	slackURL        string
+	token           string
 }
 
 // SlackResponse is the general response part given by all
