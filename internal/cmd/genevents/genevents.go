@@ -64,7 +64,7 @@ func writeEventEvents(list []definition) error {
 		return err
 	}
 
-	dst, err := os.Create("events/event_types.go")
+	dst, err := os.Create("events/event_types_gen.go")
 	if err != nil {
 		return err
 	}
