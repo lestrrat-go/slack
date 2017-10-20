@@ -46,7 +46,7 @@ func _main() error {
 		return err
 	}
 
-	dst, err := os.Create("scopes.go")
+	dst, err := os.Create("scopes_gen.go")
 	if err != nil {
 		return err
 	}
