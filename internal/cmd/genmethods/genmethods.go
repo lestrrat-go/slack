@@ -100,7 +100,7 @@ func _main() error {
 	group := map[string][]Endpoint{}
 	for _, endpoint := range endpoints {
 		i := strings.LastIndexByte(endpoint.Name, '.')
-		endpoint.file = strings.Replace(endpoint.Name[:i], ".", "_", -1) + ".go"
+		endpoint.file = strings.Replace(endpoint.Name[:i], ".", "_", -1) + "_gen.go"
 		if len(endpoint.Group) == 0 {
 			endpoint.Group = camelit(endpoint.Name[:i])
 		}
