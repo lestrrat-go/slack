@@ -41,23 +41,30 @@ func (c *OAuthAccessCall) RedirectURI(redirectURI string) *OAuthAccessCall {
 	return c
 }
 
+func (c *OAuthAccessCall) Validate() error {
+	if len(c.clientID) <= 0 {
+		return errors.New(`required field clientID not initialized`)
+	}
+	if len(c.clientSecret) <= 0 {
+		return errors.New(`required field clientSecret not initialized`)
+	}
+	if len(c.code) <= 0 {
+		return errors.New(`required field code not initialized`)
+	}
+	return nil
+}
+
 // Values returns the OAuthAccessCall object as url.Values
 func (c *OAuthAccessCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 
-	if len(c.clientID) <= 0 {
-		return nil, errors.New(`missing required parameter clientID`)
-	}
 	v.Set("client_id", c.clientID)
 
-	if len(c.clientSecret) <= 0 {
-		return nil, errors.New(`missing required parameter clientSecret`)
-	}
 	v.Set("client_secret", c.clientSecret)
 
-	if len(c.code) <= 0 {
-		return nil, errors.New(`missing required parameter code`)
-	}
 	v.Set("code", c.code)
 
 	if len(c.redirectURI) > 0 {

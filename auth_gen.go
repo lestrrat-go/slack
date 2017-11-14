@@ -40,8 +40,15 @@ func (c *AuthRevokeCall) Test(test bool) *AuthRevokeCall {
 	return c
 }
 
+func (c *AuthRevokeCall) Validate() error {
+	return nil
+}
+
 // Values returns the AuthRevokeCall object as url.Values
 func (c *AuthRevokeCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -92,8 +99,15 @@ func (s *AuthService) Test() *AuthTestCall {
 	return &call
 }
 
+func (c *AuthTestCall) Validate() error {
+	return nil
+}
+
 // Values returns the AuthTestCall object as url.Values
 func (c *AuthTestCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil

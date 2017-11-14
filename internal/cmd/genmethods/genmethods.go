@@ -258,66 +258,84 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 			}
 		}
 
+		type argCheck struct{
+			Assign string
+			Prelude string
+			Optional string
+			Required string
+		}
+		checks := map[string]*argCheck{}
+		for _, arg := range endpoint.Args {
+			var check argCheck
+			switch arg.Type {
+			case "string":
+				check.Assign = fmt.Sprintf("c.%s", arg.Name)
+				check.Optional = fmt.Sprintf("\nif len(c.%s) > 0 {", arg.Name)
+				check.Required = fmt.Sprintf("\nif len(c.%s) <= 0 {", arg.Name)
+			case "bool":
+				check.Assign= `"true"`
+				check.Optional = fmt.Sprintf("\nif c.%s {", arg.Name)
+				check.Required = fmt.Sprintf("\nif !c.%s {", arg.Name)
+			case "int":
+				check.Assign = fmt.Sprintf(`strconv.Itoa(c.%s)`, arg.Name)
+				check.Optional = fmt.Sprintf("\nif c.%s > 0 {", arg.Name)
+				check.Required = fmt.Sprintf("\nif c.%s == 0 {", arg.Name)
+			default:
+				check.Prelude = fmt.Sprintf("\n%sEncoded, err := c.%s.Encode()\nif err != nil {\nreturn nil, errors.Wrap(err, `failed to encode field`)\n}", arg.Name, arg.Name)
+				check.Assign = fmt.Sprintf("%sEncoded", arg.Name)
+				if strings.HasSuffix(arg.Type, "List") {
+					check.Optional = fmt.Sprintf("\nif len(c.%s) > 0 {", arg.Name)
+					check.Required = fmt.Sprintf("\nif len(c.%s) <= 0 {", arg.Name)
+				} else {
+					check.Optional = fmt.Sprintf("\nif c.%s != nil {", arg.Name)
+					check.Required = fmt.Sprintf("\nif c.%s == nil {", arg.Name)
+				}
+			}
+
+			checks[arg.Name] = &check
+		}
+		fmt.Fprintf(&buf, "\n\n// Validate checks that all required fields are set in the %s%sCall object", endpoint.Group, endpoint.methodName)
+		fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) Validate() error {", endpoint.Group, endpoint.methodName)
+		for _, arg := range endpoint.Args {
+			if !arg.Required {
+				continue
+			}
+
+			check := checks[arg.Name]
+			fmt.Fprintf(&buf, check.Required)
+			fmt.Fprintf(&buf, "\nreturn errors.New(`required field %s not initialized`)", arg.Name)
+			fmt.Fprintf(&buf, "\n}")
+		}
+		fmt.Fprintf(&buf, "\nreturn nil")
+		fmt.Fprintf(&buf, "\n}") // end func Validate
+
 		fmt.Fprintf(&buf, "\n\n// Values returns the %s%sCall object as url.Values", endpoint.Group, endpoint.methodName)
 		fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) Values() (url.Values, error) {", endpoint.Group, endpoint.methodName)
+		fmt.Fprintf(&buf, "\nif err := c.Validate(); err != nil {")
+		fmt.Fprintf(&buf, "\nreturn nil, errors.Wrap(err, `failed validation`)")
+		fmt.Fprintf(&buf, "\n}") // end if err := c.Validate
 		buf.WriteString("\nv := url.Values{}")
 		if !endpoint.SkipToken {
 			buf.WriteString("\nv.Set(`token`, c.service.token)")
 		}
 		for _, arg := range endpoint.Args {
-			var requiredCheck string
-			var optionalCheck string
-			var assignValue string
-			var prelude string
-
-			switch arg.Type {
-			case "string":
-				assignValue = fmt.Sprintf("c.%s", arg.Name)
-				optionalCheck = fmt.Sprintf("\nif len(c.%s) > 0 {", arg.Name)
-				requiredCheck = fmt.Sprintf("\nif len(c.%s) <= 0 {", arg.Name)
-			case "bool":
-				assignValue = `"true"`
-				optionalCheck = fmt.Sprintf("\nif c.%s {", arg.Name)
-				requiredCheck = fmt.Sprintf("\nif !c.%s {", arg.Name)
-			case "int":
-				assignValue = fmt.Sprintf(`strconv.Itoa(c.%s)`, arg.Name)
-				optionalCheck = fmt.Sprintf("\nif c.%s > 0 {", arg.Name)
-				requiredCheck = fmt.Sprintf("\nif c.%s == 0 {", arg.Name)
-			default:
-				prelude = fmt.Sprintf("\n%sEncoded, err := c.%s.Encode()\nif err != nil {\nreturn nil, errors.Wrap(err, `failed to encode field`)\n}", arg.Name, arg.Name)
-				assignValue = fmt.Sprintf("%sEncoded", arg.Name)
-				if strings.HasSuffix(arg.Type, "List") {
-					optionalCheck = fmt.Sprintf("\nif len(c.%s) > 0 {", arg.Name)
-					requiredCheck = fmt.Sprintf("\nif len(c.%s) <= 0 {", arg.Name)
-				} else {
-					optionalCheck = fmt.Sprintf("\nif c.%s != nil {", arg.Name)
-					requiredCheck = fmt.Sprintf("\nif c.%s == nil {", arg.Name)
-				}
-			}
-
+			check := checks[arg.Name]
 			buf.WriteString("\n")
-			if arg.Required {
-				buf.WriteString(requiredCheck)
-				fmt.Fprintf(&buf, "\nreturn nil, errors.New(`missing required parameter %s`)", arg.Name)
-				buf.WriteString("\n}")
-				if len(prelude) > 0 {
-					buf.WriteString(prelude)
-				}
-			} else {
-				buf.WriteString(optionalCheck)
-				if len(prelude) > 0 {
-					buf.WriteString(prelude)
-				}
+			if !arg.Required {
+				fmt.Fprintf(&buf, check.Optional)
+			}
+			if len(check.Prelude) > 0 {
+				fmt.Fprintf(&buf, check.Prelude)
 			}
 
 			var qn = arg.Name
 			if len(arg.QueryName) > 0 {
 				qn = arg.QueryName
 			}
-			fmt.Fprintf(&buf, "\nv.Set(%s,%s)", strconv.Quote(qn), assignValue)
+			fmt.Fprintf(&buf, "\nv.Set(%s,%s)", strconv.Quote(qn), check.Assign)
 
 			if !arg.Required {
-				buf.WriteString("\n}")
+				fmt.Fprintf(&buf, "\n}")
 			}
 		}
 		buf.WriteString("\nreturn v, nil")

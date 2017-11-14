@@ -30,14 +30,21 @@ func (s *BotsService) Info(bot string) *BotsInfoCall {
 	return &call
 }
 
+func (c *BotsInfoCall) Validate() error {
+	if len(c.bot) <= 0 {
+		return errors.New(`required field bot not initialized`)
+	}
+	return nil
+}
+
 // Values returns the BotsInfoCall object as url.Values
 func (c *BotsInfoCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.bot) <= 0 {
-		return nil, errors.New(`missing required parameter bot`)
-	}
 	v.Set("bot", c.bot)
 	return v, nil
 }

@@ -28,8 +28,15 @@ func (s *RTMService) Start() *RTMStartCall {
 	return &call
 }
 
+func (c *RTMStartCall) Validate() error {
+	return nil
+}
+
 // Values returns the RTMStartCall object as url.Values
 func (c *RTMStartCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil

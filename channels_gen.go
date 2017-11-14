@@ -133,14 +133,21 @@ func (s *ChannelsService) Archive(channel string) *ChannelsArchiveCall {
 	return &call
 }
 
+func (c *ChannelsArchiveCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsArchiveCall object as url.Values
 func (c *ChannelsArchiveCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -189,14 +196,21 @@ func (c *ChannelsCreateCall) Validate(validate bool) *ChannelsCreateCall {
 	return c
 }
 
+func (c *ChannelsCreateCall) Validate() error {
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsCreateCall object as url.Values
 func (c *ChannelsCreateCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if c.validate {
@@ -286,14 +300,21 @@ func (c *ChannelsHistoryCall) Unreads(unreads bool) *ChannelsHistoryCall {
 	return c
 }
 
+func (c *ChannelsHistoryCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsHistoryCall object as url.Values
 func (c *ChannelsHistoryCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if c.count > 0 {
@@ -397,14 +418,21 @@ func (c *ChannelsInfoCall) IncludeLocale(includeLocale bool) *ChannelsInfoCall {
 	return c
 }
 
+func (c *ChannelsInfoCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsInfoCall object as url.Values
 func (c *ChannelsInfoCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if c.includeLocale {
@@ -460,19 +488,26 @@ func (s *ChannelsService) Invite(channel string, user string) *ChannelsInviteCal
 	return &call
 }
 
+func (c *ChannelsInviteCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsInviteCall object as url.Values
 func (c *ChannelsInviteCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.user) <= 0 {
-		return nil, errors.New(`missing required parameter user`)
-	}
 	v.Set("user", c.user)
 	return v, nil
 }
@@ -525,14 +560,21 @@ func (c *ChannelsJoinCall) Validate(validate bool) *ChannelsJoinCall {
 	return c
 }
 
+func (c *ChannelsJoinCall) Validate() error {
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsJoinCall object as url.Values
 func (c *ChannelsJoinCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if c.validate {
@@ -588,19 +630,26 @@ func (s *ChannelsService) Kick(channel string, user string) *ChannelsKickCall {
 	return &call
 }
 
+func (c *ChannelsKickCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsKickCall object as url.Values
 func (c *ChannelsKickCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.user) <= 0 {
-		return nil, errors.New(`missing required parameter user`)
-	}
 	v.Set("user", c.user)
 	return v, nil
 }
@@ -646,14 +695,21 @@ func (s *ChannelsService) Leave(channel string) *ChannelsLeaveCall {
 	return &call
 }
 
+func (c *ChannelsLeaveCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsLeaveCall object as url.Values
 func (c *ChannelsLeaveCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -713,8 +769,15 @@ func (c *ChannelsListCall) Limit(limit int) *ChannelsListCall {
 	return c
 }
 
+func (c *ChannelsListCall) Validate() error {
+	return nil
+}
+
 // Values returns the ChannelsListCall object as url.Values
 func (c *ChannelsListCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -795,14 +858,21 @@ func (c *ChannelsMarkCall) Timestamp(timestamp string) *ChannelsMarkCall {
 	return c
 }
 
+func (c *ChannelsMarkCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsMarkCall object as url.Values
 func (c *ChannelsMarkCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if len(c.timestamp) > 0 {
@@ -859,19 +929,26 @@ func (c *ChannelsRenameCall) Validate(validate bool) *ChannelsRenameCall {
 	return c
 }
 
+func (c *ChannelsRenameCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsRenameCall object as url.Values
 func (c *ChannelsRenameCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if c.validate {
@@ -930,19 +1007,26 @@ func (s *ChannelsService) Replies(channel string, threadTimestamp string) *Chann
 	return &call
 }
 
+func (c *ChannelsRepliesCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.threadTimestamp) <= 0 {
+		return errors.New(`required field threadTimestamp not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsRepliesCall object as url.Values
 func (c *ChannelsRepliesCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.threadTimestamp) <= 0 {
-		return nil, errors.New(`missing required parameter threadTimestamp`)
-	}
 	v.Set("thread_ts", c.threadTimestamp)
 	return v, nil
 }
@@ -990,19 +1074,26 @@ func (s *ChannelsService) SetPurpose(channel string, purpose string) *ChannelsSe
 	return &call
 }
 
+func (c *ChannelsSetPurposeCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.purpose) <= 0 {
+		return errors.New(`required field purpose not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsSetPurposeCall object as url.Values
 func (c *ChannelsSetPurposeCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.purpose) <= 0 {
-		return nil, errors.New(`missing required parameter purpose`)
-	}
 	v.Set("purpose", c.purpose)
 	return v, nil
 }
@@ -1050,19 +1141,26 @@ func (s *ChannelsService) SetTopic(channel string, topic string) *ChannelsSetTop
 	return &call
 }
 
+func (c *ChannelsSetTopicCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.topic) <= 0 {
+		return errors.New(`required field topic not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsSetTopicCall object as url.Values
 func (c *ChannelsSetTopicCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.topic) <= 0 {
-		return nil, errors.New(`missing required parameter topic`)
-	}
 	v.Set("topic", c.topic)
 	return v, nil
 }
@@ -1109,14 +1207,21 @@ func (s *ChannelsService) Unarchive(channel string) *ChannelsUnarchiveCall {
 	return &call
 }
 
+func (c *ChannelsUnarchiveCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChannelsUnarchiveCall object as url.Values
 func (c *ChannelsUnarchiveCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }

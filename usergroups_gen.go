@@ -91,8 +91,18 @@ func (c *UsergroupsCreateCall) IncludeCount(includeCount bool) *UsergroupsCreate
 	return c
 }
 
+func (c *UsergroupsCreateCall) Validate() error {
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsergroupsCreateCall object as url.Values
 func (c *UsergroupsCreateCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -112,9 +122,6 @@ func (c *UsergroupsCreateCall) Values() (url.Values, error) {
 		v.Set("include_count", "true")
 	}
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 	return v, nil
 }
@@ -180,8 +187,18 @@ func (c *UsergroupsDisableCall) IncludeCount(includeCount bool) *UsergroupsDisab
 	return c
 }
 
+func (c *UsergroupsDisableCall) Validate() error {
+	if len(c.usergroup) <= 0 {
+		return errors.New(`required field usergroup not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsergroupsDisableCall object as url.Values
 func (c *UsergroupsDisableCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -189,9 +206,6 @@ func (c *UsergroupsDisableCall) Values() (url.Values, error) {
 		v.Set("include_count", "true")
 	}
 
-	if len(c.usergroup) <= 0 {
-		return nil, errors.New(`missing required parameter usergroup`)
-	}
 	v.Set("usergroup", c.usergroup)
 	return v, nil
 }
@@ -248,8 +262,18 @@ func (c *UsergroupsEnableCall) IncludeCount(includeCount bool) *UsergroupsEnable
 	return c
 }
 
+func (c *UsergroupsEnableCall) Validate() error {
+	if len(c.usergroup) <= 0 {
+		return errors.New(`required field usergroup not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsergroupsEnableCall object as url.Values
 func (c *UsergroupsEnableCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -257,9 +281,6 @@ func (c *UsergroupsEnableCall) Values() (url.Values, error) {
 		v.Set("include_count", "true")
 	}
 
-	if len(c.usergroup) <= 0 {
-		return nil, errors.New(`missing required parameter usergroup`)
-	}
 	v.Set("usergroup", c.usergroup)
 	return v, nil
 }
@@ -327,8 +348,15 @@ func (c *UsergroupsListCall) IncludeUsers(includeUsers bool) *UsergroupsListCall
 	return c
 }
 
+func (c *UsergroupsListCall) Validate() error {
+	return nil
+}
+
 // Values returns the UsergroupsListCall object as url.Values
 func (c *UsergroupsListCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -433,8 +461,18 @@ func (c *UsergroupsUpdateCall) Name(name string) *UsergroupsUpdateCall {
 	return c
 }
 
+func (c *UsergroupsUpdateCall) Validate() error {
+	if len(c.usergroup) <= 0 {
+		return errors.New(`required field usergroup not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsergroupsUpdateCall object as url.Values
 func (c *UsergroupsUpdateCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -458,9 +496,6 @@ func (c *UsergroupsUpdateCall) Values() (url.Values, error) {
 		v.Set("name", c.name)
 	}
 
-	if len(c.usergroup) <= 0 {
-		return nil, errors.New(`missing required parameter usergroup`)
-	}
 	v.Set("usergroup", c.usergroup)
 	return v, nil
 }

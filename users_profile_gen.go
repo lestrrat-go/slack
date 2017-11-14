@@ -51,8 +51,15 @@ func (c *UsersProfileGetCall) User(user string) *UsersProfileGetCall {
 	return c
 }
 
+func (c *UsersProfileGetCall) Validate() error {
+	return nil
+}
+
 // Values returns the UsersProfileGetCall object as url.Values
 func (c *UsersProfileGetCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -135,8 +142,15 @@ func (c *UsersProfileSetCall) Value(value string) *UsersProfileSetCall {
 	return c
 }
 
+func (c *UsersProfileSetCall) Validate() error {
+	return nil
+}
+
 // Values returns the UsersProfileSetCall object as url.Values
 func (c *UsersProfileSetCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 

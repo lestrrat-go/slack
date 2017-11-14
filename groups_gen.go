@@ -136,14 +136,21 @@ func (s *GroupsService) Archive(channel string) *GroupsArchiveCall {
 	return &call
 }
 
+func (c *GroupsArchiveCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsArchiveCall object as url.Values
 func (c *GroupsArchiveCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -192,14 +199,21 @@ func (c *GroupsCreateCall) Validate(validate bool) *GroupsCreateCall {
 	return c
 }
 
+func (c *GroupsCreateCall) Validate() error {
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsCreateCall object as url.Values
 func (c *GroupsCreateCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if c.validate {
@@ -254,14 +268,21 @@ func (s *GroupsService) CreateChild(channel string) *GroupsCreateChildCall {
 	return &call
 }
 
+func (c *GroupsCreateChildCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsCreateChildCall object as url.Values
 func (c *GroupsCreateChildCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -335,14 +356,21 @@ func (c *GroupsHistoryCall) Unreads(unreads bool) *GroupsHistoryCall {
 	return c
 }
 
+func (c *GroupsHistoryCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsHistoryCall object as url.Values
 func (c *GroupsHistoryCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if c.count > 0 {
@@ -440,14 +468,21 @@ func (c *GroupsInfoCall) IncludeLocale(includeLocale bool) *GroupsInfoCall {
 	return c
 }
 
+func (c *GroupsInfoCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsInfoCall object as url.Values
 func (c *GroupsInfoCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if c.includeLocale {
@@ -503,19 +538,26 @@ func (s *GroupsService) Invite(channel string, user string) *GroupsInviteCall {
 	return &call
 }
 
+func (c *GroupsInviteCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsInviteCall object as url.Values
 func (c *GroupsInviteCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.user) <= 0 {
-		return nil, errors.New(`missing required parameter user`)
-	}
 	v.Set("user", c.user)
 	return v, nil
 }
@@ -564,19 +606,26 @@ func (s *GroupsService) Kick(channel string, user string) *GroupsKickCall {
 	return &call
 }
 
+func (c *GroupsKickCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsKickCall object as url.Values
 func (c *GroupsKickCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.user) <= 0 {
-		return nil, errors.New(`missing required parameter user`)
-	}
 	v.Set("user", c.user)
 	return v, nil
 }
@@ -622,14 +671,21 @@ func (s *GroupsService) Leave(channel string) *GroupsLeaveCall {
 	return &call
 }
 
+func (c *GroupsLeaveCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsLeaveCall object as url.Values
 func (c *GroupsLeaveCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -683,8 +739,15 @@ func (c *GroupsListCall) ExcludeMembers(excludeMembers bool) *GroupsListCall {
 	return c
 }
 
+func (c *GroupsListCall) Validate() error {
+	return nil
+}
+
 // Values returns the GroupsListCall object as url.Values
 func (c *GroupsListCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -749,19 +812,26 @@ func (s *GroupsService) Mark(channel string, timestamp string) *GroupsMarkCall {
 	return &call
 }
 
+func (c *GroupsMarkCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.timestamp) <= 0 {
+		return errors.New(`required field timestamp not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsMarkCall object as url.Values
 func (c *GroupsMarkCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.timestamp) <= 0 {
-		return nil, errors.New(`missing required parameter timestamp`)
-	}
 	v.Set("ts", c.timestamp)
 	return v, nil
 }
@@ -807,14 +877,21 @@ func (s *GroupsService) Open(channel string) *GroupsOpenCall {
 	return &call
 }
 
+func (c *GroupsOpenCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsOpenCall object as url.Values
 func (c *GroupsOpenCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -864,19 +941,26 @@ func (c *GroupsRenameCall) Validate(validate bool) *GroupsRenameCall {
 	return c
 }
 
+func (c *GroupsRenameCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsRenameCall object as url.Values
 func (c *GroupsRenameCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if c.validate {
@@ -935,19 +1019,26 @@ func (s *GroupsService) Replies(channel string, threadTimestamp string) *GroupsR
 	return &call
 }
 
+func (c *GroupsRepliesCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.threadTimestamp) <= 0 {
+		return errors.New(`required field threadTimestamp not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsRepliesCall object as url.Values
 func (c *GroupsRepliesCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.threadTimestamp) <= 0 {
-		return nil, errors.New(`missing required parameter threadTimestamp`)
-	}
 	v.Set("thread_ts", c.threadTimestamp)
 	return v, nil
 }
@@ -996,19 +1087,26 @@ func (s *GroupsService) SetPurpose(channel string, purpose string) *GroupsSetPur
 	return &call
 }
 
+func (c *GroupsSetPurposeCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.purpose) <= 0 {
+		return errors.New(`required field purpose not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsSetPurposeCall object as url.Values
 func (c *GroupsSetPurposeCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.purpose) <= 0 {
-		return nil, errors.New(`missing required parameter purpose`)
-	}
 	v.Set("purpose", c.purpose)
 	return v, nil
 }
@@ -1056,19 +1154,26 @@ func (s *GroupsService) SetTopic(channel string, topic string) *GroupsSetTopicCa
 	return &call
 }
 
+func (c *GroupsSetTopicCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.topic) <= 0 {
+		return errors.New(`required field topic not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsSetTopicCall object as url.Values
 func (c *GroupsSetTopicCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.topic) <= 0 {
-		return nil, errors.New(`missing required parameter topic`)
-	}
 	v.Set("topic", c.topic)
 	return v, nil
 }
@@ -1115,14 +1220,21 @@ func (s *GroupsService) Unarchive(channel string) *GroupsUnarchiveCall {
 	return &call
 }
 
+func (c *GroupsUnarchiveCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsUnarchiveCall object as url.Values
 func (c *GroupsUnarchiveCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }

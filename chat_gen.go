@@ -90,8 +90,18 @@ func (c *ChatDeleteCall) Timestamp(timestamp string) *ChatDeleteCall {
 	return c
 }
 
+func (c *ChatDeleteCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChatDeleteCall object as url.Values
 func (c *ChatDeleteCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -99,9 +109,6 @@ func (c *ChatDeleteCall) Values() (url.Values, error) {
 		v.Set("as_user", "true")
 	}
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if len(c.timestamp) > 0 {
@@ -165,14 +172,21 @@ func (c *ChatMeMessageCall) Text(text string) *ChatMeMessageCall {
 	return c
 }
 
+func (c *ChatMeMessageCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChatMeMessageCall object as url.Values
 func (c *ChatMeMessageCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if len(c.text) > 0 {
@@ -301,8 +315,18 @@ func (c *ChatPostMessageCall) Username(username string) *ChatPostMessageCall {
 	return c
 }
 
+func (c *ChatPostMessageCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChatPostMessageCall object as url.Values
 func (c *ChatPostMessageCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -318,9 +342,6 @@ func (c *ChatPostMessageCall) Values() (url.Values, error) {
 		v.Set("attachments", attachmentsEncoded)
 	}
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if c.escapeText {
@@ -474,24 +495,31 @@ func (c *ChatUnfurlCall) UserAuthRequired(userAuthRequired bool) *ChatUnfurlCall
 	return c
 }
 
+func (c *ChatUnfurlCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.timestamp) <= 0 {
+		return errors.New(`required field timestamp not initialized`)
+	}
+	if len(c.unfurls) <= 0 {
+		return errors.New(`required field unfurls not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChatUnfurlCall object as url.Values
 func (c *ChatUnfurlCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.timestamp) <= 0 {
-		return nil, errors.New(`missing required parameter timestamp`)
-	}
 	v.Set("ts", c.timestamp)
 
-	if len(c.unfurls) <= 0 {
-		return nil, errors.New(`missing required parameter unfurls`)
-	}
 	v.Set("unfurls", c.unfurls)
 
 	if c.userAuthRequired {
@@ -593,8 +621,18 @@ func (c *ChatUpdateCall) Timestamp(timestamp string) *ChatUpdateCall {
 	return c
 }
 
+func (c *ChatUpdateCall) Validate() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChatUpdateCall object as url.Values
 func (c *ChatUpdateCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -610,9 +648,6 @@ func (c *ChatUpdateCall) Values() (url.Values, error) {
 		v.Set("attachments", attachmentsEncoded)
 	}
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if c.linkNames {

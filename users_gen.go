@@ -65,8 +65,15 @@ func (s *UsersService) DeletePhoto() *UsersDeletePhotoCall {
 	return &call
 }
 
+func (c *UsersDeletePhotoCall) Validate() error {
+	return nil
+}
+
 // Values returns the UsersDeletePhotoCall object as url.Values
 func (c *UsersDeletePhotoCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil
@@ -107,14 +114,21 @@ func (s *UsersService) GetPresence(user string) *UsersGetPresenceCall {
 	return &call
 }
 
+func (c *UsersGetPresenceCall) Validate() error {
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsersGetPresenceCall object as url.Values
 func (c *UsersGetPresenceCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.user) <= 0 {
-		return nil, errors.New(`missing required parameter user`)
-	}
 	v.Set("user", c.user)
 	return v, nil
 }
@@ -157,8 +171,15 @@ func (s *UsersService) Identity() *UsersIdentityCall {
 	return &call
 }
 
+func (c *UsersIdentityCall) Validate() error {
+	return nil
+}
+
 // Values returns the UsersIdentityCall object as url.Values
 func (c *UsersIdentityCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil
@@ -207,8 +228,18 @@ func (c *UsersInfoCall) IncludeLocale(includeLocale bool) *UsersInfoCall {
 	return c
 }
 
+func (c *UsersInfoCall) Validate() error {
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsersInfoCall object as url.Values
 func (c *UsersInfoCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -216,9 +247,6 @@ func (c *UsersInfoCall) Values() (url.Values, error) {
 		v.Set("include_locale", "true")
 	}
 
-	if len(c.user) <= 0 {
-		return nil, errors.New(`missing required parameter user`)
-	}
 	v.Set("user", c.user)
 	return v, nil
 }
@@ -286,8 +314,15 @@ func (c *UsersListCall) Presence(presence bool) *UsersListCall {
 	return c
 }
 
+func (c *UsersListCall) Validate() error {
+	return nil
+}
+
 // Values returns the UsersListCall object as url.Values
 func (c *UsersListCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -361,8 +396,15 @@ func (s *UsersService) SetActive() *UsersSetActiveCall {
 	return &call
 }
 
+func (c *UsersSetActiveCall) Validate() error {
+	return nil
+}
+
 // Values returns the UsersSetActiveCall object as url.Values
 func (c *UsersSetActiveCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil
@@ -403,14 +445,21 @@ func (s *UsersService) SetPresence(presence string) *UsersSetPresenceCall {
 	return &call
 }
 
+func (c *UsersSetPresenceCall) Validate() error {
+	if len(c.presence) <= 0 {
+		return errors.New(`required field presence not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsersSetPresenceCall object as url.Values
 func (c *UsersSetPresenceCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.presence) <= 0 {
-		return nil, errors.New(`missing required parameter presence`)
-	}
 	v.Set("presence", c.presence)
 	return v, nil
 }

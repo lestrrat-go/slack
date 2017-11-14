@@ -28,8 +28,15 @@ func (s *EmojiService) List() *EmojiListCall {
 	return &call
 }
 
+func (c *EmojiListCall) Validate() error {
+	return nil
+}
+
 // Values returns the EmojiListCall object as url.Values
 func (c *EmojiListCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil

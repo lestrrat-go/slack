@@ -87,8 +87,18 @@ func (c *ReactionsAddCall) Timestamp(timestamp string) *ReactionsAddCall {
 	return c
 }
 
+func (c *ReactionsAddCall) Validate() error {
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ReactionsAddCall object as url.Values
 func (c *ReactionsAddCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -104,9 +114,6 @@ func (c *ReactionsAddCall) Values() (url.Values, error) {
 		v.Set("fileComment", c.fileComment)
 	}
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if len(c.timestamp) > 0 {
@@ -194,8 +201,15 @@ func (c *ReactionsGetCall) Timestamp(timestamp string) *ReactionsGetCall {
 	return c
 }
 
+func (c *ReactionsGetCall) Validate() error {
+	return nil
+}
+
 // Values returns the ReactionsGetCall object as url.Values
 func (c *ReactionsGetCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -299,8 +313,15 @@ func (c *ReactionsListCall) User(user string) *ReactionsListCall {
 	return c
 }
 
+func (c *ReactionsListCall) Validate() error {
+	return nil
+}
+
 // Values returns the ReactionsListCall object as url.Values
 func (c *ReactionsListCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -406,8 +427,18 @@ func (c *ReactionsRemoveCall) Timestamp(timestamp string) *ReactionsRemoveCall {
 	return c
 }
 
+func (c *ReactionsRemoveCall) Validate() error {
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ReactionsRemoveCall object as url.Values
 func (c *ReactionsRemoveCall) Values() (url.Values, error) {
+	if err := c.Validate(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -423,9 +454,6 @@ func (c *ReactionsRemoveCall) Values() (url.Values, error) {
 		v.Set("fileComment", c.fileComment)
 	}
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if len(c.timestamp) > 0 {
