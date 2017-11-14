@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // ReactionsAddCall is created by ReactionsService.Add method call
@@ -133,6 +135,28 @@ func (c *ReactionsAddCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ReactionsAddCall) FromValues(v url.Values) error {
+	var tmp ReactionsAddCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("file")); len(raw) > 0 {
+		tmp.file = raw
+	}
+	if raw := strings.TrimSpace(v.Get("fileComment")); len(raw) > 0 {
+		tmp.fileComment = raw
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("timestamp")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Get creates a ReactionsGetCall object in preparation for accessing the reactions.get endpoint
 func (s *ReactionsService) Get() *ReactionsGetCall {
 	var call ReactionsGetCall
@@ -218,6 +242,32 @@ func (c *ReactionsGetCall) Do(ctx context.Context) (*ReactionsGetResponse, error
 	return res.ReactionsGetResponse, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ReactionsGetCall) FromValues(v url.Values) error {
+	var tmp ReactionsGetCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("file")); len(raw) > 0 {
+		tmp.file = raw
+	}
+	if raw := strings.TrimSpace(v.Get("fileComment")); len(raw) > 0 {
+		tmp.fileComment = raw
+	}
+	if raw := strings.TrimSpace(v.Get("full")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "full"`)
+		}
+		tmp.full = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("timestamp")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // List creates a ReactionsListCall object in preparation for accessing the reactions.list endpoint
 func (s *ReactionsService) List() *ReactionsListCall {
 	var call ReactionsListCall
@@ -291,6 +341,37 @@ func (c *ReactionsListCall) Do(ctx context.Context) (*ReactionsListResponse, err
 	}
 
 	return res.ReactionsListResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ReactionsListCall) FromValues(v url.Values) error {
+	var tmp ReactionsListCall
+	if raw := strings.TrimSpace(v.Get("count")); len(raw) > 0 {
+		parsed, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse integer value "count"`)
+		}
+		tmp.count = int(parsed)
+	}
+	if raw := strings.TrimSpace(v.Get("full")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "full"`)
+		}
+		tmp.full = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("page")); len(raw) > 0 {
+		parsed, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse integer value "page"`)
+		}
+		tmp.page = int(parsed)
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // Remove creates a ReactionsRemoveCall object in preparation for accessing the reactions.remove endpoint
@@ -370,5 +451,27 @@ func (c *ReactionsRemoveCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ReactionsRemoveCall) FromValues(v url.Values) error {
+	var tmp ReactionsRemoveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("file")); len(raw) > 0 {
+		tmp.file = raw
+	}
+	if raw := strings.TrimSpace(v.Get("fileComment")); len(raw) > 0 {
+		tmp.fileComment = raw
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("timestamp")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
 	return nil
 }

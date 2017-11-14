@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // RTMStartCall is created by RTMService.Start method call
@@ -52,4 +54,11 @@ func (c *RTMStartCall) Do(ctx context.Context) (*RTMResponse, error) {
 	}
 
 	return res.RTMResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *RTMStartCall) FromValues(v url.Values) error {
+	var tmp RTMStartCall
+	*c = tmp
+	return nil
 }

@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // UsergroupsCreateCall is created by UsergroupsService.Create method call
@@ -138,6 +140,32 @@ func (c *UsergroupsCreateCall) Do(ctx context.Context) (*objects.Usergroup, erro
 	return res.Usergroup, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsCreateCall) FromValues(v url.Values) error {
+	var tmp UsergroupsCreateCall
+	if raw := strings.TrimSpace(v.Get("channels")); len(raw) > 0 {
+		tmp.channels = raw
+	}
+	if raw := strings.TrimSpace(v.Get("description")); len(raw) > 0 {
+		tmp.description = raw
+	}
+	if raw := strings.TrimSpace(v.Get("handle")); len(raw) > 0 {
+		tmp.handle = raw
+	}
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Disable creates a UsergroupsDisableCall object in preparation for accessing the usergroups.disable endpoint
 func (s *UsergroupsService) Disable(usergroup string) *UsergroupsDisableCall {
 	var call UsergroupsDisableCall
@@ -189,6 +217,23 @@ func (c *UsergroupsDisableCall) Do(ctx context.Context) (*objects.Usergroup, err
 	return res.Usergroup, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsDisableCall) FromValues(v url.Values) error {
+	var tmp UsergroupsDisableCall
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("usergroup")); len(raw) > 0 {
+		tmp.usergroup = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Enable creates a UsergroupsEnableCall object in preparation for accessing the usergroups.enable endpoint
 func (s *UsergroupsService) Enable(usergroup string) *UsergroupsEnableCall {
 	var call UsergroupsEnableCall
@@ -238,6 +283,23 @@ func (c *UsergroupsEnableCall) Do(ctx context.Context) (*objects.Usergroup, erro
 	}
 
 	return res.Usergroup, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsEnableCall) FromValues(v url.Values) error {
+	var tmp UsergroupsEnableCall
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("usergroup")); len(raw) > 0 {
+		tmp.usergroup = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // List creates a UsergroupsListCall object in preparation for accessing the usergroups.list endpoint
@@ -303,6 +365,34 @@ func (c *UsergroupsListCall) Do(ctx context.Context) (objects.UsergroupList, err
 	}
 
 	return res.UsergroupList, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsListCall) FromValues(v url.Values) error {
+	var tmp UsergroupsListCall
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("include_disabled")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_disabled"`)
+		}
+		tmp.includeDisabled = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("include_users")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_users"`)
+		}
+		tmp.includeUsers = parsed
+	}
+	*c = tmp
+	return nil
 }
 
 // Update creates a UsergroupsUpdateCall object in preparation for accessing the usergroups.update endpoint
@@ -394,4 +484,33 @@ func (c *UsergroupsUpdateCall) Do(ctx context.Context) (*objects.Usergroup, erro
 	}
 
 	return res.Usergroup, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsUpdateCall) FromValues(v url.Values) error {
+	var tmp UsergroupsUpdateCall
+	if raw := strings.TrimSpace(v.Get("channels")); len(raw) > 0 {
+		tmp.channels = raw
+	}
+	if raw := strings.TrimSpace(v.Get("description")); len(raw) > 0 {
+		tmp.description = raw
+	}
+	if raw := strings.TrimSpace(v.Get("handle")); len(raw) > 0 {
+		tmp.handle = raw
+	}
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("usergroup")); len(raw) > 0 {
+		tmp.usergroup = raw
+	}
+	*c = tmp
+	return nil
 }

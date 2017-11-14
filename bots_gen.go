@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // BotsInfoCall is created by BotsService.Info method call
@@ -59,4 +61,14 @@ func (c *BotsInfoCall) Do(ctx context.Context) (*objects.Bot, error) {
 	}
 
 	return res.Bot, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *BotsInfoCall) FromValues(v url.Values) error {
+	var tmp BotsInfoCall
+	if raw := strings.TrimSpace(v.Get("bot")); len(raw) > 0 {
+		tmp.bot = raw
+	}
+	*c = tmp
+	return nil
 }

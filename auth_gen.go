@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // AuthRevokeCall is created by AuthService.Revoke method call
@@ -69,6 +71,20 @@ func (c *AuthRevokeCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *AuthRevokeCall) FromValues(v url.Values) error {
+	var tmp AuthRevokeCall
+	if raw := strings.TrimSpace(v.Get("test")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "test"`)
+		}
+		tmp.test = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Test creates a AuthTestCall object in preparation for accessing the auth.test endpoint
 func (s *AuthService) Test() *AuthTestCall {
 	var call AuthTestCall
@@ -102,4 +118,11 @@ func (c *AuthTestCall) Do(ctx context.Context) (*AuthTestResponse, error) {
 	}
 
 	return res.AuthTestResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *AuthTestCall) FromValues(v url.Values) error {
+	var tmp AuthTestCall
+	*c = tmp
+	return nil
 }

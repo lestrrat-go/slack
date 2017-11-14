@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // UsersProfileGetCall is created by UsersProfileService.Get method call
@@ -83,6 +85,23 @@ func (c *UsersProfileGetCall) Do(ctx context.Context) (*objects.UserProfile, err
 	}
 
 	return res.UserProfile, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersProfileGetCall) FromValues(v url.Values) error {
+	var tmp UsersProfileGetCall
+	if raw := strings.TrimSpace(v.Get("include_labels")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_labels"`)
+		}
+		tmp.includeLabels = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // Set creates a UsersProfileSetCall object in preparation for accessing the users.profile.set endpoint
@@ -162,4 +181,25 @@ func (c *UsersProfileSetCall) Do(ctx context.Context) (*objects.UserProfile, err
 	}
 
 	return res.UserProfile, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersProfileSetCall) FromValues(v url.Values) error {
+	var tmp UsersProfileSetCall
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("profile")); len(raw) > 0 {
+		if err := tmp.profile.Decode(raw); err != nil {
+			return errors.Wrap(err, `failed to decode value "profile"`)
+		}
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	if raw := strings.TrimSpace(v.Get("value")); len(raw) > 0 {
+		tmp.value = raw
+	}
+	*c = tmp
+	return nil
 }

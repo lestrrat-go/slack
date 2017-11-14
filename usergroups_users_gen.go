@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // UsergroupsUsersListCall is created by UsergroupsUsersService.List method call
@@ -80,6 +82,23 @@ func (c *UsergroupsUsersListCall) Do(ctx context.Context) (objects.UsergroupUser
 	return res.UsergroupUsersList, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsUsersListCall) FromValues(v url.Values) error {
+	var tmp UsergroupsUsersListCall
+	if raw := strings.TrimSpace(v.Get("include_disabled")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_disabled"`)
+		}
+		tmp.includeDisabled = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("usergroup")); len(raw) > 0 {
+		tmp.usergroup = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Update creates a UsergroupsUsersUpdateCall object in preparation for accessing the usergroups.users.update endpoint
 func (s *UsergroupsUsersService) Update(usergroup string, users string) *UsergroupsUsersUpdateCall {
 	var call UsergroupsUsersUpdateCall
@@ -135,4 +154,24 @@ func (c *UsergroupsUsersUpdateCall) Do(ctx context.Context) (*objects.Usergroup,
 	}
 
 	return res.Usergroup, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsUsersUpdateCall) FromValues(v url.Values) error {
+	var tmp UsergroupsUsersUpdateCall
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("usergroup")); len(raw) > 0 {
+		tmp.usergroup = raw
+	}
+	if raw := strings.TrimSpace(v.Get("users")); len(raw) > 0 {
+		tmp.users = raw
+	}
+	*c = tmp
+	return nil
 }

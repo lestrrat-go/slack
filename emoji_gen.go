@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // EmojiListCall is created by EmojiService.List method call
@@ -52,4 +54,11 @@ func (c *EmojiListCall) Do(ctx context.Context) (*EmojiListResponse, error) {
 	}
 
 	return res.EmojiListResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *EmojiListCall) FromValues(v url.Values) error {
+	var tmp EmojiListCall
+	*c = tmp
+	return nil
 }

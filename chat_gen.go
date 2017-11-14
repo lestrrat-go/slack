@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // ChatDeleteCall is created by ChatService.Delete method call
@@ -129,6 +131,26 @@ func (c *ChatDeleteCall) Do(ctx context.Context) (*ChatResponse, error) {
 	return res.ChatResponse, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChatDeleteCall) FromValues(v url.Values) error {
+	var tmp ChatDeleteCall
+	if raw := strings.TrimSpace(v.Get("as_user")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "as_user"`)
+		}
+		tmp.asUser = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // MeMessage creates a ChatMeMessageCall object in preparation for accessing the chat.meMessage endpoint
 func (s *ChatService) MeMessage(channel string) *ChatMeMessageCall {
 	var call ChatMeMessageCall
@@ -178,6 +200,19 @@ func (c *ChatMeMessageCall) Do(ctx context.Context) (*ChatResponse, error) {
 	}
 
 	return res.ChatResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChatMeMessageCall) FromValues(v url.Values) error {
+	var tmp ChatMeMessageCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("text")); len(raw) > 0 {
+		tmp.text = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // PostMessage creates a ChatPostMessageCall object in preparation for accessing the chat.postMessage endpoint
@@ -351,6 +386,78 @@ func (c *ChatPostMessageCall) Do(ctx context.Context) (*ChatResponse, error) {
 	return res.ChatResponse, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChatPostMessageCall) FromValues(v url.Values) error {
+	var tmp ChatPostMessageCall
+	if raw := strings.TrimSpace(v.Get("as_user")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "as_user"`)
+		}
+		tmp.asUser = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("attachments")); len(raw) > 0 {
+		if err := tmp.attachments.Decode(raw); err != nil {
+			return errors.Wrap(err, `failed to decode value "attachments"`)
+		}
+	}
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("escapeText")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "escapeText"`)
+		}
+		tmp.escapeText = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("iconEmoji")); len(raw) > 0 {
+		tmp.iconEmoji = raw
+	}
+	if raw := strings.TrimSpace(v.Get("iconURL")); len(raw) > 0 {
+		tmp.iconURL = raw
+	}
+	if raw := strings.TrimSpace(v.Get("linkNames")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "linkNames"`)
+		}
+		tmp.linkNames = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("markdown")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "markdown"`)
+		}
+		tmp.markdown = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("parse")); len(raw) > 0 {
+		tmp.parse = raw
+	}
+	if raw := strings.TrimSpace(v.Get("text")); len(raw) > 0 {
+		tmp.text = raw
+	}
+	if raw := strings.TrimSpace(v.Get("unfurlLinks")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "unfurlLinks"`)
+		}
+		tmp.unfurlLinks = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("unfurlMedia")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "unfurlMedia"`)
+		}
+		tmp.unfurlMedia = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("username")); len(raw) > 0 {
+		tmp.username = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Unfurl creates a ChatUnfurlCall object in preparation for accessing the chat.unfurl endpoint
 func (s *ChatService) Unfurl(channel string, timestamp string, unfurls string) *ChatUnfurlCall {
 	var call ChatUnfurlCall
@@ -410,6 +517,29 @@ func (c *ChatUnfurlCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChatUnfurlCall) FromValues(v url.Values) error {
+	var tmp ChatUnfurlCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	if raw := strings.TrimSpace(v.Get("unfurls")); len(raw) > 0 {
+		tmp.unfurls = raw
+	}
+	if raw := strings.TrimSpace(v.Get("user_auth_required")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "user_auth_required"`)
+		}
+		tmp.userAuthRequired = parsed
+	}
+	*c = tmp
 	return nil
 }
 
@@ -522,4 +652,42 @@ func (c *ChatUpdateCall) Do(ctx context.Context) (*ChatResponse, error) {
 	}
 
 	return res.ChatResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChatUpdateCall) FromValues(v url.Values) error {
+	var tmp ChatUpdateCall
+	if raw := strings.TrimSpace(v.Get("as_user")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "as_user"`)
+		}
+		tmp.asUser = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("attachments")); len(raw) > 0 {
+		if err := tmp.attachments.Decode(raw); err != nil {
+			return errors.Wrap(err, `failed to decode value "attachments"`)
+		}
+	}
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("linkNames")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "linkNames"`)
+		}
+		tmp.linkNames = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("parse")); len(raw) > 0 {
+		tmp.parse = raw
+	}
+	if raw := strings.TrimSpace(v.Get("text")); len(raw) > 0 {
+		tmp.text = raw
+	}
+	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
+	return nil
 }

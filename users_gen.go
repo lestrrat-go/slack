@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // UsersDeletePhotoCall is created by UsersService.DeletePhoto method call
@@ -90,6 +92,13 @@ func (c *UsersDeletePhotoCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *UsersDeletePhotoCall) FromValues(v url.Values) error {
+	var tmp UsersDeletePhotoCall
+	*c = tmp
+	return nil
+}
+
 // GetPresence creates a UsersGetPresenceCall object in preparation for accessing the users.getPresence endpoint
 func (s *UsersService) GetPresence(user string) *UsersGetPresenceCall {
 	var call UsersGetPresenceCall
@@ -131,6 +140,16 @@ func (c *UsersGetPresenceCall) Do(ctx context.Context) (*objects.UserPresence, e
 	return res.UserPresence, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *UsersGetPresenceCall) FromValues(v url.Values) error {
+	var tmp UsersGetPresenceCall
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Identity creates a UsersIdentityCall object in preparation for accessing the users.identity endpoint
 func (s *UsersService) Identity() *UsersIdentityCall {
 	var call UsersIdentityCall
@@ -165,6 +184,13 @@ func (c *UsersIdentityCall) Do(ctx context.Context) (*objects.UserProfile, *obje
 	}
 
 	return res.UserProfile, res.Team, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersIdentityCall) FromValues(v url.Values) error {
+	var tmp UsersIdentityCall
+	*c = tmp
+	return nil
 }
 
 // Info creates a UsersInfoCall object in preparation for accessing the users.info endpoint
@@ -216,6 +242,23 @@ func (c *UsersInfoCall) Do(ctx context.Context) (*objects.User, error) {
 	}
 
 	return res.User, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersInfoCall) FromValues(v url.Values) error {
+	var tmp UsersInfoCall
+	if raw := strings.TrimSpace(v.Get("include_locale")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_locale"`)
+		}
+		tmp.includeLocale = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // List creates a UsersListCall object in preparation for accessing the users.list endpoint
@@ -283,6 +326,34 @@ func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
 	return res.UserList, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *UsersListCall) FromValues(v url.Values) error {
+	var tmp UsersListCall
+	if raw := strings.TrimSpace(v.Get("include_locale")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_locale"`)
+		}
+		tmp.includeLocale = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("limit")); len(raw) > 0 {
+		parsed, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse integer value "limit"`)
+		}
+		tmp.limit = int(parsed)
+	}
+	if raw := strings.TrimSpace(v.Get("presence")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "presence"`)
+		}
+		tmp.presence = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // SetActive creates a UsersSetActiveCall object in preparation for accessing the users.setActive endpoint
 func (s *UsersService) SetActive() *UsersSetActiveCall {
 	var call UsersSetActiveCall
@@ -314,6 +385,13 @@ func (c *UsersSetActiveCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersSetActiveCall) FromValues(v url.Values) error {
+	var tmp UsersSetActiveCall
+	*c = tmp
 	return nil
 }
 
@@ -354,5 +432,15 @@ func (c *UsersSetPresenceCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersSetPresenceCall) FromValues(v url.Values) error {
+	var tmp UsersSetPresenceCall
+	if raw := strings.TrimSpace(v.Get("presence")); len(raw) > 0 {
+		tmp.presence = raw
+	}
+	*c = tmp
 	return nil
 }

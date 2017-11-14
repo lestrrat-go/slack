@@ -13,3 +13,10 @@ func (p *UserProfile) Encode() (string, error) {
 	}
 	return string(buf), nil
 }
+
+func (p *UserProfile) Decode(buf string) error {
+	if buf == "" {
+		return nil
+	}
+	return json.Unmarshal([]byte(buf), p)
+}

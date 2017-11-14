@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // OAuthAccessCall is created by OAuthService.Access method call
@@ -83,4 +85,23 @@ func (c *OAuthAccessCall) Do(ctx context.Context) (*OAuthAccessResponse, error) 
 	}
 
 	return res.OAuthAccessResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *OAuthAccessCall) FromValues(v url.Values) error {
+	var tmp OAuthAccessCall
+	if raw := strings.TrimSpace(v.Get("client_id")); len(raw) > 0 {
+		tmp.clientID = raw
+	}
+	if raw := strings.TrimSpace(v.Get("client_secret")); len(raw) > 0 {
+		tmp.clientSecret = raw
+	}
+	if raw := strings.TrimSpace(v.Get("code")); len(raw) > 0 {
+		tmp.code = raw
+	}
+	if raw := strings.TrimSpace(v.Get("redirect_uri")); len(raw) > 0 {
+		tmp.redirectURI = raw
+	}
+	*c = tmp
+	return nil
 }

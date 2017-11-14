@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // GroupsArchiveCall is created by GroupsService.Archive method call
@@ -166,6 +168,16 @@ func (c *GroupsArchiveCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsArchiveCall) FromValues(v url.Values) error {
+	var tmp GroupsArchiveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Create creates a GroupsCreateCall object in preparation for accessing the groups.create endpoint
 func (s *GroupsService) Create(name string) *GroupsCreateCall {
 	var call GroupsCreateCall
@@ -217,6 +229,23 @@ func (c *GroupsCreateCall) Do(ctx context.Context) (*objects.Group, error) {
 	return res.Group, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsCreateCall) FromValues(v url.Values) error {
+	var tmp GroupsCreateCall
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("validate")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "validate"`)
+		}
+		tmp.validate = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // CreateChild creates a GroupsCreateChildCall object in preparation for accessing the groups.createChild endpoint
 func (s *GroupsService) CreateChild(channel string) *GroupsCreateChildCall {
 	var call GroupsCreateChildCall
@@ -256,6 +285,16 @@ func (c *GroupsCreateChildCall) Do(ctx context.Context) (*objects.Group, error) 
 	}
 
 	return res.Group, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsCreateChildCall) FromValues(v url.Values) error {
+	var tmp GroupsCreateChildCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // History creates a GroupsHistoryCall object in preparation for accessing the groups.history endpoint
@@ -350,6 +389,43 @@ func (c *GroupsHistoryCall) Do(ctx context.Context) (*string, objects.MessageLis
 	return res.string, res.MessageList, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsHistoryCall) FromValues(v url.Values) error {
+	var tmp GroupsHistoryCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("count")); len(raw) > 0 {
+		parsed, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse integer value "count"`)
+		}
+		tmp.count = int(parsed)
+	}
+	if raw := strings.TrimSpace(v.Get("inclusive")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "inclusive"`)
+		}
+		tmp.inclusive = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("latest")); len(raw) > 0 {
+		tmp.latest = raw
+	}
+	if raw := strings.TrimSpace(v.Get("oldest")); len(raw) > 0 {
+		tmp.oldest = raw
+	}
+	if raw := strings.TrimSpace(v.Get("unreads")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "unreads"`)
+		}
+		tmp.unreads = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Info creates a GroupsInfoCall object in preparation for accessing the groups.info endpoint
 func (s *GroupsService) Info(channel string) *GroupsInfoCall {
 	var call GroupsInfoCall
@@ -401,6 +477,23 @@ func (c *GroupsInfoCall) Do(ctx context.Context) (*objects.Group, error) {
 	return res.Group, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsInfoCall) FromValues(v url.Values) error {
+	var tmp GroupsInfoCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("include_locale")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_locale"`)
+		}
+		tmp.includeLocale = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Invite creates a GroupsInviteCall object in preparation for accessing the groups.invite endpoint
 func (s *GroupsService) Invite(channel string, user string) *GroupsInviteCall {
 	var call GroupsInviteCall
@@ -449,6 +542,19 @@ func (c *GroupsInviteCall) Do(ctx context.Context) (*objects.Group, *bool, error
 	return res.Group, res.bool, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsInviteCall) FromValues(v url.Values) error {
+	var tmp GroupsInviteCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Kick creates a GroupsKickCall object in preparation for accessing the groups.kick endpoint
 func (s *GroupsService) Kick(channel string, user string) *GroupsKickCall {
 	var call GroupsKickCall
@@ -495,6 +601,19 @@ func (c *GroupsKickCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsKickCall) FromValues(v url.Values) error {
+	var tmp GroupsKickCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Leave creates a GroupsLeaveCall object in preparation for accessing the groups.leave endpoint
 func (s *GroupsService) Leave(channel string) *GroupsLeaveCall {
 	var call GroupsLeaveCall
@@ -532,6 +651,16 @@ func (c *GroupsLeaveCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsLeaveCall) FromValues(v url.Values) error {
+	var tmp GroupsLeaveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
 	return nil
 }
 
@@ -590,6 +719,27 @@ func (c *GroupsListCall) Do(ctx context.Context) (objects.GroupList, error) {
 	return res.GroupList, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsListCall) FromValues(v url.Values) error {
+	var tmp GroupsListCall
+	if raw := strings.TrimSpace(v.Get("exclude_archived")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "exclude_archived"`)
+		}
+		tmp.excludeArchived = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("exclude_members")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "exclude_members"`)
+		}
+		tmp.excludeMembers = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Mark creates a GroupsMarkCall object in preparation for accessing the groups.mark endpoint
 func (s *GroupsService) Mark(channel string, timestamp string) *GroupsMarkCall {
 	var call GroupsMarkCall
@@ -636,6 +786,19 @@ func (c *GroupsMarkCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsMarkCall) FromValues(v url.Values) error {
+	var tmp GroupsMarkCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Open creates a GroupsOpenCall object in preparation for accessing the groups.open endpoint
 func (s *GroupsService) Open(channel string) *GroupsOpenCall {
 	var call GroupsOpenCall
@@ -673,6 +836,16 @@ func (c *GroupsOpenCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsOpenCall) FromValues(v url.Values) error {
+	var tmp GroupsOpenCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
 	return nil
 }
 
@@ -733,6 +906,26 @@ func (c *GroupsRenameCall) Do(ctx context.Context) (*objects.Group, error) {
 	return res.Group, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsRenameCall) FromValues(v url.Values) error {
+	var tmp GroupsRenameCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("validate")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "validate"`)
+		}
+		tmp.validate = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Replies creates a GroupsRepliesCall object in preparation for accessing the groups.replies endpoint
 func (s *GroupsService) Replies(channel string, threadTimestamp string) *GroupsRepliesCall {
 	var call GroupsRepliesCall
@@ -779,6 +972,19 @@ func (c *GroupsRepliesCall) Do(ctx context.Context) (objects.MessageList, *objec
 	}
 
 	return res.MessageList, res.ThreadInfo, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsRepliesCall) FromValues(v url.Values) error {
+	var tmp GroupsRepliesCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("thread_ts")); len(raw) > 0 {
+		tmp.threadTimestamp = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // SetPurpose creates a GroupsSetPurposeCall object in preparation for accessing the groups.setPurpose endpoint
@@ -828,6 +1034,19 @@ func (c *GroupsSetPurposeCall) Do(ctx context.Context) (*string, error) {
 	return res.string, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsSetPurposeCall) FromValues(v url.Values) error {
+	var tmp GroupsSetPurposeCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("purpose")); len(raw) > 0 {
+		tmp.purpose = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // SetTopic creates a GroupsSetTopicCall object in preparation for accessing the groups.setTopic endpoint
 func (s *GroupsService) SetTopic(channel string, topic string) *GroupsSetTopicCall {
 	var call GroupsSetTopicCall
@@ -875,6 +1094,19 @@ func (c *GroupsSetTopicCall) Do(ctx context.Context) (*string, error) {
 	return res.string, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsSetTopicCall) FromValues(v url.Values) error {
+	var tmp GroupsSetTopicCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("topic")); len(raw) > 0 {
+		tmp.topic = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Unarchive creates a GroupsUnarchiveCall object in preparation for accessing the groups.unarchive endpoint
 func (s *GroupsService) Unarchive(channel string) *GroupsUnarchiveCall {
 	var call GroupsUnarchiveCall
@@ -912,5 +1144,15 @@ func (c *GroupsUnarchiveCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsUnarchiveCall) FromValues(v url.Values) error {
+	var tmp GroupsUnarchiveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
 	return nil
 }

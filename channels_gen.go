@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // ChannelsArchiveCall is created by ChannelsService.Archive method call
@@ -163,6 +165,16 @@ func (c *ChannelsArchiveCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsArchiveCall) FromValues(v url.Values) error {
+	var tmp ChannelsArchiveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Create creates a ChannelsCreateCall object in preparation for accessing the channels.create endpoint
 func (s *ChannelsService) Create(name string) *ChannelsCreateCall {
 	var call ChannelsCreateCall
@@ -210,6 +222,23 @@ func (c *ChannelsCreateCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsCreateCall) FromValues(v url.Values) error {
+	var tmp ChannelsCreateCall
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("validate")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "validate"`)
+		}
+		tmp.validate = parsed
+	}
+	*c = tmp
 	return nil
 }
 
@@ -314,6 +343,46 @@ func (c *ChannelsHistoryCall) Do(ctx context.Context) (*ChannelsHistoryResponse,
 	return res.ChannelsHistoryResponse, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsHistoryCall) FromValues(v url.Values) error {
+	var tmp ChannelsHistoryCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("count")); len(raw) > 0 {
+		parsed, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse integer value "count"`)
+		}
+		tmp.count = int(parsed)
+	}
+	if raw := strings.TrimSpace(v.Get("inclusive")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "inclusive"`)
+		}
+		tmp.inclusive = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("latest")); len(raw) > 0 {
+		tmp.latest = raw
+	}
+	if raw := strings.TrimSpace(v.Get("oldest")); len(raw) > 0 {
+		tmp.oldest = raw
+	}
+	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	if raw := strings.TrimSpace(v.Get("unreads")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "unreads"`)
+		}
+		tmp.unreads = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Info creates a ChannelsInfoCall object in preparation for accessing the channels.info endpoint
 func (s *ChannelsService) Info(channel string) *ChannelsInfoCall {
 	var call ChannelsInfoCall
@@ -365,6 +434,23 @@ func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
 	return res.Channel, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsInfoCall) FromValues(v url.Values) error {
+	var tmp ChannelsInfoCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("include_locale")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_locale"`)
+		}
+		tmp.includeLocale = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Invite creates a ChannelsInviteCall object in preparation for accessing the channels.invite endpoint
 func (s *ChannelsService) Invite(channel string, user string) *ChannelsInviteCall {
 	var call ChannelsInviteCall
@@ -410,6 +496,19 @@ func (c *ChannelsInviteCall) Do(ctx context.Context) (*objects.Channel, error) {
 	}
 
 	return res.Channel, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsInviteCall) FromValues(v url.Values) error {
+	var tmp ChannelsInviteCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // Join creates a ChannelsJoinCall object in preparation for accessing the channels.join endpoint
@@ -463,6 +562,23 @@ func (c *ChannelsJoinCall) Do(ctx context.Context) (*objects.Channel, error) {
 	return res.Channel, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsJoinCall) FromValues(v url.Values) error {
+	var tmp ChannelsJoinCall
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("validate")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "validate"`)
+		}
+		tmp.validate = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Kick creates a ChannelsKickCall object in preparation for accessing the channels.kick endpoint
 func (s *ChannelsService) Kick(channel string, user string) *ChannelsKickCall {
 	var call ChannelsKickCall
@@ -509,6 +625,19 @@ func (c *ChannelsKickCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsKickCall) FromValues(v url.Values) error {
+	var tmp ChannelsKickCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Leave creates a ChannelsLeaveCall object in preparation for accessing the channels.leave endpoint
 func (s *ChannelsService) Leave(channel string) *ChannelsLeaveCall {
 	var call ChannelsLeaveCall
@@ -546,6 +675,16 @@ func (c *ChannelsLeaveCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsLeaveCall) FromValues(v url.Values) error {
+	var tmp ChannelsLeaveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
 	return nil
 }
 
@@ -614,6 +753,34 @@ func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) 
 	return res.ChannelList, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsListCall) FromValues(v url.Values) error {
+	var tmp ChannelsListCall
+	if raw := strings.TrimSpace(v.Get("exclude_archive")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "exclude_archive"`)
+		}
+		tmp.excludeArchive = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("exclude_members")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "exclude_members"`)
+		}
+		tmp.excludeMembers = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("limit")); len(raw) > 0 {
+		parsed, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse integer value "limit"`)
+		}
+		tmp.limit = int(parsed)
+	}
+	*c = tmp
+	return nil
+}
+
 // Mark creates a ChannelsMarkCall object in preparation for accessing the channels.mark endpoint
 func (s *ChannelsService) Mark(channel string) *ChannelsMarkCall {
 	var call ChannelsMarkCall
@@ -661,6 +828,19 @@ func (c *ChannelsMarkCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsMarkCall) FromValues(v url.Values) error {
+	var tmp ChannelsMarkCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
 	return nil
 }
 
@@ -721,6 +901,26 @@ func (c *ChannelsRenameCall) Do(ctx context.Context) (*objects.Channel, error) {
 	return res.Channel, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsRenameCall) FromValues(v url.Values) error {
+	var tmp ChannelsRenameCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("validate")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "validate"`)
+		}
+		tmp.validate = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Replies creates a ChannelsRepliesCall object in preparation for accessing the channels.replies endpoint
 func (s *ChannelsService) Replies(channel string, threadTimestamp string) *ChannelsRepliesCall {
 	var call ChannelsRepliesCall
@@ -766,6 +966,19 @@ func (c *ChannelsRepliesCall) Do(ctx context.Context) (objects.MessageList, erro
 	}
 
 	return res.MessageList, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsRepliesCall) FromValues(v url.Values) error {
+	var tmp ChannelsRepliesCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("thread_ts")); len(raw) > 0 {
+		tmp.threadTimestamp = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // SetPurpose creates a ChannelsSetPurposeCall object in preparation for accessing the channels.setPurpose endpoint
@@ -815,6 +1028,19 @@ func (c *ChannelsSetPurposeCall) Do(ctx context.Context) (*string, error) {
 	return res.string, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsSetPurposeCall) FromValues(v url.Values) error {
+	var tmp ChannelsSetPurposeCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("purpose")); len(raw) > 0 {
+		tmp.purpose = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // SetTopic creates a ChannelsSetTopicCall object in preparation for accessing the channels.setTopic endpoint
 func (s *ChannelsService) SetTopic(channel string, topic string) *ChannelsSetTopicCall {
 	var call ChannelsSetTopicCall
@@ -862,6 +1088,19 @@ func (c *ChannelsSetTopicCall) Do(ctx context.Context) (*string, error) {
 	return res.string, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsSetTopicCall) FromValues(v url.Values) error {
+	var tmp ChannelsSetTopicCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("topic")); len(raw) > 0 {
+		tmp.topic = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Unarchive creates a ChannelsUnarchiveCall object in preparation for accessing the channels.unarchive endpoint
 func (s *ChannelsService) Unarchive(channel string) *ChannelsUnarchiveCall {
 	var call ChannelsUnarchiveCall
@@ -899,5 +1138,15 @@ func (c *ChannelsUnarchiveCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChannelsUnarchiveCall) FromValues(v url.Values) error {
+	var tmp ChannelsUnarchiveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
 	return nil
 }
