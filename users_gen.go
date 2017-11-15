@@ -65,13 +65,14 @@ func (s *UsersService) DeletePhoto() *UsersDeletePhotoCall {
 	return &call
 }
 
-func (c *UsersDeletePhotoCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsersDeletePhotoCall object
+func (c *UsersDeletePhotoCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the UsersDeletePhotoCall object as url.Values
 func (c *UsersDeletePhotoCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -114,7 +115,8 @@ func (s *UsersService) GetPresence(user string) *UsersGetPresenceCall {
 	return &call
 }
 
-func (c *UsersGetPresenceCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsersGetPresenceCall object
+func (c *UsersGetPresenceCall) ValidateArgs() error {
 	if len(c.user) <= 0 {
 		return errors.New(`required field user not initialized`)
 	}
@@ -123,7 +125,7 @@ func (c *UsersGetPresenceCall) Validate() error {
 
 // Values returns the UsersGetPresenceCall object as url.Values
 func (c *UsersGetPresenceCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -171,13 +173,14 @@ func (s *UsersService) Identity() *UsersIdentityCall {
 	return &call
 }
 
-func (c *UsersIdentityCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsersIdentityCall object
+func (c *UsersIdentityCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the UsersIdentityCall object as url.Values
 func (c *UsersIdentityCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -228,7 +231,8 @@ func (c *UsersInfoCall) IncludeLocale(includeLocale bool) *UsersInfoCall {
 	return c
 }
 
-func (c *UsersInfoCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsersInfoCall object
+func (c *UsersInfoCall) ValidateArgs() error {
 	if len(c.user) <= 0 {
 		return errors.New(`required field user not initialized`)
 	}
@@ -237,7 +241,7 @@ func (c *UsersInfoCall) Validate() error {
 
 // Values returns the UsersInfoCall object as url.Values
 func (c *UsersInfoCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -314,13 +318,14 @@ func (c *UsersListCall) Presence(presence bool) *UsersListCall {
 	return c
 }
 
-func (c *UsersListCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsersListCall object
+func (c *UsersListCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the UsersListCall object as url.Values
 func (c *UsersListCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -396,13 +401,14 @@ func (s *UsersService) SetActive() *UsersSetActiveCall {
 	return &call
 }
 
-func (c *UsersSetActiveCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsersSetActiveCall object
+func (c *UsersSetActiveCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the UsersSetActiveCall object as url.Values
 func (c *UsersSetActiveCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -445,7 +451,8 @@ func (s *UsersService) SetPresence(presence string) *UsersSetPresenceCall {
 	return &call
 }
 
-func (c *UsersSetPresenceCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsersSetPresenceCall object
+func (c *UsersSetPresenceCall) ValidateArgs() error {
 	if len(c.presence) <= 0 {
 		return errors.New(`required field presence not initialized`)
 	}
@@ -454,7 +461,7 @@ func (c *UsersSetPresenceCall) Validate() error {
 
 // Values returns the UsersSetPresenceCall object as url.Values
 func (c *UsersSetPresenceCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}

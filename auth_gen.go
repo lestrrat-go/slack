@@ -40,13 +40,14 @@ func (c *AuthRevokeCall) Test(test bool) *AuthRevokeCall {
 	return c
 }
 
-func (c *AuthRevokeCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the AuthRevokeCall object
+func (c *AuthRevokeCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the AuthRevokeCall object as url.Values
 func (c *AuthRevokeCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -99,13 +100,14 @@ func (s *AuthService) Test() *AuthTestCall {
 	return &call
 }
 
-func (c *AuthTestCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the AuthTestCall object
+func (c *AuthTestCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the AuthTestCall object as url.Values
 func (c *AuthTestCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}

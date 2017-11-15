@@ -28,13 +28,14 @@ func (s *RTMService) Start() *RTMStartCall {
 	return &call
 }
 
-func (c *RTMStartCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the RTMStartCall object
+func (c *RTMStartCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the RTMStartCall object as url.Values
 func (c *RTMStartCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}

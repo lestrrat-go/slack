@@ -30,7 +30,8 @@ func (s *BotsService) Info(bot string) *BotsInfoCall {
 	return &call
 }
 
-func (c *BotsInfoCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the BotsInfoCall object
+func (c *BotsInfoCall) ValidateArgs() error {
 	if len(c.bot) <= 0 {
 		return errors.New(`required field bot not initialized`)
 	}
@@ -39,7 +40,7 @@ func (c *BotsInfoCall) Validate() error {
 
 // Values returns the BotsInfoCall object as url.Values
 func (c *BotsInfoCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}

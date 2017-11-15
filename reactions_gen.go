@@ -87,7 +87,8 @@ func (c *ReactionsAddCall) Timestamp(timestamp string) *ReactionsAddCall {
 	return c
 }
 
-func (c *ReactionsAddCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ReactionsAddCall object
+func (c *ReactionsAddCall) ValidateArgs() error {
 	if len(c.name) <= 0 {
 		return errors.New(`required field name not initialized`)
 	}
@@ -96,7 +97,7 @@ func (c *ReactionsAddCall) Validate() error {
 
 // Values returns the ReactionsAddCall object as url.Values
 func (c *ReactionsAddCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -201,13 +202,14 @@ func (c *ReactionsGetCall) Timestamp(timestamp string) *ReactionsGetCall {
 	return c
 }
 
-func (c *ReactionsGetCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ReactionsGetCall object
+func (c *ReactionsGetCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the ReactionsGetCall object as url.Values
 func (c *ReactionsGetCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -313,13 +315,14 @@ func (c *ReactionsListCall) User(user string) *ReactionsListCall {
 	return c
 }
 
-func (c *ReactionsListCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ReactionsListCall object
+func (c *ReactionsListCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the ReactionsListCall object as url.Values
 func (c *ReactionsListCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -427,7 +430,8 @@ func (c *ReactionsRemoveCall) Timestamp(timestamp string) *ReactionsRemoveCall {
 	return c
 }
 
-func (c *ReactionsRemoveCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ReactionsRemoveCall object
+func (c *ReactionsRemoveCall) ValidateArgs() error {
 	if len(c.name) <= 0 {
 		return errors.New(`required field name not initialized`)
 	}
@@ -436,7 +440,7 @@ func (c *ReactionsRemoveCall) Validate() error {
 
 // Values returns the ReactionsRemoveCall object as url.Values
 func (c *ReactionsRemoveCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}

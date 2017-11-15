@@ -51,13 +51,14 @@ func (c *UsersProfileGetCall) User(user string) *UsersProfileGetCall {
 	return c
 }
 
-func (c *UsersProfileGetCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsersProfileGetCall object
+func (c *UsersProfileGetCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the UsersProfileGetCall object as url.Values
 func (c *UsersProfileGetCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -142,13 +143,14 @@ func (c *UsersProfileSetCall) Value(value string) *UsersProfileSetCall {
 	return c
 }
 
-func (c *UsersProfileSetCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsersProfileSetCall object
+func (c *UsersProfileSetCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the UsersProfileSetCall object as url.Values
 func (c *UsersProfileSetCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}

@@ -294,8 +294,8 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 
 			checks[arg.Name] = &check
 		}
-		fmt.Fprintf(&buf, "\n\n// Validate checks that all required fields are set in the %s%sCall object", endpoint.Group, endpoint.methodName)
-		fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) Validate() error {", endpoint.Group, endpoint.methodName)
+		fmt.Fprintf(&buf, "\n\n// ValidateArgs checks that all required fields are set in the %s%sCall object", endpoint.Group, endpoint.methodName)
+		fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) ValidateArgs() error {", endpoint.Group, endpoint.methodName)
 		for _, arg := range endpoint.Args {
 			if !arg.Required {
 				continue
@@ -307,11 +307,11 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 			fmt.Fprintf(&buf, "\n}")
 		}
 		fmt.Fprintf(&buf, "\nreturn nil")
-		fmt.Fprintf(&buf, "\n}") // end func Validate
+		fmt.Fprintf(&buf, "\n}") // end func ValidateArgs
 
 		fmt.Fprintf(&buf, "\n\n// Values returns the %s%sCall object as url.Values", endpoint.Group, endpoint.methodName)
 		fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) Values() (url.Values, error) {", endpoint.Group, endpoint.methodName)
-		fmt.Fprintf(&buf, "\nif err := c.Validate(); err != nil {")
+		fmt.Fprintf(&buf, "\nif err := c.ValidateArgs(); err != nil {")
 		fmt.Fprintf(&buf, "\nreturn nil, errors.Wrap(err, `failed validation`)")
 		fmt.Fprintf(&buf, "\n}") // end if err := c.Validate
 		buf.WriteString("\nv := url.Values{}")

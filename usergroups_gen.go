@@ -91,7 +91,8 @@ func (c *UsergroupsCreateCall) IncludeCount(includeCount bool) *UsergroupsCreate
 	return c
 }
 
-func (c *UsergroupsCreateCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsergroupsCreateCall object
+func (c *UsergroupsCreateCall) ValidateArgs() error {
 	if len(c.name) <= 0 {
 		return errors.New(`required field name not initialized`)
 	}
@@ -100,7 +101,7 @@ func (c *UsergroupsCreateCall) Validate() error {
 
 // Values returns the UsergroupsCreateCall object as url.Values
 func (c *UsergroupsCreateCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -187,7 +188,8 @@ func (c *UsergroupsDisableCall) IncludeCount(includeCount bool) *UsergroupsDisab
 	return c
 }
 
-func (c *UsergroupsDisableCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsergroupsDisableCall object
+func (c *UsergroupsDisableCall) ValidateArgs() error {
 	if len(c.usergroup) <= 0 {
 		return errors.New(`required field usergroup not initialized`)
 	}
@@ -196,7 +198,7 @@ func (c *UsergroupsDisableCall) Validate() error {
 
 // Values returns the UsergroupsDisableCall object as url.Values
 func (c *UsergroupsDisableCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -262,7 +264,8 @@ func (c *UsergroupsEnableCall) IncludeCount(includeCount bool) *UsergroupsEnable
 	return c
 }
 
-func (c *UsergroupsEnableCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsergroupsEnableCall object
+func (c *UsergroupsEnableCall) ValidateArgs() error {
 	if len(c.usergroup) <= 0 {
 		return errors.New(`required field usergroup not initialized`)
 	}
@@ -271,7 +274,7 @@ func (c *UsergroupsEnableCall) Validate() error {
 
 // Values returns the UsergroupsEnableCall object as url.Values
 func (c *UsergroupsEnableCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -348,13 +351,14 @@ func (c *UsergroupsListCall) IncludeUsers(includeUsers bool) *UsergroupsListCall
 	return c
 }
 
-func (c *UsergroupsListCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsergroupsListCall object
+func (c *UsergroupsListCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the UsergroupsListCall object as url.Values
 func (c *UsergroupsListCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -461,7 +465,8 @@ func (c *UsergroupsUpdateCall) Name(name string) *UsergroupsUpdateCall {
 	return c
 }
 
-func (c *UsergroupsUpdateCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the UsergroupsUpdateCall object
+func (c *UsergroupsUpdateCall) ValidateArgs() error {
 	if len(c.usergroup) <= 0 {
 		return errors.New(`required field usergroup not initialized`)
 	}
@@ -470,7 +475,7 @@ func (c *UsergroupsUpdateCall) Validate() error {
 
 // Values returns the UsergroupsUpdateCall object as url.Values
 func (c *UsergroupsUpdateCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}

@@ -133,7 +133,8 @@ func (s *ChannelsService) Archive(channel string) *ChannelsArchiveCall {
 	return &call
 }
 
-func (c *ChannelsArchiveCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsArchiveCall object
+func (c *ChannelsArchiveCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -142,7 +143,7 @@ func (c *ChannelsArchiveCall) Validate() error {
 
 // Values returns the ChannelsArchiveCall object as url.Values
 func (c *ChannelsArchiveCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -196,7 +197,8 @@ func (c *ChannelsCreateCall) Validate(validate bool) *ChannelsCreateCall {
 	return c
 }
 
-func (c *ChannelsCreateCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsCreateCall object
+func (c *ChannelsCreateCall) ValidateArgs() error {
 	if len(c.name) <= 0 {
 		return errors.New(`required field name not initialized`)
 	}
@@ -205,7 +207,7 @@ func (c *ChannelsCreateCall) Validate() error {
 
 // Values returns the ChannelsCreateCall object as url.Values
 func (c *ChannelsCreateCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -300,7 +302,8 @@ func (c *ChannelsHistoryCall) Unreads(unreads bool) *ChannelsHistoryCall {
 	return c
 }
 
-func (c *ChannelsHistoryCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsHistoryCall object
+func (c *ChannelsHistoryCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -309,7 +312,7 @@ func (c *ChannelsHistoryCall) Validate() error {
 
 // Values returns the ChannelsHistoryCall object as url.Values
 func (c *ChannelsHistoryCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -418,7 +421,8 @@ func (c *ChannelsInfoCall) IncludeLocale(includeLocale bool) *ChannelsInfoCall {
 	return c
 }
 
-func (c *ChannelsInfoCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsInfoCall object
+func (c *ChannelsInfoCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -427,7 +431,7 @@ func (c *ChannelsInfoCall) Validate() error {
 
 // Values returns the ChannelsInfoCall object as url.Values
 func (c *ChannelsInfoCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -488,7 +492,8 @@ func (s *ChannelsService) Invite(channel string, user string) *ChannelsInviteCal
 	return &call
 }
 
-func (c *ChannelsInviteCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsInviteCall object
+func (c *ChannelsInviteCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -500,7 +505,7 @@ func (c *ChannelsInviteCall) Validate() error {
 
 // Values returns the ChannelsInviteCall object as url.Values
 func (c *ChannelsInviteCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -560,7 +565,8 @@ func (c *ChannelsJoinCall) Validate(validate bool) *ChannelsJoinCall {
 	return c
 }
 
-func (c *ChannelsJoinCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsJoinCall object
+func (c *ChannelsJoinCall) ValidateArgs() error {
 	if len(c.name) <= 0 {
 		return errors.New(`required field name not initialized`)
 	}
@@ -569,7 +575,7 @@ func (c *ChannelsJoinCall) Validate() error {
 
 // Values returns the ChannelsJoinCall object as url.Values
 func (c *ChannelsJoinCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -630,7 +636,8 @@ func (s *ChannelsService) Kick(channel string, user string) *ChannelsKickCall {
 	return &call
 }
 
-func (c *ChannelsKickCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsKickCall object
+func (c *ChannelsKickCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -642,7 +649,7 @@ func (c *ChannelsKickCall) Validate() error {
 
 // Values returns the ChannelsKickCall object as url.Values
 func (c *ChannelsKickCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -695,7 +702,8 @@ func (s *ChannelsService) Leave(channel string) *ChannelsLeaveCall {
 	return &call
 }
 
-func (c *ChannelsLeaveCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsLeaveCall object
+func (c *ChannelsLeaveCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -704,7 +712,7 @@ func (c *ChannelsLeaveCall) Validate() error {
 
 // Values returns the ChannelsLeaveCall object as url.Values
 func (c *ChannelsLeaveCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -769,13 +777,14 @@ func (c *ChannelsListCall) Limit(limit int) *ChannelsListCall {
 	return c
 }
 
-func (c *ChannelsListCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsListCall object
+func (c *ChannelsListCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the ChannelsListCall object as url.Values
 func (c *ChannelsListCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -858,7 +867,8 @@ func (c *ChannelsMarkCall) Timestamp(timestamp string) *ChannelsMarkCall {
 	return c
 }
 
-func (c *ChannelsMarkCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsMarkCall object
+func (c *ChannelsMarkCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -867,7 +877,7 @@ func (c *ChannelsMarkCall) Validate() error {
 
 // Values returns the ChannelsMarkCall object as url.Values
 func (c *ChannelsMarkCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -929,7 +939,8 @@ func (c *ChannelsRenameCall) Validate(validate bool) *ChannelsRenameCall {
 	return c
 }
 
-func (c *ChannelsRenameCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsRenameCall object
+func (c *ChannelsRenameCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -941,7 +952,7 @@ func (c *ChannelsRenameCall) Validate() error {
 
 // Values returns the ChannelsRenameCall object as url.Values
 func (c *ChannelsRenameCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -1007,7 +1018,8 @@ func (s *ChannelsService) Replies(channel string, threadTimestamp string) *Chann
 	return &call
 }
 
-func (c *ChannelsRepliesCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsRepliesCall object
+func (c *ChannelsRepliesCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -1019,7 +1031,7 @@ func (c *ChannelsRepliesCall) Validate() error {
 
 // Values returns the ChannelsRepliesCall object as url.Values
 func (c *ChannelsRepliesCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -1074,7 +1086,8 @@ func (s *ChannelsService) SetPurpose(channel string, purpose string) *ChannelsSe
 	return &call
 }
 
-func (c *ChannelsSetPurposeCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsSetPurposeCall object
+func (c *ChannelsSetPurposeCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -1086,7 +1099,7 @@ func (c *ChannelsSetPurposeCall) Validate() error {
 
 // Values returns the ChannelsSetPurposeCall object as url.Values
 func (c *ChannelsSetPurposeCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -1141,7 +1154,8 @@ func (s *ChannelsService) SetTopic(channel string, topic string) *ChannelsSetTop
 	return &call
 }
 
-func (c *ChannelsSetTopicCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsSetTopicCall object
+func (c *ChannelsSetTopicCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -1153,7 +1167,7 @@ func (c *ChannelsSetTopicCall) Validate() error {
 
 // Values returns the ChannelsSetTopicCall object as url.Values
 func (c *ChannelsSetTopicCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
@@ -1207,7 +1221,8 @@ func (s *ChannelsService) Unarchive(channel string) *ChannelsUnarchiveCall {
 	return &call
 }
 
-func (c *ChannelsUnarchiveCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the ChannelsUnarchiveCall object
+func (c *ChannelsUnarchiveCall) ValidateArgs() error {
 	if len(c.channel) <= 0 {
 		return errors.New(`required field channel not initialized`)
 	}
@@ -1216,7 +1231,7 @@ func (c *ChannelsUnarchiveCall) Validate() error {
 
 // Values returns the ChannelsUnarchiveCall object as url.Values
 func (c *ChannelsUnarchiveCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}

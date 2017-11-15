@@ -28,13 +28,14 @@ func (s *EmojiService) List() *EmojiListCall {
 	return &call
 }
 
-func (c *EmojiListCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the EmojiListCall object
+func (c *EmojiListCall) ValidateArgs() error {
 	return nil
 }
 
 // Values returns the EmojiListCall object as url.Values
 func (c *EmojiListCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}

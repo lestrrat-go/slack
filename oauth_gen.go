@@ -41,7 +41,8 @@ func (c *OAuthAccessCall) RedirectURI(redirectURI string) *OAuthAccessCall {
 	return c
 }
 
-func (c *OAuthAccessCall) Validate() error {
+// ValidateArgs checks that all required fields are set in the OAuthAccessCall object
+func (c *OAuthAccessCall) ValidateArgs() error {
 	if len(c.clientID) <= 0 {
 		return errors.New(`required field clientID not initialized`)
 	}
@@ -56,7 +57,7 @@ func (c *OAuthAccessCall) Validate() error {
 
 // Values returns the OAuthAccessCall object as url.Values
 func (c *OAuthAccessCall) Values() (url.Values, error) {
-	if err := c.Validate(); err != nil {
+	if err := c.ValidateArgs(); err != nil {
 		return nil, errors.Wrap(err, `failed validation`)
 	}
 	v := url.Values{}
