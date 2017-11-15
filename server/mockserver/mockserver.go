@@ -11,75 +11,91 @@ import (
 	"github.com/lestrrat/go-slack/server"
 )
 
-func New() *server.Server {
-	s := server.New()
-	s.Handle("auth.revoke", http.HandlerFunc(HandleAuthRevoke))
-	s.Handle("auth.test", http.HandlerFunc(HandleAuthTest))
-	s.Handle("bots.info", http.HandlerFunc(HandleBotsInfo))
-	s.Handle("channels.archive", http.HandlerFunc(HandleChannelsArchive))
-	s.Handle("channels.create", http.HandlerFunc(HandleChannelsCreate))
-	s.Handle("channels.history", http.HandlerFunc(HandleChannelsHistory))
-	s.Handle("channels.info", http.HandlerFunc(HandleChannelsInfo))
-	s.Handle("channels.invite", http.HandlerFunc(HandleChannelsInvite))
-	s.Handle("channels.join", http.HandlerFunc(HandleChannelsJoin))
-	s.Handle("channels.kick", http.HandlerFunc(HandleChannelsKick))
-	s.Handle("channels.leave", http.HandlerFunc(HandleChannelsLeave))
-	s.Handle("channels.list", http.HandlerFunc(HandleChannelsList))
-	s.Handle("channels.mark", http.HandlerFunc(HandleChannelsMark))
-	s.Handle("channels.rename", http.HandlerFunc(HandleChannelsRename))
-	s.Handle("channels.replies", http.HandlerFunc(HandleChannelsReplies))
-	s.Handle("channels.setPurpose", http.HandlerFunc(HandleChannelsSetPurpose))
-	s.Handle("channels.setTopic", http.HandlerFunc(HandleChannelsSetTopic))
-	s.Handle("channels.unarchive", http.HandlerFunc(HandleChannelsUnarchive))
-	s.Handle("chat.delete", http.HandlerFunc(HandleChatDelete))
-	s.Handle("chat.meMessage", http.HandlerFunc(HandleChatMeMessage))
-	s.Handle("chat.postMessage", http.HandlerFunc(HandleChatPostMessage))
-	s.Handle("chat.unfurl", http.HandlerFunc(HandleChatUnfurl))
-	s.Handle("chat.update", http.HandlerFunc(HandleChatUpdate))
-	s.Handle("emoji.list", http.HandlerFunc(HandleEmojiList))
-	s.Handle("groups.archive", http.HandlerFunc(HandleGroupsArchive))
-	s.Handle("groups.create", http.HandlerFunc(HandleGroupsCreate))
-	s.Handle("groups.createChild", http.HandlerFunc(HandleGroupsCreateChild))
-	s.Handle("groups.history", http.HandlerFunc(HandleGroupsHistory))
-	s.Handle("groups.info", http.HandlerFunc(HandleGroupsInfo))
-	s.Handle("groups.invite", http.HandlerFunc(HandleGroupsInvite))
-	s.Handle("groups.kick", http.HandlerFunc(HandleGroupsKick))
-	s.Handle("groups.leave", http.HandlerFunc(HandleGroupsLeave))
-	s.Handle("groups.list", http.HandlerFunc(HandleGroupsList))
-	s.Handle("groups.mark", http.HandlerFunc(HandleGroupsMark))
-	s.Handle("groups.open", http.HandlerFunc(HandleGroupsOpen))
-	s.Handle("groups.rename", http.HandlerFunc(HandleGroupsRename))
-	s.Handle("groups.replies", http.HandlerFunc(HandleGroupsReplies))
-	s.Handle("groups.setPurpose", http.HandlerFunc(HandleGroupsSetPurpose))
-	s.Handle("groups.setTopic", http.HandlerFunc(HandleGroupsSetTopic))
-	s.Handle("groups.unarchive", http.HandlerFunc(HandleGroupsUnarchive))
-	s.Handle("oauth.access", http.HandlerFunc(HandleOAuthAccess))
-	s.Handle("reactions.add", http.HandlerFunc(HandleReactionsAdd))
-	s.Handle("reactions.get", http.HandlerFunc(HandleReactionsGet))
-	s.Handle("reactions.list", http.HandlerFunc(HandleReactionsList))
-	s.Handle("reactions.remove", http.HandlerFunc(HandleReactionsRemove))
-	s.Handle("rtm.start", http.HandlerFunc(HandleRTMStart))
-	s.Handle("usergroups.create", http.HandlerFunc(HandleUsergroupsCreate))
-	s.Handle("usergroups.disable", http.HandlerFunc(HandleUsergroupsDisable))
-	s.Handle("usergroups.enable", http.HandlerFunc(HandleUsergroupsEnable))
-	s.Handle("usergroups.list", http.HandlerFunc(HandleUsergroupsList))
-	s.Handle("usergroups.update", http.HandlerFunc(HandleUsergroupsUpdate))
-	s.Handle("usergroups.users.list", http.HandlerFunc(HandleUsergroupsUsersList))
-	s.Handle("usergroups.users.update", http.HandlerFunc(HandleUsergroupsUsersUpdate))
-	s.Handle("users.deletePhoto", http.HandlerFunc(HandleUsersDeletePhoto))
-	s.Handle("users.getPresence", http.HandlerFunc(HandleUsersGetPresence))
-	s.Handle("users.identity", http.HandlerFunc(HandleUsersIdentity))
-	s.Handle("users.info", http.HandlerFunc(HandleUsersInfo))
-	s.Handle("users.list", http.HandlerFunc(HandleUsersList))
-	s.Handle("users.profile.get", http.HandlerFunc(HandleUsersProfileGet))
-	s.Handle("users.profile.set", http.HandlerFunc(HandleUsersProfileSet))
-	s.Handle("users.setActive", http.HandlerFunc(HandleUsersSetActive))
-	s.Handle("users.setPresence", http.HandlerFunc(HandleUsersSetPresence))
-	return s
+type Handler struct {
+	token string
+}
+
+func New(token string) *Handler {
+	return &Handler{
+		token: token,
+	}
+}
+
+func (h *Handler) InstallHandlers(s *server.Server) {
+	s.Handle("auth.revoke", http.HandlerFunc(h.HandleAuthRevoke))
+	s.Handle("auth.test", http.HandlerFunc(h.HandleAuthTest))
+	s.Handle("bots.info", http.HandlerFunc(h.HandleBotsInfo))
+	s.Handle("channels.archive", http.HandlerFunc(h.HandleChannelsArchive))
+	s.Handle("channels.create", http.HandlerFunc(h.HandleChannelsCreate))
+	s.Handle("channels.history", http.HandlerFunc(h.HandleChannelsHistory))
+	s.Handle("channels.info", http.HandlerFunc(h.HandleChannelsInfo))
+	s.Handle("channels.invite", http.HandlerFunc(h.HandleChannelsInvite))
+	s.Handle("channels.join", http.HandlerFunc(h.HandleChannelsJoin))
+	s.Handle("channels.kick", http.HandlerFunc(h.HandleChannelsKick))
+	s.Handle("channels.leave", http.HandlerFunc(h.HandleChannelsLeave))
+	s.Handle("channels.list", http.HandlerFunc(h.HandleChannelsList))
+	s.Handle("channels.mark", http.HandlerFunc(h.HandleChannelsMark))
+	s.Handle("channels.rename", http.HandlerFunc(h.HandleChannelsRename))
+	s.Handle("channels.replies", http.HandlerFunc(h.HandleChannelsReplies))
+	s.Handle("channels.setPurpose", http.HandlerFunc(h.HandleChannelsSetPurpose))
+	s.Handle("channels.setTopic", http.HandlerFunc(h.HandleChannelsSetTopic))
+	s.Handle("channels.unarchive", http.HandlerFunc(h.HandleChannelsUnarchive))
+	s.Handle("chat.delete", http.HandlerFunc(h.HandleChatDelete))
+	s.Handle("chat.meMessage", http.HandlerFunc(h.HandleChatMeMessage))
+	s.Handle("chat.postMessage", http.HandlerFunc(h.HandleChatPostMessage))
+	s.Handle("chat.unfurl", http.HandlerFunc(h.HandleChatUnfurl))
+	s.Handle("chat.update", http.HandlerFunc(h.HandleChatUpdate))
+	s.Handle("emoji.list", http.HandlerFunc(h.HandleEmojiList))
+	s.Handle("groups.archive", http.HandlerFunc(h.HandleGroupsArchive))
+	s.Handle("groups.create", http.HandlerFunc(h.HandleGroupsCreate))
+	s.Handle("groups.createChild", http.HandlerFunc(h.HandleGroupsCreateChild))
+	s.Handle("groups.history", http.HandlerFunc(h.HandleGroupsHistory))
+	s.Handle("groups.info", http.HandlerFunc(h.HandleGroupsInfo))
+	s.Handle("groups.invite", http.HandlerFunc(h.HandleGroupsInvite))
+	s.Handle("groups.kick", http.HandlerFunc(h.HandleGroupsKick))
+	s.Handle("groups.leave", http.HandlerFunc(h.HandleGroupsLeave))
+	s.Handle("groups.list", http.HandlerFunc(h.HandleGroupsList))
+	s.Handle("groups.mark", http.HandlerFunc(h.HandleGroupsMark))
+	s.Handle("groups.open", http.HandlerFunc(h.HandleGroupsOpen))
+	s.Handle("groups.rename", http.HandlerFunc(h.HandleGroupsRename))
+	s.Handle("groups.replies", http.HandlerFunc(h.HandleGroupsReplies))
+	s.Handle("groups.setPurpose", http.HandlerFunc(h.HandleGroupsSetPurpose))
+	s.Handle("groups.setTopic", http.HandlerFunc(h.HandleGroupsSetTopic))
+	s.Handle("groups.unarchive", http.HandlerFunc(h.HandleGroupsUnarchive))
+	s.Handle("oauth.access", http.HandlerFunc(h.HandleOAuthAccess))
+	s.Handle("reactions.add", http.HandlerFunc(h.HandleReactionsAdd))
+	s.Handle("reactions.get", http.HandlerFunc(h.HandleReactionsGet))
+	s.Handle("reactions.list", http.HandlerFunc(h.HandleReactionsList))
+	s.Handle("reactions.remove", http.HandlerFunc(h.HandleReactionsRemove))
+	s.Handle("rtm.start", http.HandlerFunc(h.HandleRTMStart))
+	s.Handle("usergroups.create", http.HandlerFunc(h.HandleUsergroupsCreate))
+	s.Handle("usergroups.disable", http.HandlerFunc(h.HandleUsergroupsDisable))
+	s.Handle("usergroups.enable", http.HandlerFunc(h.HandleUsergroupsEnable))
+	s.Handle("usergroups.list", http.HandlerFunc(h.HandleUsergroupsList))
+	s.Handle("usergroups.update", http.HandlerFunc(h.HandleUsergroupsUpdate))
+	s.Handle("usergroups.users.list", http.HandlerFunc(h.HandleUsergroupsUsersList))
+	s.Handle("usergroups.users.update", http.HandlerFunc(h.HandleUsergroupsUsersUpdate))
+	s.Handle("users.deletePhoto", http.HandlerFunc(h.HandleUsersDeletePhoto))
+	s.Handle("users.getPresence", http.HandlerFunc(h.HandleUsersGetPresence))
+	s.Handle("users.identity", http.HandlerFunc(h.HandleUsersIdentity))
+	s.Handle("users.info", http.HandlerFunc(h.HandleUsersInfo))
+	s.Handle("users.list", http.HandlerFunc(h.HandleUsersList))
+	s.Handle("users.profile.get", http.HandlerFunc(h.HandleUsersProfileGet))
+	s.Handle("users.profile.set", http.HandlerFunc(h.HandleUsersProfileSet))
+	s.Handle("users.setActive", http.HandlerFunc(h.HandleUsersSetActive))
+	s.Handle("users.setPresence", http.HandlerFunc(h.HandleUsersSetPresence))
 }
 
 // HandleAuthRevoke is the default handler method for the Slack auth.revoke API
-func HandleAuthRevoke(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleAuthRevoke(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.AuthRevokeCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -95,7 +111,15 @@ func HandleAuthRevoke(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleAuthTest is the default handler method for the Slack auth.test API
-func HandleAuthTest(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleAuthTest(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.AuthTestCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -111,7 +135,15 @@ func HandleAuthTest(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleBotsInfo is the default handler method for the Slack bots.info API
-func HandleBotsInfo(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleBotsInfo(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.BotsInfoCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -127,7 +159,15 @@ func HandleBotsInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsArchive is the default handler method for the Slack channels.archive API
-func HandleChannelsArchive(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsArchive(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsArchiveCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -143,7 +183,15 @@ func HandleChannelsArchive(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsCreate is the default handler method for the Slack channels.create API
-func HandleChannelsCreate(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsCreate(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsCreateCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -159,7 +207,15 @@ func HandleChannelsCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsHistory is the default handler method for the Slack channels.history API
-func HandleChannelsHistory(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsHistory(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsHistoryCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -175,7 +231,15 @@ func HandleChannelsHistory(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsInfo is the default handler method for the Slack channels.info API
-func HandleChannelsInfo(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsInfo(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsInfoCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -191,7 +255,15 @@ func HandleChannelsInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsInvite is the default handler method for the Slack channels.invite API
-func HandleChannelsInvite(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsInvite(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsInviteCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -207,7 +279,15 @@ func HandleChannelsInvite(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsJoin is the default handler method for the Slack channels.join API
-func HandleChannelsJoin(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsJoin(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsJoinCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -223,7 +303,15 @@ func HandleChannelsJoin(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsKick is the default handler method for the Slack channels.kick API
-func HandleChannelsKick(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsKick(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsKickCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -239,7 +327,15 @@ func HandleChannelsKick(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsLeave is the default handler method for the Slack channels.leave API
-func HandleChannelsLeave(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsLeave(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsLeaveCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -255,7 +351,15 @@ func HandleChannelsLeave(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsList is the default handler method for the Slack channels.list API
-func HandleChannelsList(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsList(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsListCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -271,7 +375,15 @@ func HandleChannelsList(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsMark is the default handler method for the Slack channels.mark API
-func HandleChannelsMark(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsMark(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsMarkCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -287,7 +399,15 @@ func HandleChannelsMark(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsRename is the default handler method for the Slack channels.rename API
-func HandleChannelsRename(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsRename(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsRenameCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -303,7 +423,15 @@ func HandleChannelsRename(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsReplies is the default handler method for the Slack channels.replies API
-func HandleChannelsReplies(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsReplies(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsRepliesCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -319,7 +447,15 @@ func HandleChannelsReplies(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsSetPurpose is the default handler method for the Slack channels.setPurpose API
-func HandleChannelsSetPurpose(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsSetPurpose(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsSetPurposeCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -335,7 +471,15 @@ func HandleChannelsSetPurpose(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsSetTopic is the default handler method for the Slack channels.setTopic API
-func HandleChannelsSetTopic(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsSetTopic(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsSetTopicCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -351,7 +495,15 @@ func HandleChannelsSetTopic(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChannelsUnarchive is the default handler method for the Slack channels.unarchive API
-func HandleChannelsUnarchive(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChannelsUnarchive(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChannelsUnarchiveCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -367,7 +519,15 @@ func HandleChannelsUnarchive(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChatDelete is the default handler method for the Slack chat.delete API
-func HandleChatDelete(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChatDelete(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChatDeleteCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -383,7 +543,15 @@ func HandleChatDelete(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChatMeMessage is the default handler method for the Slack chat.meMessage API
-func HandleChatMeMessage(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChatMeMessage(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChatMeMessageCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -399,7 +567,15 @@ func HandleChatMeMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChatPostMessage is the default handler method for the Slack chat.postMessage API
-func HandleChatPostMessage(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChatPostMessage(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChatPostMessageCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -415,7 +591,15 @@ func HandleChatPostMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChatUnfurl is the default handler method for the Slack chat.unfurl API
-func HandleChatUnfurl(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChatUnfurl(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChatUnfurlCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -431,7 +615,15 @@ func HandleChatUnfurl(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleChatUpdate is the default handler method for the Slack chat.update API
-func HandleChatUpdate(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleChatUpdate(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ChatUpdateCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -447,7 +639,15 @@ func HandleChatUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleEmojiList is the default handler method for the Slack emoji.list API
-func HandleEmojiList(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleEmojiList(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.EmojiListCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -463,7 +663,15 @@ func HandleEmojiList(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsArchive is the default handler method for the Slack groups.archive API
-func HandleGroupsArchive(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsArchive(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsArchiveCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -479,7 +687,15 @@ func HandleGroupsArchive(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsCreate is the default handler method for the Slack groups.create API
-func HandleGroupsCreate(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsCreate(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsCreateCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -495,7 +711,15 @@ func HandleGroupsCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsCreateChild is the default handler method for the Slack groups.createChild API
-func HandleGroupsCreateChild(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsCreateChild(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsCreateChildCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -511,7 +735,15 @@ func HandleGroupsCreateChild(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsHistory is the default handler method for the Slack groups.history API
-func HandleGroupsHistory(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsHistory(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsHistoryCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -527,7 +759,15 @@ func HandleGroupsHistory(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsInfo is the default handler method for the Slack groups.info API
-func HandleGroupsInfo(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsInfo(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsInfoCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -543,7 +783,15 @@ func HandleGroupsInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsInvite is the default handler method for the Slack groups.invite API
-func HandleGroupsInvite(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsInvite(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsInviteCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -559,7 +807,15 @@ func HandleGroupsInvite(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsKick is the default handler method for the Slack groups.kick API
-func HandleGroupsKick(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsKick(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsKickCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -575,7 +831,15 @@ func HandleGroupsKick(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsLeave is the default handler method for the Slack groups.leave API
-func HandleGroupsLeave(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsLeave(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsLeaveCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -591,7 +855,15 @@ func HandleGroupsLeave(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsList is the default handler method for the Slack groups.list API
-func HandleGroupsList(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsList(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsListCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -607,7 +879,15 @@ func HandleGroupsList(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsMark is the default handler method for the Slack groups.mark API
-func HandleGroupsMark(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsMark(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsMarkCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -623,7 +903,15 @@ func HandleGroupsMark(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsOpen is the default handler method for the Slack groups.open API
-func HandleGroupsOpen(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsOpen(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsOpenCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -639,7 +927,15 @@ func HandleGroupsOpen(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsRename is the default handler method for the Slack groups.rename API
-func HandleGroupsRename(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsRename(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsRenameCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -655,7 +951,15 @@ func HandleGroupsRename(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsReplies is the default handler method for the Slack groups.replies API
-func HandleGroupsReplies(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsReplies(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsRepliesCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -671,7 +975,15 @@ func HandleGroupsReplies(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsSetPurpose is the default handler method for the Slack groups.setPurpose API
-func HandleGroupsSetPurpose(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsSetPurpose(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsSetPurposeCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -687,7 +999,15 @@ func HandleGroupsSetPurpose(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsSetTopic is the default handler method for the Slack groups.setTopic API
-func HandleGroupsSetTopic(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsSetTopic(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsSetTopicCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -703,7 +1023,15 @@ func HandleGroupsSetTopic(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleGroupsUnarchive is the default handler method for the Slack groups.unarchive API
-func HandleGroupsUnarchive(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGroupsUnarchive(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.GroupsUnarchiveCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -719,7 +1047,11 @@ func HandleGroupsUnarchive(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleOAuthAccess is the default handler method for the Slack oauth.access API
-func HandleOAuthAccess(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleOAuthAccess(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
 	var c slack.OAuthAccessCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -735,7 +1067,15 @@ func HandleOAuthAccess(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleReactionsAdd is the default handler method for the Slack reactions.add API
-func HandleReactionsAdd(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleReactionsAdd(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ReactionsAddCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -751,7 +1091,15 @@ func HandleReactionsAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleReactionsGet is the default handler method for the Slack reactions.get API
-func HandleReactionsGet(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleReactionsGet(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ReactionsGetCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -767,7 +1115,15 @@ func HandleReactionsGet(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleReactionsList is the default handler method for the Slack reactions.list API
-func HandleReactionsList(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleReactionsList(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ReactionsListCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -783,7 +1139,15 @@ func HandleReactionsList(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleReactionsRemove is the default handler method for the Slack reactions.remove API
-func HandleReactionsRemove(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleReactionsRemove(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.ReactionsRemoveCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -799,7 +1163,15 @@ func HandleReactionsRemove(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleRTMStart is the default handler method for the Slack rtm.start API
-func HandleRTMStart(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleRTMStart(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.RTMStartCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -815,7 +1187,15 @@ func HandleRTMStart(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsergroupsCreate is the default handler method for the Slack usergroups.create API
-func HandleUsergroupsCreate(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsergroupsCreate(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsergroupsCreateCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -831,7 +1211,15 @@ func HandleUsergroupsCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsergroupsDisable is the default handler method for the Slack usergroups.disable API
-func HandleUsergroupsDisable(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsergroupsDisable(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsergroupsDisableCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -847,7 +1235,15 @@ func HandleUsergroupsDisable(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsergroupsEnable is the default handler method for the Slack usergroups.enable API
-func HandleUsergroupsEnable(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsergroupsEnable(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsergroupsEnableCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -863,7 +1259,15 @@ func HandleUsergroupsEnable(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsergroupsList is the default handler method for the Slack usergroups.list API
-func HandleUsergroupsList(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsergroupsList(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsergroupsListCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -879,7 +1283,15 @@ func HandleUsergroupsList(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsergroupsUpdate is the default handler method for the Slack usergroups.update API
-func HandleUsergroupsUpdate(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsergroupsUpdate(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsergroupsUpdateCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -895,7 +1307,15 @@ func HandleUsergroupsUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsergroupsUsersList is the default handler method for the Slack usergroups.users.list API
-func HandleUsergroupsUsersList(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsergroupsUsersList(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsergroupsUsersListCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -911,7 +1331,15 @@ func HandleUsergroupsUsersList(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsergroupsUsersUpdate is the default handler method for the Slack usergroups.users.update API
-func HandleUsergroupsUsersUpdate(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsergroupsUsersUpdate(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsergroupsUsersUpdateCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -927,7 +1355,15 @@ func HandleUsergroupsUsersUpdate(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsersDeletePhoto is the default handler method for the Slack users.deletePhoto API
-func HandleUsersDeletePhoto(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsersDeletePhoto(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsersDeletePhotoCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -943,7 +1379,15 @@ func HandleUsersDeletePhoto(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsersGetPresence is the default handler method for the Slack users.getPresence API
-func HandleUsersGetPresence(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsersGetPresence(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsersGetPresenceCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -959,7 +1403,15 @@ func HandleUsersGetPresence(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsersIdentity is the default handler method for the Slack users.identity API
-func HandleUsersIdentity(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsersIdentity(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsersIdentityCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -975,7 +1427,15 @@ func HandleUsersIdentity(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsersInfo is the default handler method for the Slack users.info API
-func HandleUsersInfo(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsersInfo(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsersInfoCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -991,7 +1451,15 @@ func HandleUsersInfo(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsersList is the default handler method for the Slack users.list API
-func HandleUsersList(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsersList(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsersListCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -1007,7 +1475,15 @@ func HandleUsersList(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsersProfileGet is the default handler method for the Slack users.profile.get API
-func HandleUsersProfileGet(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsersProfileGet(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsersProfileGetCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -1023,7 +1499,15 @@ func HandleUsersProfileGet(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsersProfileSet is the default handler method for the Slack users.profile.set API
-func HandleUsersProfileSet(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsersProfileSet(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsersProfileSetCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -1039,7 +1523,15 @@ func HandleUsersProfileSet(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsersSetActive is the default handler method for the Slack users.setActive API
-func HandleUsersSetActive(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsersSetActive(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsersSetActiveCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
@@ -1055,7 +1547,15 @@ func HandleUsersSetActive(w http.ResponseWriter, r *http.Request) {
 }
 
 // HandleUsersSetPresence is the default handler method for the Slack users.setPresence API
-func HandleUsersSetPresence(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleUsersSetPresence(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
 	var c slack.UsersSetPresenceCall
 	if err := c.FromValues(r.Form); err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)

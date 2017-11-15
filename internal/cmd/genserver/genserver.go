@@ -221,17 +221,36 @@ func generateMockServerFile(endpoints []*Endpoint) error {
 	}
 	buf.WriteString("\n)")
 
-	fmt.Fprintf(&buf, "\n\nfunc New() *server.Server {")
-	fmt.Fprintf(&buf, "\ns := server.New()")
+	fmt.Fprintf(&buf, "\ntype Handler struct {")
+	fmt.Fprintf(&buf, "\ntoken string")
+	fmt.Fprintf(&buf, "\n}") // end type Handler
+
+	fmt.Fprintf(&buf, "\n\nfunc New(token string) *Handler {")
+	fmt.Fprintf(&buf, "\nreturn &Handler{")
+	fmt.Fprintf(&buf, "\ntoken: token,")
+	fmt.Fprintf(&buf, "\n}") // end return Handler
+	fmt.Fprintf(&buf, "\n}") // end New
+	fmt.Fprintf(&buf, "\n\nfunc (h *Handler) InstallHandlers(s *server.Server) {")
 	for _, endpoint := range endpoints {
-		fmt.Fprintf(&buf, "\ns.Handle(%s, http.HandlerFunc(Handle%s%s))", strconv.Quote(endpoint.Name), endpoint.Group, endpoint.methodName)
+		fmt.Fprintf(&buf, "\ns.Handle(%s, http.HandlerFunc(h.Handle%s%s))", strconv.Quote(endpoint.Name), endpoint.Group, endpoint.methodName)
 	}
-	fmt.Fprintf(&buf, "\nreturn s")
-	fmt.Fprintf(&buf, "\n}")  // end of New
+	fmt.Fprintf(&buf, "\n}") // end Server
 
 	for _, endpoint := range endpoints {
 		fmt.Fprintf(&buf, "\n\n// Handle%s%s is the default handler method for the Slack %s API", endpoint.Group, endpoint.methodName, endpoint.Name)
-		fmt.Fprintf(&buf, "\nfunc Handle%s%s(w http.ResponseWriter, r *http.Request) {", endpoint.Group, endpoint.methodName)
+		fmt.Fprintf(&buf, "\nfunc (h *Handler) Handle%s%s(w http.ResponseWriter, r *http.Request) {", endpoint.Group, endpoint.methodName)
+		fmt.Fprintf(&buf, "\nif err := r.ParseForm(); err != nil {")
+		fmt.Fprintf(&buf, "\nhttp.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)")
+		fmt.Fprintf(&buf, "\nreturn")
+		fmt.Fprintf(&buf, "\n}") // end if err := r.ParseForm()
+
+		if !endpoint.SkipToken {
+			fmt.Fprintf(&buf, "\nif token := r.FormValue(`token`); len(token) == 0 || h.token != token {")
+			fmt.Fprintf(&buf, "\nhttp.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)")
+			fmt.Fprintf(&buf, "\nreturn")
+			fmt.Fprintf(&buf, "\n}") // if len(token) || h.token != token
+		}
+
 		fmt.Fprintf(&buf, "\nvar c slack.%s%sCall", endpoint.Group, endpoint.methodName)
 		fmt.Fprintf(&buf, "\nif err := c.FromValues(r.Form); err != nil {")
 		fmt.Fprintf(&buf, "\nhttp.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)")

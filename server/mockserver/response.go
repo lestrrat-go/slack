@@ -15,6 +15,7 @@ var (
 	}{
 		SlackResponse: slack.SlackResponse{
 			OK: true,
+			Timestamp: "233431200",
 		},
 		Channel: objects.Channel{
 			Group: objects.Group{
