@@ -119,15 +119,15 @@ func (c *ChatDeleteCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access chat.delete endpoint
-func (c *ChatDeleteCall) Do(ctx context.Context) (*ChatResponse, error) {
+func (c *ChatDeleteCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.delete"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ChatResponse
+		objects.GenericResponse
+		*objects.ChatResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.delete`)
@@ -198,15 +198,15 @@ func (c *ChatMeMessageCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access chat.meMessage endpoint
-func (c *ChatMeMessageCall) Do(ctx context.Context) (*ChatResponse, error) {
+func (c *ChatMeMessageCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.meMessage"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ChatResponse
+		objects.GenericResponse
+		*objects.ChatResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.meMessage`)
@@ -390,15 +390,15 @@ func (c *ChatPostMessageCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access chat.postMessage endpoint
-func (c *ChatPostMessageCall) Do(ctx context.Context) (*ChatResponse, error) {
+func (c *ChatPostMessageCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.postMessage"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ChatResponse
+		objects.GenericResponse
+		*objects.ChatResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.postMessage`)
@@ -540,7 +540,7 @@ func (c *ChatUnfurlCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to chat.unfurl`)
@@ -674,15 +674,15 @@ func (c *ChatUpdateCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access chat.update endpoint
-func (c *ChatUpdateCall) Do(ctx context.Context) (*ChatResponse, error) {
+func (c *ChatUpdateCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.update"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ChatResponse
+		objects.GenericResponse
+		*objects.ChatResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.update`)

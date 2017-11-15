@@ -135,7 +135,7 @@ func (c *UsergroupsCreateCall) Do(ctx context.Context) (*objects.Usergroup, erro
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Usergroup `json:"usergroup"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -220,7 +220,7 @@ func (c *UsergroupsDisableCall) Do(ctx context.Context) (*objects.Usergroup, err
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Usergroup `json:"usergroup"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -296,7 +296,7 @@ func (c *UsergroupsEnableCall) Do(ctx context.Context) (*objects.Usergroup, erro
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Usergroup `json:"usergroup"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -386,7 +386,7 @@ func (c *UsergroupsListCall) Do(ctx context.Context) (objects.UsergroupList, err
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.UsergroupList `json:"usergroups"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -513,7 +513,7 @@ func (c *UsergroupsUpdateCall) Do(ctx context.Context) (*objects.Usergroup, erro
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Usergroup `json:"usergroup"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {

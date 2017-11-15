@@ -82,7 +82,7 @@ func (c *UsersProfileGetCall) Do(ctx context.Context) (*objects.UserProfile, err
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.UserProfile
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -186,7 +186,7 @@ func (c *UsersProfileSetCall) Do(ctx context.Context) (*objects.UserProfile, err
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.UserProfile
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {

@@ -44,15 +44,15 @@ func (c *EmojiListCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access emoji.list endpoint
-func (c *EmojiListCall) Do(ctx context.Context) (*EmojiListResponse, error) {
+func (c *EmojiListCall) Do(ctx context.Context) (*objects.EmojiListResponse, error) {
 	const endpoint = "emoji.list"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*EmojiListResponse
+		objects.GenericResponse
+		*objects.EmojiListResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to emoji.list`)

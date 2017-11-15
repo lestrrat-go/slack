@@ -164,7 +164,7 @@ func (c *GroupsArchiveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.archive`)
@@ -232,7 +232,7 @@ func (c *GroupsCreateCall) Do(ctx context.Context) (*objects.Group, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Group `json:"group"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -298,7 +298,7 @@ func (c *GroupsCreateChildCall) Do(ctx context.Context) (*objects.Group, error) 
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Group `json:"group"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -407,7 +407,7 @@ func (c *GroupsHistoryCall) Do(ctx context.Context) (*string, objects.MessageLis
 		return nil, nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*string             `json:"latest"`
 		objects.MessageList `json:"messages"`
 	}
@@ -504,7 +504,7 @@ func (c *GroupsInfoCall) Do(ctx context.Context) (*objects.Group, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Group `json:"group"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -576,7 +576,7 @@ func (c *GroupsInviteCall) Do(ctx context.Context) (*objects.Group, *bool, error
 		return nil, nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Group `json:"group"`
 		*bool          `json:"already_in_group"`
 	}
@@ -645,7 +645,7 @@ func (c *GroupsKickCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.kick`)
@@ -706,7 +706,7 @@ func (c *GroupsLeaveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.leave`)
@@ -778,7 +778,7 @@ func (c *GroupsListCall) Do(ctx context.Context) (objects.GroupList, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.GroupList `json:"groups"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -854,7 +854,7 @@ func (c *GroupsMarkCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.mark`)
@@ -915,7 +915,7 @@ func (c *GroupsOpenCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.open`)
@@ -989,7 +989,7 @@ func (c *GroupsRenameCall) Do(ctx context.Context) (*objects.Group, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Group `json:"group"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -1064,7 +1064,7 @@ func (c *GroupsRepliesCall) Do(ctx context.Context) (objects.MessageList, *objec
 		return nil, nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.MessageList `json:"messages"`
 		*objects.ThreadInfo `json:"thread_info"`
 	}
@@ -1133,7 +1133,7 @@ func (c *GroupsSetPurposeCall) Do(ctx context.Context) (*string, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*string `json:"purpose"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -1201,7 +1201,7 @@ func (c *GroupsSetTopicCall) Do(ctx context.Context) (*string, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*string `json:"topic"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -1263,7 +1263,7 @@ func (c *GroupsUnarchiveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.unarchive`)

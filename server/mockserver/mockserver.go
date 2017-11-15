@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/lestrrat/go-slack"
+	"github.com/lestrrat/go-slack/objects"
 	"github.com/lestrrat/go-slack/server"
 )
 
@@ -1636,60 +1637,60 @@ func (h *Handler) HandleUsersSetPresence(w http.ResponseWriter, r *http.Request)
 
 func StockResponse(method string) interface{} {
 	switch method {
-	case "bots.info":
-		return stockObjectsBot()
-	case "channels.setPurpose", "channels.setTopic", "groups.setPurpose", "groups.setTopic":
-		return stockString()
-	case "emoji.list":
-		return stockEmojiListResponse()
-	case "groups.history":
-		return stockStringObjectsMessageList()
-	case "oauth.access":
-		return stockOAuthAccessResponse()
-	case "reactions.list":
-		return stockReactionsListResponse()
-	case "rtm.start":
-		return stockRTMResponse()
-	case "users.list":
-		return stockObjectsUserList()
-	case "users.profile.get", "users.profile.set":
-		return stockObjectsUserProfile()
-	case "channels.history":
-		return stockChannelsHistoryResponse()
 	case "channels.list":
 		return stockObjectsChannelList()
-	case "groups.create", "groups.createChild", "groups.info", "groups.rename":
-		return stockObjectsGroup()
-	case "groups.invite":
-		return stockObjectsGroupBool()
-	case "groups.list":
-		return stockObjectsGroupList()
+	case "chat.delete", "chat.meMessage", "chat.postMessage", "chat.update":
+		return stockObjectsChatResponse()
 	case "usergroups.create", "usergroups.disable", "usergroups.enable", "usergroups.update", "usergroups.users.update":
 		return stockObjectsUsergroup()
-	case "users.info":
-		return stockObjectsUser()
-	case "auth.test":
-		return stockAuthTestResponse()
+	case "usergroups.list":
+		return stockObjectsUsergroupList()
+	case "users.getPresence":
+		return stockObjectsUserPresence()
+	case "channels.history":
+		return stockObjectsChannelsHistoryResponse()
 	case "channels.info", "channels.invite", "channels.join", "channels.rename":
 		return stockObjectsChannel()
 	case "channels.replies":
 		return stockObjectsMessageList()
-	case "chat.delete", "chat.meMessage", "chat.postMessage", "chat.update":
-		return stockChatResponse()
+	case "groups.invite":
+		return stockObjectsGroupBool()
 	case "groups.replies":
 		return stockObjectsMessageListObjectsThreadInfo()
 	case "reactions.get":
-		return stockReactionsGetResponse()
-	case "usergroups.list":
-		return stockObjectsUsergroupList()
-	case "usergroups.users.list":
-		return stockObjectsUsergroupUsersList()
-	case "users.getPresence":
-		return stockObjectsUserPresence()
+		return stockObjectsReactionsGetResponse()
 	case "users.identity":
 		return stockObjectsUserProfileObjectsTeam()
+	case "users.list":
+		return stockObjectsUserList()
+	case "bots.info":
+		return stockObjectsBot()
+	case "groups.create", "groups.createChild", "groups.info", "groups.rename":
+		return stockObjectsGroup()
+	case "groups.list":
+		return stockObjectsGroupList()
+	case "usergroups.users.list":
+		return stockObjectsUsergroupUsersList()
+	case "users.profile.get", "users.profile.set":
+		return stockObjectsUserProfile()
+	case "emoji.list":
+		return stockObjectsEmojiListResponse()
+	case "channels.setPurpose", "channels.setTopic", "groups.setPurpose", "groups.setTopic":
+		return stockString()
+	case "groups.history":
+		return stockStringObjectsMessageList()
+	case "oauth.access":
+		return stockObjectsOAuthAccessResponse()
+	case "reactions.list":
+		return stockObjectsReactionsListResponse()
+	case "rtm.start":
+		return stockObjectsRTMResponse()
+	case "users.info":
+		return stockObjectsUser()
+	case "auth.test":
+		return stockObjectsAuthTestResponse()
 	default:
-		return slack.SlackResponse{
+		return objects.GenericResponse{
 			OK:        true,
 			Timestamp: strconv.FormatInt(time.Now().Unix(), 10),
 		}

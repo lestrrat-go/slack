@@ -88,7 +88,7 @@ func (c *UsersDeletePhotoCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.deletePhoto`)
@@ -143,7 +143,7 @@ func (c *UsersGetPresenceCall) Do(ctx context.Context) (*objects.UserPresence, e
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.UserPresence
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -196,7 +196,7 @@ func (c *UsersIdentityCall) Do(ctx context.Context) (*objects.UserProfile, *obje
 		return nil, nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.UserProfile `json:"user"`
 		*objects.Team        `json:"team"`
 	}
@@ -263,7 +263,7 @@ func (c *UsersInfoCall) Do(ctx context.Context) (*objects.User, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.User
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -353,7 +353,7 @@ func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.UserList `json:"members"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -424,7 +424,7 @@ func (c *UsersSetActiveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.setActive`)
@@ -479,7 +479,7 @@ func (c *UsersSetPresenceCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.setPresence`)

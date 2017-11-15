@@ -77,7 +77,7 @@ func (c *UsergroupsUsersListCall) Do(ctx context.Context) (objects.UsergroupUser
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.UsergroupUsersList `json:"users"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -159,7 +159,7 @@ func (c *UsergroupsUsersUpdateCall) Do(ctx context.Context) (*objects.Usergroup,
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Usergroup `json:"usergroup"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {

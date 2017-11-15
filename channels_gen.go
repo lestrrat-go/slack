@@ -161,7 +161,7 @@ func (c *ChannelsArchiveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.archive`)
@@ -229,7 +229,7 @@ func (c *ChannelsCreateCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.create`)
@@ -347,15 +347,15 @@ func (c *ChannelsHistoryCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access channels.history endpoint
-func (c *ChannelsHistoryCall) Do(ctx context.Context) (*ChannelsHistoryResponse, error) {
+func (c *ChannelsHistoryCall) Do(ctx context.Context) (*objects.ChannelsHistoryResponse, error) {
 	const endpoint = "channels.history"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ChannelsHistoryResponse
+		objects.GenericResponse
+		*objects.ChannelsHistoryResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.history`)
@@ -453,7 +453,7 @@ func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Channel
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -525,7 +525,7 @@ func (c *ChannelsInviteCall) Do(ctx context.Context) (*objects.Channel, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Channel
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -597,7 +597,7 @@ func (c *ChannelsJoinCall) Do(ctx context.Context) (*objects.Channel, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Channel
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -669,7 +669,7 @@ func (c *ChannelsKickCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.kick`)
@@ -730,7 +730,7 @@ func (c *ChannelsLeaveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.leave`)
@@ -812,7 +812,7 @@ func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) 
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.ChannelList `json:"channels"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -899,7 +899,7 @@ func (c *ChannelsMarkCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.mark`)
@@ -976,7 +976,7 @@ func (c *ChannelsRenameCall) Do(ctx context.Context) (*objects.Channel, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Channel `json:"channel"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -1051,7 +1051,7 @@ func (c *ChannelsRepliesCall) Do(ctx context.Context) (objects.MessageList, erro
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.MessageList `json:"messages"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -1119,7 +1119,7 @@ func (c *ChannelsSetPurposeCall) Do(ctx context.Context) (*string, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*string `json:"purpose"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -1187,7 +1187,7 @@ func (c *ChannelsSetTopicCall) Do(ctx context.Context) (*string, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*string `json:"topic"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -1249,7 +1249,7 @@ func (c *ChannelsUnarchiveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.unarchive`)

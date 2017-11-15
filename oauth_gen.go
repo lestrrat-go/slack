@@ -75,15 +75,15 @@ func (c *OAuthAccessCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access oauth.access endpoint
-func (c *OAuthAccessCall) Do(ctx context.Context) (*OAuthAccessResponse, error) {
+func (c *OAuthAccessCall) Do(ctx context.Context) (*objects.OAuthAccessResponse, error) {
 	const endpoint = "oauth.access"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*OAuthAccessResponse
+		objects.GenericResponse
+		*objects.OAuthAccessResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to oauth.access`)

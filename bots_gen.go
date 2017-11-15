@@ -58,7 +58,7 @@ func (c *BotsInfoCall) Do(ctx context.Context) (*objects.Bot, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Bot
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {

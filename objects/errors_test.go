@@ -1,16 +1,16 @@
-package slack_test
+package objects_test
 
 import (
 	"encoding/json"
 	"testing"
 
-	slack "github.com/lestrrat/go-slack"
+	"github.com/lestrrat/go-slack/objects"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestStructuredError(t *testing.T) {
 	b := []byte(`{"code": 1049, "msg": "hello, world"}`)
-	var e slack.ErrorResponse
+	var e objects.ErrorResponse
 	if !assert.NoError(t, json.Unmarshal(b, &e), `json unmarshal should succeed`) {
 		return
 	}

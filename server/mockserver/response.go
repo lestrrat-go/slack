@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lestrrat/go-slack"
 	"github.com/lestrrat/go-slack/objects"
 )
 
@@ -26,13 +25,13 @@ var UserLukeSkywalker = objects.User{
 	Name: "luke.skywalker",
 }
 
-func stockAuthTestResponse() interface{} {
+func stockObjectsAuthTestResponse() interface{} {
 	var r = struct {
-		slack.SlackResponse
-		slack.AuthTestResponse
+		objects.GenericResponse
+		objects.AuthTestResponse
 	}{
-		SlackResponse: StockResponse("dummy").(slack.SlackResponse),
-		AuthTestResponse: slack.AuthTestResponse{
+		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
+		AuthTestResponse: objects.AuthTestResponse{
 			URL:    "https://jedi.dummy.mock-slack.com",
 			Team:   TeamJedi.Name,
 			TeamID: TeamJedi.ID,
@@ -45,10 +44,10 @@ func stockAuthTestResponse() interface{} {
 
 func stockObjectsChannel() interface{} {
 	var r = struct {
-		slack.SlackResponse
+		objects.GenericResponse
 		objects.Channel
 	}{
-		SlackResponse: StockResponse("dummy").(slack.SlackResponse),
+		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
 		Channel: objects.Channel{
 			Group: objects.Group{
 				Conversation: objects.Conversation{
@@ -79,15 +78,15 @@ func stockObjectsChannel() interface{} {
 	return r
 }
 
-func stockReactionsGetResponse() interface{}          { return StockResponse("dummy") }
+func stockObjectsReactionsGetResponse() interface{}          { return StockResponse("dummy") }
 func stockObjectsUserProfileObjectsTeam() interface{} { return StockResponse("dummy") }
 func stockObjectsUserList() interface{}               { return StockResponse("dummy") }
 func stockObjectsBot() interface{} {
 	var r = struct {
-		slack.SlackResponse
+		objects.GenericResponse
 		objects.Bot
 	}{
-		SlackResponse: StockResponse("dummy").(slack.SlackResponse),
+		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
 		Bot: objects.Bot{
 			ID:      "B0123456",
 			AppID:   "A0123456",
@@ -103,27 +102,27 @@ func stockObjectsBot() interface{} {
 	return r
 }
 func stockString() interface{}                              { return StockResponse("dummy") }
-func stockChatResponse() interface{}                        { return StockResponse("dummy") }
+func stockObjectsChatResponse() interface{}                 { return StockResponse("dummy") }
 func stockObjectsGroupBool() interface{}                    { return StockResponse("dummy") }
-func stockOAuthAccessResponse() interface{}                 { return StockResponse("dummy") }
+func stockObjectsOAuthAccessResponse() interface{}          { return StockResponse("dummy") }
 func stockObjectsUsergroupUsersList() interface{}           { return StockResponse("dummy") }
 func stockObjectsUser() interface{}                         { return StockResponse("dummy") }
-func stockEmojiListResponse() interface{}                   { return StockResponse("dummy") }
+func stockObjectsEmojiListResponse() interface{}            { return StockResponse("dummy") }
 func stockObjectsMessageListObjectsThreadInfo() interface{} { return StockResponse("dummy") }
-func stockRTMResponse() interface{}                         { return StockResponse("dummy") }
+func stockObjectsRTMResponse() interface{}                         { return StockResponse("dummy") }
 func stockObjectsMessageList() interface{}                  { return StockResponse("dummy") }
 func stockStringObjectsMessageList() interface{}            { return StockResponse("dummy") }
 func stockObjectsUsergroup() interface{}                    { return StockResponse("dummy") }
 func stockObjectsUserProfile() interface{}                  { return StockResponse("dummy") }
 func stockObjectsUsergroupList() interface{}                { return StockResponse("dummy") }
 func stockObjectsUserPresence() interface{}                 { return StockResponse("dummy") }
-func stockChannelsHistoryResponse() interface{} {
+func stockObjectsChannelsHistoryResponse() interface{} {
 	var r = struct {
-		slack.SlackResponse
-		slack.ChannelsHistoryResponse
+		objects.GenericResponse
+		objects.ChannelsHistoryResponse
 	}{
-		SlackResponse: StockResponse("dummy").(slack.SlackResponse),
-		ChannelsHistoryResponse: slack.ChannelsHistoryResponse{
+		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
+		ChannelsHistoryResponse: objects.ChannelsHistoryResponse{
 			HasMore: true,
 			Latest:  "dummy",
 			Messages: objects.MessageList{
@@ -138,5 +137,5 @@ func stockChannelsHistoryResponse() interface{} {
 }
 func stockObjectsGroup() interface{}          { return StockResponse("dummy") }
 func stockObjectsGroupList() interface{}      { return StockResponse("dummy") }
-func stockReactionsListResponse() interface{} { return StockResponse("dummy") }
+func stockObjectsReactionsListResponse() interface{} { return StockResponse("dummy") }
 func stockObjectsChannelList() interface{}    { return StockResponse("dummy") }

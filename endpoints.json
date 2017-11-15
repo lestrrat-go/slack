@@ -10,7 +10,7 @@
   },
   {
     "name": "auth.test",
-    "return": "AuthTestResponse"
+    "return": "objects.AuthTestResponse"
   },
   {
     "name": "bots.info",
@@ -49,7 +49,7 @@
   },
   {
     "name": "channels.history",
-    "return": "ChannelsHistoryResponse",
+    "return": "objects.ChannelsHistoryResponse",
     "args": [
       {
         "name": "channel",
@@ -283,7 +283,7 @@
   },
   {
     "name": "chat.postMessage",
-    "return": "ChatResponse",
+    "return": "objects.ChatResponse",
     "args": [
       {
         "name": "asUser",
@@ -369,7 +369,7 @@
   },
   {
     "name": "chat.update",
-    "return": "ChatResponse",
+    "return": "objects.ChatResponse",
     "args": [
       {
         "name": "asUser",
@@ -406,7 +406,7 @@
   },
   {
     "name": "chat.delete",
-    "return": "ChatResponse",
+    "return": "objects.ChatResponse",
     "args": [
       {
         "name": "asUser",
@@ -427,7 +427,7 @@
   },
   {
     "name": "chat.meMessage",
-    "return": "ChatResponse",
+    "return": "objects.ChatResponse",
     "args": [
       {
         "name": "channel",
@@ -442,7 +442,7 @@
   },
   {
     "name": "emoji.list",
-    "return": "EmojiListResponse"
+    "return": "objects.EmojiListResponse"
   },
   {
     "name": "groups.archive",
@@ -721,7 +721,7 @@
     "name": "oauth.access",
     "skip_token": true,
     "group": "OAuth",
-    "return": "OAuthAccessResponse",
+    "return": "objects.OAuthAccessResponse",
     "args": [
       {
         "name": "clientID",
@@ -775,7 +775,7 @@
   },
   {
     "name": "reactions.get",
-    "return": "ReactionsGetResponse",
+    "return": "objects.ReactionsGetResponse",
     "args": [
       {
         "name": "file",
@@ -801,7 +801,7 @@
   },
   {
     "name": "reactions.list",
-    "return": "ReactionsListResponse",
+    "return": "objects.ReactionsListResponse",
     "args": [
       {
         "name": "user",
@@ -849,7 +849,7 @@
   },
   {
     "name": "rtm.start",
-    "return": "RTMResponse",
+    "return": "objects.RTMResponse",
     "group": "RTM"
   },
   {

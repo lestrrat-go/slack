@@ -131,7 +131,7 @@ func (c *ReactionsAddCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to reactions.add`)
@@ -238,15 +238,15 @@ func (c *ReactionsGetCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access reactions.get endpoint
-func (c *ReactionsGetCall) Do(ctx context.Context) (*ReactionsGetResponse, error) {
+func (c *ReactionsGetCall) Do(ctx context.Context) (*objects.ReactionsGetResponse, error) {
 	const endpoint = "reactions.get"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ReactionsGetResponse
+		objects.GenericResponse
+		*objects.ReactionsGetResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reactions.get`)
@@ -347,15 +347,15 @@ func (c *ReactionsListCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access reactions.list endpoint
-func (c *ReactionsListCall) Do(ctx context.Context) (*ReactionsListResponse, error) {
+func (c *ReactionsListCall) Do(ctx context.Context) (*objects.ReactionsListResponse, error) {
 	const endpoint = "reactions.list"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ReactionsListResponse
+		objects.GenericResponse
+		*objects.ReactionsListResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reactions.list`)
@@ -474,7 +474,7 @@ func (c *ReactionsRemoveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to reactions.remove`)

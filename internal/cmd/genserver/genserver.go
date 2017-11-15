@@ -216,7 +216,7 @@ func generateMockServerFile(endpoints []*Endpoint) error {
 		fmt.Fprintf(&buf, "\n%s", strconv.Quote(pkg))
 	}
 	buf.WriteString("\n")
-	for _, pkg := range []string{"github.com/lestrrat/go-slack", "github.com/lestrrat/go-slack/server"} {
+	for _, pkg := range []string{"github.com/lestrrat/go-slack", "github.com/lestrrat/go-slack/objects", "github.com/lestrrat/go-slack/server"} {
 		fmt.Fprintf(&buf, "\n%s", strconv.Quote(pkg))
 	}
 	buf.WriteString("\n)")
@@ -288,7 +288,7 @@ func generateMockServerFile(endpoints []*Endpoint) error {
 		fmt.Fprintf(&buf, "\nreturn stock%s()", camelit(typ))
 	}
 	fmt.Fprintf(&buf, "\ndefault:")
-	fmt.Fprintf(&buf, "\nreturn slack.SlackResponse{")
+	fmt.Fprintf(&buf, "\nreturn objects.GenericResponse{")
 	fmt.Fprintf(&buf, "\nOK: true,")
 	fmt.Fprintf(&buf, "\nTimestamp: strconv.FormatInt(time.Now().Unix(), 10),")
 	fmt.Fprintf(&buf, "\n}")

@@ -67,7 +67,7 @@ func (c *AuthRevokeCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to auth.revoke`)
@@ -116,15 +116,15 @@ func (c *AuthTestCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access auth.test endpoint
-func (c *AuthTestCall) Do(ctx context.Context) (*AuthTestResponse, error) {
+func (c *AuthTestCall) Do(ctx context.Context) (*objects.AuthTestResponse, error) {
 	const endpoint = "auth.test"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*AuthTestResponse
+		objects.GenericResponse
+		*objects.AuthTestResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to auth.test`)

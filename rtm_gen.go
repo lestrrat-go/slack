@@ -44,15 +44,15 @@ func (c *RTMStartCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access rtm.start endpoint
-func (c *RTMStartCall) Do(ctx context.Context) (*RTMResponse, error) {
+func (c *RTMStartCall) Do(ctx context.Context) (*objects.RTMResponse, error) {
 	const endpoint = "rtm.start"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*RTMResponse
+		objects.GenericResponse
+		*objects.RTMResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to rtm.start`)

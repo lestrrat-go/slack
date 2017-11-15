@@ -380,7 +380,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		buf.WriteString("err")
 		buf.WriteString("\n}")
 		buf.WriteString("\nvar res struct {")
-		buf.WriteString("\nSlackResponse")
+		buf.WriteString("\nobjects.GenericResponse")
 		if hasReturn {
 			buf.WriteByte('\n')
 			for i, typ := range endpoint.ReturnType {
