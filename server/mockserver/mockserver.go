@@ -6,6 +6,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/lestrrat/go-slack"
 	"github.com/lestrrat/go-slack/server"
@@ -102,8 +104,9 @@ func (h *Handler) HandleAuthRevoke(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("auth.revoke")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -126,8 +129,9 @@ func (h *Handler) HandleAuthTest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("auth.test")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -150,8 +154,9 @@ func (h *Handler) HandleBotsInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("bots.info")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -174,8 +179,9 @@ func (h *Handler) HandleChannelsArchive(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.archive")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -198,8 +204,9 @@ func (h *Handler) HandleChannelsCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.create")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -222,8 +229,9 @@ func (h *Handler) HandleChannelsHistory(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.history")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -246,8 +254,9 @@ func (h *Handler) HandleChannelsInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(StockChannelResponse); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.info")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -270,8 +279,9 @@ func (h *Handler) HandleChannelsInvite(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.invite")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -294,8 +304,9 @@ func (h *Handler) HandleChannelsJoin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.join")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -318,8 +329,9 @@ func (h *Handler) HandleChannelsKick(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.kick")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -342,8 +354,9 @@ func (h *Handler) HandleChannelsLeave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.leave")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -366,8 +379,9 @@ func (h *Handler) HandleChannelsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.list")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -390,8 +404,9 @@ func (h *Handler) HandleChannelsMark(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.mark")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -414,8 +429,9 @@ func (h *Handler) HandleChannelsRename(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.rename")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -438,8 +454,9 @@ func (h *Handler) HandleChannelsReplies(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.replies")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -462,8 +479,9 @@ func (h *Handler) HandleChannelsSetPurpose(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.setPurpose")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -486,8 +504,9 @@ func (h *Handler) HandleChannelsSetTopic(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.setTopic")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -510,8 +529,9 @@ func (h *Handler) HandleChannelsUnarchive(w http.ResponseWriter, r *http.Request
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("channels.unarchive")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -534,8 +554,9 @@ func (h *Handler) HandleChatDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("chat.delete")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -558,8 +579,9 @@ func (h *Handler) HandleChatMeMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("chat.meMessage")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -582,8 +604,9 @@ func (h *Handler) HandleChatPostMessage(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("chat.postMessage")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -606,8 +629,9 @@ func (h *Handler) HandleChatUnfurl(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("chat.unfurl")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -630,8 +654,9 @@ func (h *Handler) HandleChatUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("chat.update")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -654,8 +679,9 @@ func (h *Handler) HandleEmojiList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("emoji.list")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -678,8 +704,9 @@ func (h *Handler) HandleGroupsArchive(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.archive")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -702,8 +729,9 @@ func (h *Handler) HandleGroupsCreate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.create")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -726,8 +754,9 @@ func (h *Handler) HandleGroupsCreateChild(w http.ResponseWriter, r *http.Request
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.createChild")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -750,8 +779,9 @@ func (h *Handler) HandleGroupsHistory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.history")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -774,8 +804,9 @@ func (h *Handler) HandleGroupsInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.info")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -798,8 +829,9 @@ func (h *Handler) HandleGroupsInvite(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.invite")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -822,8 +854,9 @@ func (h *Handler) HandleGroupsKick(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.kick")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -846,8 +879,9 @@ func (h *Handler) HandleGroupsLeave(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.leave")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -870,8 +904,9 @@ func (h *Handler) HandleGroupsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.list")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -894,8 +929,9 @@ func (h *Handler) HandleGroupsMark(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.mark")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -918,8 +954,9 @@ func (h *Handler) HandleGroupsOpen(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.open")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -942,8 +979,9 @@ func (h *Handler) HandleGroupsRename(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.rename")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -966,8 +1004,9 @@ func (h *Handler) HandleGroupsReplies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.replies")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -990,8 +1029,9 @@ func (h *Handler) HandleGroupsSetPurpose(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.setPurpose")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1014,8 +1054,9 @@ func (h *Handler) HandleGroupsSetTopic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.setTopic")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1038,8 +1079,9 @@ func (h *Handler) HandleGroupsUnarchive(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("groups.unarchive")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1058,8 +1100,9 @@ func (h *Handler) HandleOAuthAccess(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("oauth.access")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1082,8 +1125,9 @@ func (h *Handler) HandleReactionsAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("reactions.add")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1106,8 +1150,9 @@ func (h *Handler) HandleReactionsGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("reactions.get")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1130,8 +1175,9 @@ func (h *Handler) HandleReactionsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("reactions.list")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1154,8 +1200,9 @@ func (h *Handler) HandleReactionsRemove(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("reactions.remove")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1178,8 +1225,9 @@ func (h *Handler) HandleRTMStart(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("rtm.start")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1202,8 +1250,9 @@ func (h *Handler) HandleUsergroupsCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("usergroups.create")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1226,8 +1275,9 @@ func (h *Handler) HandleUsergroupsDisable(w http.ResponseWriter, r *http.Request
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("usergroups.disable")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1250,8 +1300,9 @@ func (h *Handler) HandleUsergroupsEnable(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("usergroups.enable")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1274,8 +1325,9 @@ func (h *Handler) HandleUsergroupsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("usergroups.list")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1298,8 +1350,9 @@ func (h *Handler) HandleUsergroupsUpdate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("usergroups.update")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1322,8 +1375,9 @@ func (h *Handler) HandleUsergroupsUsersList(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("usergroups.users.list")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1346,8 +1400,9 @@ func (h *Handler) HandleUsergroupsUsersUpdate(w http.ResponseWriter, r *http.Req
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("usergroups.users.update")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1370,8 +1425,9 @@ func (h *Handler) HandleUsersDeletePhoto(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("users.deletePhoto")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1394,8 +1450,9 @@ func (h *Handler) HandleUsersGetPresence(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("users.getPresence")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1418,8 +1475,9 @@ func (h *Handler) HandleUsersIdentity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("users.identity")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1442,8 +1500,9 @@ func (h *Handler) HandleUsersInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("users.info")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1466,8 +1525,9 @@ func (h *Handler) HandleUsersList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("users.list")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1490,8 +1550,9 @@ func (h *Handler) HandleUsersProfileGet(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("users.profile.get")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1514,8 +1575,9 @@ func (h *Handler) HandleUsersProfileSet(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("users.profile.set")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1538,8 +1600,9 @@ func (h *Handler) HandleUsersSetActive(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("users.setActive")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
@@ -1562,10 +1625,73 @@ func (h *Handler) HandleUsersSetPresence(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(slack.SlackResponse{OK: true}); err != nil {
+	if err := json.NewEncoder(&buf).Encode(StockResponse("users.setPresence")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
 	}
 	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
 	w.WriteHeader(http.StatusOK)
 	buf.WriteTo(w)
+}
+
+func StockResponse(method string) interface{} {
+	switch method {
+	case "bots.info":
+		return stockObjectsBot()
+	case "channels.setPurpose", "channels.setTopic", "groups.setPurpose", "groups.setTopic":
+		return stockString()
+	case "emoji.list":
+		return stockEmojiListResponse()
+	case "groups.history":
+		return stockStringObjectsMessageList()
+	case "oauth.access":
+		return stockOAuthAccessResponse()
+	case "reactions.list":
+		return stockReactionsListResponse()
+	case "rtm.start":
+		return stockRTMResponse()
+	case "users.list":
+		return stockObjectsUserList()
+	case "users.profile.get", "users.profile.set":
+		return stockObjectsUserProfile()
+	case "channels.history":
+		return stockChannelsHistoryResponse()
+	case "channels.list":
+		return stockObjectsChannelList()
+	case "groups.create", "groups.createChild", "groups.info", "groups.rename":
+		return stockObjectsGroup()
+	case "groups.invite":
+		return stockObjectsGroupBool()
+	case "groups.list":
+		return stockObjectsGroupList()
+	case "usergroups.create", "usergroups.disable", "usergroups.enable", "usergroups.update", "usergroups.users.update":
+		return stockObjectsUsergroup()
+	case "users.info":
+		return stockObjectsUser()
+	case "auth.test":
+		return stockAuthTestResponse()
+	case "channels.info", "channels.invite", "channels.join", "channels.rename":
+		return stockObjectsChannel()
+	case "channels.replies":
+		return stockObjectsMessageList()
+	case "chat.delete", "chat.meMessage", "chat.postMessage", "chat.update":
+		return stockChatResponse()
+	case "groups.replies":
+		return stockObjectsMessageListObjectsThreadInfo()
+	case "reactions.get":
+		return stockReactionsGetResponse()
+	case "usergroups.list":
+		return stockObjectsUsergroupList()
+	case "usergroups.users.list":
+		return stockObjectsUsergroupUsersList()
+	case "users.getPresence":
+		return stockObjectsUserPresence()
+	case "users.identity":
+		return stockObjectsUserProfileObjectsTeam()
+	default:
+		return slack.SlackResponse{
+			OK:        true,
+			Timestamp: strconv.FormatInt(time.Now().Unix(), 10),
+		}
+	}
 }
