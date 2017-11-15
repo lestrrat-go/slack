@@ -29,8 +29,16 @@ func (e *ErrorResponse) UnmarshalJSON(data []byte) error {
 			*e = ErrorResponse{}
 			return json.Unmarshal(data, &e.Message)
 		case '{':
-			*e = ErrorResponse{}
-			return json.Unmarshal(data, e)
+			var dummy struct {
+				Code    int    `json:"code"`
+				Message string `json:"msg"`
+			}
+			if err := json.Unmarshal(data, &dummy); err != nil {
+				return errors.Wrap(err, `failed to unmarshal structured error`)
+			}
+			e.Code = dummy.Code
+			e.Message = dummy.Message
+			return nil
 		}
 	}
 
