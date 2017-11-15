@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/lestrrat/go-slack"
+	"github.com/lestrrat/go-slack/objects"
 	"github.com/lestrrat/go-slack/server"
 	"github.com/lestrrat/go-slack/server/mockserver"
 	"github.com/pkg/errors"
@@ -19,6 +20,13 @@ import (
 )
 
 const token = "AbCdEfG"
+
+func checkChannel(t *testing.T, channel *objects.Channel) bool {
+	if !assert.NotEmpty(t, channel.Name, "channel.Name should be populated") {
+		return false
+	}
+	return true
+}
 
 // These tests just excercise the "regular" code path
 func TestWithMockServer(t *testing.T) {
@@ -124,6 +132,16 @@ func TestWithMockServer(t *testing.T) {
 				return
 			}
 			if !assert.NotEmpty(t, res.Messages, "res.Messages should be populated") {
+				return
+			}
+		})
+		t.Run("Invite", func(t *testing.T) {
+			res, err := cl.Channels().Invite("C0123456", "U0123456").
+				Do(ctx)
+			if !assert.NoError(t, err, "channels.invite should succeed") {
+				return
+			}
+			if !checkChannel(t, res) {
 				return
 			}
 		})

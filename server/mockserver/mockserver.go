@@ -1637,58 +1637,58 @@ func (h *Handler) HandleUsersSetPresence(w http.ResponseWriter, r *http.Request)
 
 func StockResponse(method string) interface{} {
 	switch method {
+	case "auth.test":
+		return stockObjectsAuthTestResponse()
+	case "bots.info":
+		return stockObjectsBot()
+	case "channels.info", "channels.invite", "channels.join", "channels.rename":
+		return stockObjectsChannel()
 	case "channels.list":
 		return stockObjectsChannelList()
+	case "channels.history":
+		return stockObjectsChannelsHistoryResponse()
 	case "chat.delete", "chat.meMessage", "chat.postMessage", "chat.update":
 		return stockObjectsChatResponse()
+	case "emoji.list":
+		return stockObjectsEmojiListResponse()
+	case "groups.create", "groups.createChild", "groups.info", "groups.rename":
+		return stockObjectsGroup()
+	case "groups.invite":
+		return stockObjectsGroupBool()
+	case "groups.list":
+		return stockObjectsGroupList()
+	case "channels.replies":
+		return stockObjectsMessageList()
+	case "groups.replies":
+		return stockObjectsMessageListObjectsThreadInfo()
+	case "oauth.access":
+		return stockObjectsOAuthAccessResponse()
+	case "rtm.start":
+		return stockObjectsRTMResponse()
+	case "reactions.get":
+		return stockObjectsReactionsGetResponse()
+	case "reactions.list":
+		return stockObjectsReactionsListResponse()
+	case "users.info":
+		return stockObjectsUser()
+	case "users.list":
+		return stockObjectsUserList()
+	case "users.getPresence":
+		return stockObjectsUserPresence()
+	case "users.profile.get", "users.profile.set":
+		return stockObjectsUserProfile()
+	case "users.identity":
+		return stockObjectsUserProfileObjectsTeam()
 	case "usergroups.create", "usergroups.disable", "usergroups.enable", "usergroups.update", "usergroups.users.update":
 		return stockObjectsUsergroup()
 	case "usergroups.list":
 		return stockObjectsUsergroupList()
-	case "users.getPresence":
-		return stockObjectsUserPresence()
-	case "channels.history":
-		return stockObjectsChannelsHistoryResponse()
-	case "channels.info", "channels.invite", "channels.join", "channels.rename":
-		return stockObjectsChannel()
-	case "channels.replies":
-		return stockObjectsMessageList()
-	case "groups.invite":
-		return stockObjectsGroupBool()
-	case "groups.replies":
-		return stockObjectsMessageListObjectsThreadInfo()
-	case "reactions.get":
-		return stockObjectsReactionsGetResponse()
-	case "users.identity":
-		return stockObjectsUserProfileObjectsTeam()
-	case "users.list":
-		return stockObjectsUserList()
-	case "bots.info":
-		return stockObjectsBot()
-	case "groups.create", "groups.createChild", "groups.info", "groups.rename":
-		return stockObjectsGroup()
-	case "groups.list":
-		return stockObjectsGroupList()
 	case "usergroups.users.list":
 		return stockObjectsUsergroupUsersList()
-	case "users.profile.get", "users.profile.set":
-		return stockObjectsUserProfile()
-	case "emoji.list":
-		return stockObjectsEmojiListResponse()
 	case "channels.setPurpose", "channels.setTopic", "groups.setPurpose", "groups.setTopic":
 		return stockString()
 	case "groups.history":
 		return stockStringObjectsMessageList()
-	case "oauth.access":
-		return stockObjectsOAuthAccessResponse()
-	case "reactions.list":
-		return stockObjectsReactionsListResponse()
-	case "rtm.start":
-		return stockObjectsRTMResponse()
-	case "users.info":
-		return stockObjectsUser()
-	case "auth.test":
-		return stockObjectsAuthTestResponse()
 	default:
 		return objects.GenericResponse{
 			OK:        true,

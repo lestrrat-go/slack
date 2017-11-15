@@ -25,6 +25,11 @@ var UserLukeSkywalker = objects.User{
 	Name: "luke.skywalker",
 }
 
+var UserYoda = objects.User{
+	ID:   "U0000001",
+	Name: "yoda",
+}
+
 func stockObjectsAuthTestResponse() interface{} {
 	var r = struct {
 		objects.GenericResponse
@@ -54,7 +59,7 @@ func stockObjectsChannel() interface{} {
 					ID:      "123456789ABCDEFG",
 					Created: aLongLongTimeAgo,
 				},
-				Creator: "yoda",
+				Creator: UserYoda.Name,
 				Members: []string{
 					"obiwan",
 					"lukeskywalker",
@@ -73,6 +78,8 @@ func stockObjectsChannel() interface{} {
 					LastSet: aLongLongTimeAgo,
 				},
 			},
+			IsChannel: true,
+			IsMember: true,
 		},
 	}
 	return r

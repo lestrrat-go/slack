@@ -273,13 +273,22 @@ func generateMockServerFile(endpoints []*Endpoint) error {
 		}
 	}
 
+	var returnTypeNames []string
+	for rt := range returnTypes {
+		returnTypeNames = append(returnTypeNames, rt)
+	}
+	sort.Strings(returnTypeNames)
+
 	fmt.Fprintf(&buf, "\n\nfunc StockResponse(method string) interface{} {")
 	fmt.Fprintf(&buf, "\nswitch method {")
-	for typ, methods := range returnTypes {
+	for _, typ := range returnTypeNames {
+		methods := returnTypes[typ]
+		sort.Strings(methods)
+
 		fmt.Fprintf(&buf, "\ncase ")
 		for i, method := range methods {
 			fmt.Fprintf(&buf, "%s", strconv.Quote(method))
-			if i < len(methods) - 1 {
+			if i < len(methods)-1 {
 				fmt.Fprintf(&buf, ",")
 			} else {
 				fmt.Fprintf(&buf, ":")
