@@ -12,8 +12,123 @@ import (
 	"time"
 
 	"github.com/lestrrat/go-slack"
+	"github.com/lestrrat/go-slack/server"
+	"github.com/lestrrat/go-slack/server/mockserver"
 	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
 )
+
+const token = "AbCdEfG"
+
+// These tests just excercise the "regular" code path
+func TestWithMockServer(t *testing.T) {
+	h := mockserver.New(token)
+	s := server.New()
+	h.InstallHandlers(s)
+
+	ts := httptest.NewServer(s)
+	defer ts.Close()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	cl := slack.New(token, slack.WithAPIEndpoint(ts.URL))
+	t.Run("Auth", func(t *testing.T) {
+		t.Run("Revoke", func(t *testing.T) {
+			err := cl.Auth().Revoke().Test(true).Do(ctx)
+			if !assert.NoError(t, err, "auth.revoke should succeed") {
+				return
+			}
+		})
+		t.Run("Test", func(t *testing.T) {
+			res, err := cl.Auth().Test().Do(ctx)
+			if !assert.NoError(t, err, "auth.test should succeed") {
+				return
+			}
+			if !assert.NotEmpty(t, res.URL, "res.URL should be populated") {
+				return
+			}
+			if !assert.NotEmpty(t, res.Team, "res.Team should be populated") {
+				return
+			}
+			if !assert.NotEmpty(t, res.User, "res.User should be populated") {
+				return
+			}
+			if !assert.NotEmpty(t, res.TeamID, "res.TeamID should be populated") {
+				return
+			}
+			if !assert.NotEmpty(t, res.UserID, "res.UserID should be populated") {
+				return
+			}
+		})
+	})
+	t.Run("Bots", func(t *testing.T) {
+		t.Run("Info", func(t *testing.T) {
+			res, err := cl.Bots().Info("B0123456").Do(ctx)
+			if !assert.NoError(t, err, "bots.info should succeed") {
+				return
+			}
+
+			if !assert.NotEmpty(t, res.ID, "res.ID should be populated") {
+				return
+			}
+			if !assert.NotEmpty(t, res.AppID, "res.AppID should be populated") {
+				return
+			}
+			if !assert.NotEmpty(t, res.Name, "res.Name should be populated") {
+				return
+			}
+			if !assert.False(t, res.Deleted, "res.Delete should be false") {
+				return
+			}
+			if !assert.NotEmpty(t, res.Icons.Image36, "res.Icons.Image36 should be populated") {
+				return
+			}
+			if !assert.NotEmpty(t, res.Icons.Image48, "res.Icons.Image48 should be populated") {
+				return
+			}
+			if !assert.NotEmpty(t, res.Icons.Image72, "res.Icons.Image72 should be populated") {
+				return
+			}
+		})
+	})
+	t.Run("Channels", func(t *testing.T) {
+		t.Run("Archive", func(t *testing.T) {
+			err := cl.Channels().Archive("C0123456").Do(ctx)
+			if !assert.NoError(t, err, "channels.archive should succeed") {
+				return
+			}
+		})
+		t.Run("Create", func(t *testing.T) {
+			err := cl.Channels().Create("siths").Validate(true).Do(ctx)
+			if !assert.NoError(t, err, "channels.create should succeed") {
+				return
+			}
+		})
+		t.Run("History", func(t *testing.T) {
+			res, err := cl.Channels().History("C0123456").
+				Count(1000).
+				Inclusive(true).
+				Latest("dummy").
+				Oldest("dummy").
+				Unreads(true).
+				Timestamp("dummy").
+				Do(ctx)
+			if !assert.NoError(t, err, "channels.history should succeed") {
+				return
+			}
+			if !assert.True(t, res.HasMore, "res.HasMore should be true") {
+				return
+			}
+			if !assert.NotEmpty(t, res.Latest, "res.Latest should be populated") {
+				return
+			}
+			if !assert.NotEmpty(t, res.Messages, "res.Messages should be populated") {
+				return
+			}
+		})
+	})
+}
 
 var testDmUser string
 var testChannel string

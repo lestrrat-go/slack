@@ -12,8 +12,9 @@ import (
 	"github.com/lestrrat/go-slack/server/mockserver"
 )
 
+const token = "AbCdEfG"
+
 func ExampleMockServer() {
-	token := "AbCdEfG"
 	h := mockserver.New(token)
 	s := server.New()
 	h.InstallHandlers(s)
