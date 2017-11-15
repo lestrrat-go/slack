@@ -249,7 +249,7 @@ type User struct {
 	TZ                string      `json:"tz,omitempty"`
 	TZLabel           string      `json:"tz_label"`
 	TZOffset          int         `json:"tz_offset"`
-	Update            int         `json:"updated"`
+	Updated           int         `json:"updated"`
 }
 
 // UserDetails is only provided by rtm.start response
