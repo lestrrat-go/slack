@@ -99,15 +99,14 @@ func ExampleMockServer() {
 
   srv := http.Server{Handler: s, Addr: ":8080"}
   go srv.ListenAndServe()
-
+  ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+  defer cancel()
   cl := slack.New(token, slack.WithAPIEndpoint("htttp://localhost:8080"))
-  if err := cl.Auth().Test(); err != nil {
+  if _, err := cl.Auth().Test().Do(ctx); err != nil {
     log.Printf("failed to call auth.test: %s", err)
     return
   }
 
-  ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-  defer cancel()
   srv.Shutdown(ctx)
 }
 ```
