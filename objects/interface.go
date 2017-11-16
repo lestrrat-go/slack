@@ -7,51 +7,6 @@ const (
 	ButtonActionType = "button"
 )
 
-// Conversation is a structure that is never used by itself:
-// it's re-used to describe a basic conversation profile
-// by being embedded in other objects
-type Conversation struct {
-	ID                 string    `json:"id"`
-	Created            EpochTime `json:"created"`
-	IsOpen             bool      `json:"is_open"`
-	LastRead           string    `json:"last_read,omitempty"`
-	Latest             *Message  `json:"latest,omitempty"`
-	UnreadCount        int       `json:"unread_count,omitempty"`
-	UnreadCountDisplay int       `json:"unread_count_display,omitempty"`
-}
-
-// Group contains information about a private channel. Private channels were
-// once known as "private groups."
-type Group struct {
-	Conversation
-	Creator        string   `json:"creator"`
-	IsArchived     bool     `json:"is_archived"`
-	IsGroup        bool     `json:"is_group"`
-	IsMPIM         bool     `json:"is_mpim"`
-	Members        []string `json:"members"`
-	Name           string   `json:"name"`
-	NameNormalized string   `json:"name_normalized"`
-	NumMembers     int      `json:"num_members,omitempty"`
-	PreviousNames  []string `json:"previous_names"`
-	Purpose        Purpose  `json:"purpose"`
-	Topic          Topic    `json:"topic"`
-}
-
-// GroupList is a list of groups.
-type GroupList []*Group
-
-type Purpose struct {
-	Value   string    `json:"value"`
-	Creator string    `json:"creator"`
-	LastSet EpochTime `json:"last_set"`
-}
-
-type Topic struct {
-	Value   string    `json:"value"`
-	Creator string    `json:"creator"`
-	LastSet EpochTime `json:"last_set"`
-}
-
 // Action is used in conjunction with message buttons
 type Action struct {
 	Confirm         *Confirmation   `json:"confirm,omitempty"`
@@ -90,6 +45,15 @@ type Attachment struct {
 }
 type AttachmentList []*Attachment
 
+// AuthTestResponse is the data structure response from auth.test
+type AuthTestResponse struct {
+	URL    string `json:"url"`
+	Team   string `json:"team"`
+	User   string `json:"user"`
+	TeamID string `json:"team_id"`
+	UserID string `json:"user_id"`
+}
+
 type Channel struct {
 	Group
 	IsChannel   bool `json:"is_channel"`
@@ -101,12 +65,16 @@ type Channel struct {
 
 type ChannelList []*Channel
 
-// Confirmation is used in conjunction with message buttons
-type Confirmation struct {
-	Title       string `json:"title"`
-	Text        string `json:"text"`
-	OkText      string `json:"ok_text"`
-	DismissText string `json:"dismiss_text"`
+type ChannelsHistoryResponse struct {
+	HasMore  bool        `json:"has_more"`
+	Latest   string      `json:"latest"`
+	Messages MessageList `json:"messages"`
+}
+
+type ChatResponse struct {
+	Channel   string      `json:"channel"`
+	Timestamp string      `json:"ts"`
+	Message   interface{} `json:"message"` // TODO
 }
 
 type Comment struct {
@@ -115,6 +83,111 @@ type Comment struct {
 	Timestamp EpochTime `json:"timestamp,omitempty"`
 	User      string    `json:"user,omitempty"`
 	Comment   string    `json:"comment,omitempty"`
+}
+
+// Confirmation is used in conjunction with message buttons
+type Confirmation struct {
+	Title       string `json:"title"`
+	Text        string `json:"text"`
+	OkText      string `json:"ok_text"`
+	DismissText string `json:"dismiss_text"`
+}
+
+// Conversation is a structure that is never used by itself:
+// it's re-used to describe a basic conversation profile
+// by being embedded in other objects
+type Conversation struct {
+	ID                 string    `json:"id"`
+	Created            EpochTime `json:"created"`
+	IsOpen             bool      `json:"is_open"`
+	LastRead           string    `json:"last_read,omitempty"`
+	Latest             *Message  `json:"latest,omitempty"`
+	UnreadCount        int       `json:"unread_count,omitempty"`
+	UnreadCountDisplay int       `json:"unread_count_display,omitempty"`
+}
+
+type EmojiListResponse map[string]string
+
+// ErrorResponse wraps errors returned by Slack. It's usually a string,
+// but it could be a structure.
+// https://api.slack.com/rtm#handling_responses
+type ErrorResponse struct {
+	Code    int    `json:"code"`
+	Message string `json:"msg"`
+}
+
+// GenericResponse is the generic response part given by all
+// slack API response.
+type GenericResponse struct {
+	OK        bool          `json:"ok"`
+	ReplyTo   int           `json:"reply_to,omitempty"`
+	Error     ErrorResponse `json:"error,omitempty"`
+	Timestamp string        `json:"ts"`
+}
+
+// Group contains information about a private channel. Private channels were
+// once known as "private groups."
+type Group struct {
+	Conversation
+	Creator        string   `json:"creator"`
+	IsArchived     bool     `json:"is_archived"`
+	IsGroup        bool     `json:"is_group"`
+	IsMPIM         bool     `json:"is_mpim"`
+	Members        []string `json:"members"`
+	Name           string   `json:"name"`
+	NameNormalized string   `json:"name_normalized"`
+	NumMembers     int      `json:"num_members,omitempty"`
+	PreviousNames  []string `json:"previous_names,omitempty"`
+	Purpose        Purpose  `json:"purpose"`
+	Topic          Topic    `json:"topic"`
+}
+
+// GroupList is a list of groups.
+type GroupList []*Group
+
+// InteractiveButtonRequest is a request that is sent when a user
+// hits a Slack button. Note: this is experimental
+type InteractiveButtonRequest struct {
+	ActionTimestamp string     `json:"action_ts"`
+	Actions         ActionList `json:"actions"`
+	AttachmentID    int        `json:"attachment_id,string"`
+	CallbackID      string     `json:"callback_id"`
+	Channel         struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	} `json:"channel"`
+	IsAppUnfurl      bool            `json:"is_app_unfurl"`
+	MessageTimestamp string          `json:"message_ts"`
+	OriginalMessage  *Message        `json:"original_message"`
+	Options          OptionList      `json:"options"`
+	OptionGroups     OptionGroupList `json:"option_groups"`
+	ResponseURL      string          `json:"response_url"`
+	Team             struct {
+		Domain string `json:"domain"`
+		ID     string `json:"id"`
+	} `json:"team"`
+	Token string `json:"token"`
+	User  struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	} `json:"user"`
+}
+
+type OAuthAccessResponse struct {
+	AccessToken string `json:"access_token"`
+	Scope       string `json:"scope"`
+}
+
+type Purpose struct {
+	Value   string    `json:"value"`
+	Creator string    `json:"creator"`
+	LastSet EpochTime `json:"last_set"`
+}
+
+type Topic struct {
+	Value   string    `json:"value"`
+	Creator string    `json:"creator"`
+	LastSet EpochTime `json:"last_set"`
 }
 
 type Edited struct {
@@ -190,7 +263,7 @@ type Message struct {
 	Team    string `json:"team,omitempty"`
 
 	// reactions
-	Reactions []ItemReaction `json:"reactions,omitempty"`
+	Reactions ReactionList `json:"reactions,omitempty"`
 }
 
 type MessageList []*Message
@@ -205,12 +278,6 @@ type IM struct {
 type Icon struct {
 	IconURL   string `json:"icon_url,omitempty"`
 	IconEmoji string `json:"icon_emoji,omitempty"`
-}
-
-type ItemReaction struct {
-	Name  string   `json:"name"`
-	Count int      `json:"count"`
-	Users []string `json:"users"`
 }
 
 type UserProfile struct {
@@ -249,7 +316,7 @@ type User struct {
 	TZ                string      `json:"tz,omitempty"`
 	TZLabel           string      `json:"tz_label"`
 	TZOffset          int         `json:"tz_offset"`
-	Update            int         `json:"updated"`
+	Updated           int         `json:"updated"`
 }
 
 // UserDetails is only provided by rtm.start response
@@ -372,6 +439,9 @@ type File struct {
 	CommentsCount   int      `json:"comments_count"`
 	NumStars        int      `json:"num_stars"`
 	IsStarred       bool     `json:"is_starred"`
+
+	Title string `json:"title"`
+	Reactions ReactionList `json:"reactions,omitempty"`
 }
 
 type Option struct {
@@ -419,7 +489,7 @@ type Usergroup struct {
 	UserCount           int             `json:"user_count"`
 }
 
-// UsergroupList is a list of UserGroup objects.
+// UsergroupList is a list of UserGroup
 type UsergroupList []*Usergroup
 
 // UsergroupPrefs is the list of preferences for channels and groups for a given
@@ -431,3 +501,51 @@ type UsergroupPrefs struct {
 
 // UsergroupUsersList is the list of users in a given Usergroup.
 type UsergroupUsersList []string
+
+type Reaction struct {
+	Count int      `json:"count"`
+	Name  string   `json:"name"`
+	Users []string `json:"users"`
+}
+type ReactionList []*Reaction
+
+// ReactionsGetResponse represents the response obtained from
+// reactions.get API (https://api.slack.com/methods/reactions.get)
+type ReactionsGetResponse struct {
+	Channel string   `json:"channel"`
+	Comment string   `json:"comment"`
+	File    *File    `json:"file"`
+	Message *Message `json:"message"`
+	Type    string   `json:"type"`
+}
+
+type ReactionsGetResponseList []ReactionsGetResponse
+type ReactionsListResponse struct {
+	Items  ReactionsGetResponseList `json:"items"`
+	Paging Paging                   `json:"paging"`
+}
+
+type RTMResponse struct {
+	URL      string       `json:"url"`
+	Self     *UserDetails `json:"self"`
+	Team     *Team        `json:"team"`
+	Users    []*User      `json:"users"`
+	Channels []*Channel   `json:"channels"`
+	Groups   []*Group     `json:"groups"`
+	Bots     []*Bot       `json:"bots"`
+	IMs      []*IM        `json:"ims"`
+}
+
+type Paging struct {
+	Count int `json:"count"`
+	Total int `json:"total"`
+	Page  int `json:"page"`
+	Pages int `json:"pages"`
+}
+
+type StarsListResponse struct {
+	Items  StarredItemList `json:"items"`
+	Paging Paging          `json:"paging"`
+}
+type StarredItem interface{}
+type StarredItemList []StarredItem

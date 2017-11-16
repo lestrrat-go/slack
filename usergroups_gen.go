@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // UsergroupsCreateCall is created by UsergroupsService.Create method call
@@ -89,8 +91,19 @@ func (c *UsergroupsCreateCall) IncludeCount(includeCount bool) *UsergroupsCreate
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the UsergroupsCreateCall object
+func (c *UsergroupsCreateCall) ValidateArgs() error {
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsergroupsCreateCall object as url.Values
 func (c *UsergroupsCreateCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -110,9 +123,6 @@ func (c *UsergroupsCreateCall) Values() (url.Values, error) {
 		v.Set("include_count", "true")
 	}
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 	return v, nil
 }
@@ -125,7 +135,7 @@ func (c *UsergroupsCreateCall) Do(ctx context.Context) (*objects.Usergroup, erro
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Usergroup `json:"usergroup"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -136,6 +146,32 @@ func (c *UsergroupsCreateCall) Do(ctx context.Context) (*objects.Usergroup, erro
 	}
 
 	return res.Usergroup, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsCreateCall) FromValues(v url.Values) error {
+	var tmp UsergroupsCreateCall
+	if raw := strings.TrimSpace(v.Get("channels")); len(raw) > 0 {
+		tmp.channels = raw
+	}
+	if raw := strings.TrimSpace(v.Get("description")); len(raw) > 0 {
+		tmp.description = raw
+	}
+	if raw := strings.TrimSpace(v.Get("handle")); len(raw) > 0 {
+		tmp.handle = raw
+	}
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // Disable creates a UsergroupsDisableCall object in preparation for accessing the usergroups.disable endpoint
@@ -152,8 +188,19 @@ func (c *UsergroupsDisableCall) IncludeCount(includeCount bool) *UsergroupsDisab
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the UsergroupsDisableCall object
+func (c *UsergroupsDisableCall) ValidateArgs() error {
+	if len(c.usergroup) <= 0 {
+		return errors.New(`required field usergroup not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsergroupsDisableCall object as url.Values
 func (c *UsergroupsDisableCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -161,9 +208,6 @@ func (c *UsergroupsDisableCall) Values() (url.Values, error) {
 		v.Set("include_count", "true")
 	}
 
-	if len(c.usergroup) <= 0 {
-		return nil, errors.New(`missing required parameter usergroup`)
-	}
 	v.Set("usergroup", c.usergroup)
 	return v, nil
 }
@@ -176,7 +220,7 @@ func (c *UsergroupsDisableCall) Do(ctx context.Context) (*objects.Usergroup, err
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Usergroup `json:"usergroup"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -187,6 +231,23 @@ func (c *UsergroupsDisableCall) Do(ctx context.Context) (*objects.Usergroup, err
 	}
 
 	return res.Usergroup, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsDisableCall) FromValues(v url.Values) error {
+	var tmp UsergroupsDisableCall
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("usergroup")); len(raw) > 0 {
+		tmp.usergroup = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // Enable creates a UsergroupsEnableCall object in preparation for accessing the usergroups.enable endpoint
@@ -203,8 +264,19 @@ func (c *UsergroupsEnableCall) IncludeCount(includeCount bool) *UsergroupsEnable
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the UsergroupsEnableCall object
+func (c *UsergroupsEnableCall) ValidateArgs() error {
+	if len(c.usergroup) <= 0 {
+		return errors.New(`required field usergroup not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsergroupsEnableCall object as url.Values
 func (c *UsergroupsEnableCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -212,9 +284,6 @@ func (c *UsergroupsEnableCall) Values() (url.Values, error) {
 		v.Set("include_count", "true")
 	}
 
-	if len(c.usergroup) <= 0 {
-		return nil, errors.New(`missing required parameter usergroup`)
-	}
 	v.Set("usergroup", c.usergroup)
 	return v, nil
 }
@@ -227,7 +296,7 @@ func (c *UsergroupsEnableCall) Do(ctx context.Context) (*objects.Usergroup, erro
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Usergroup `json:"usergroup"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -238,6 +307,23 @@ func (c *UsergroupsEnableCall) Do(ctx context.Context) (*objects.Usergroup, erro
 	}
 
 	return res.Usergroup, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsEnableCall) FromValues(v url.Values) error {
+	var tmp UsergroupsEnableCall
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("usergroup")); len(raw) > 0 {
+		tmp.usergroup = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // List creates a UsergroupsListCall object in preparation for accessing the usergroups.list endpoint
@@ -265,8 +351,16 @@ func (c *UsergroupsListCall) IncludeUsers(includeUsers bool) *UsergroupsListCall
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the UsergroupsListCall object
+func (c *UsergroupsListCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the UsergroupsListCall object as url.Values
 func (c *UsergroupsListCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -292,7 +386,7 @@ func (c *UsergroupsListCall) Do(ctx context.Context) (objects.UsergroupList, err
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.UsergroupList `json:"usergroups"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -303,6 +397,34 @@ func (c *UsergroupsListCall) Do(ctx context.Context) (objects.UsergroupList, err
 	}
 
 	return res.UsergroupList, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsListCall) FromValues(v url.Values) error {
+	var tmp UsergroupsListCall
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("include_disabled")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_disabled"`)
+		}
+		tmp.includeDisabled = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("include_users")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_users"`)
+		}
+		tmp.includeUsers = parsed
+	}
+	*c = tmp
+	return nil
 }
 
 // Update creates a UsergroupsUpdateCall object in preparation for accessing the usergroups.update endpoint
@@ -343,8 +465,19 @@ func (c *UsergroupsUpdateCall) Name(name string) *UsergroupsUpdateCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the UsergroupsUpdateCall object
+func (c *UsergroupsUpdateCall) ValidateArgs() error {
+	if len(c.usergroup) <= 0 {
+		return errors.New(`required field usergroup not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsergroupsUpdateCall object as url.Values
 func (c *UsergroupsUpdateCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -368,9 +501,6 @@ func (c *UsergroupsUpdateCall) Values() (url.Values, error) {
 		v.Set("name", c.name)
 	}
 
-	if len(c.usergroup) <= 0 {
-		return nil, errors.New(`missing required parameter usergroup`)
-	}
 	v.Set("usergroup", c.usergroup)
 	return v, nil
 }
@@ -383,7 +513,7 @@ func (c *UsergroupsUpdateCall) Do(ctx context.Context) (*objects.Usergroup, erro
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Usergroup `json:"usergroup"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -394,4 +524,33 @@ func (c *UsergroupsUpdateCall) Do(ctx context.Context) (*objects.Usergroup, erro
 	}
 
 	return res.Usergroup, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsergroupsUpdateCall) FromValues(v url.Values) error {
+	var tmp UsergroupsUpdateCall
+	if raw := strings.TrimSpace(v.Get("channels")); len(raw) > 0 {
+		tmp.channels = raw
+	}
+	if raw := strings.TrimSpace(v.Get("description")); len(raw) > 0 {
+		tmp.description = raw
+	}
+	if raw := strings.TrimSpace(v.Get("handle")); len(raw) > 0 {
+		tmp.handle = raw
+	}
+	if raw := strings.TrimSpace(v.Get("include_count")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_count"`)
+		}
+		tmp.includeCount = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("usergroup")); len(raw) > 0 {
+		tmp.usergroup = raw
+	}
+	*c = tmp
+	return nil
 }

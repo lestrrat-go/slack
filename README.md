@@ -27,6 +27,12 @@ All of the APIs in this library resemble that of google.golang.org/api, and is v
 
 The API is designed from the ground up to integrate well with context.Context.
 
+## Mock Server
+
+A server that mocks the Slack API calls is available, which should help you integrate your applications with Slack while you are still in development.
+
+Note: many mock methods are still NOT properly implemented. Please see `server/mockserver/mockserver.go` and `server/mockserver/response.go`. PRs welcome!
+
 # Synopsis
 
 Simple REST Client:
@@ -66,6 +72,42 @@ func ExampleClient() {
     return
   }
   fmt.Printf("%#v\n", chatres)
+}
+```
+
+A mock server
+
+```
+package slack_test
+
+import (
+  "context"
+  "net/http"
+  "time"
+
+  "github.com/lestrrat/go-slack"
+  "github.com/lestrrat/go-slack/server"
+  "github.com/lestrrat/go-slack/server/mockserver"
+)
+
+func ExampleMockServer() {
+  token := "..."
+  h := mockserver.New(mockserver.WithToken(token))
+  s := server.New()
+
+  h.InstallHandlers(s)
+
+  srv := http.Server{Handler: s, Addr: ":8080"}
+  go srv.ListenAndServe()
+  ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+  defer cancel()
+  cl := slack.New(token, slack.WithAPIEndpoint("htttp://localhost:8080"))
+  if _, err := cl.Auth().Test().Do(ctx); err != nil {
+    log.Printf("failed to call auth.test: %s", err)
+    return
+  }
+
+  srv.Shutdown(ctx)
 }
 ```
 

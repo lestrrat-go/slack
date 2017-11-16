@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // RTMStartCall is created by RTMService.Start method call
@@ -26,23 +28,31 @@ func (s *RTMService) Start() *RTMStartCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the RTMStartCall object
+func (c *RTMStartCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the RTMStartCall object as url.Values
 func (c *RTMStartCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil
 }
 
 // Do executes the call to access rtm.start endpoint
-func (c *RTMStartCall) Do(ctx context.Context) (*RTMResponse, error) {
+func (c *RTMStartCall) Do(ctx context.Context) (*objects.RTMResponse, error) {
 	const endpoint = "rtm.start"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*RTMResponse
+		objects.GenericResponse
+		*objects.RTMResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to rtm.start`)
@@ -52,4 +62,11 @@ func (c *RTMStartCall) Do(ctx context.Context) (*RTMResponse, error) {
 	}
 
 	return res.RTMResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *RTMStartCall) FromValues(v url.Values) error {
+	var tmp RTMStartCall
+	*c = tmp
+	return nil
 }

@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // UsersDeletePhotoCall is created by UsersService.DeletePhoto method call
@@ -63,8 +65,16 @@ func (s *UsersService) DeletePhoto() *UsersDeletePhotoCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the UsersDeletePhotoCall object
+func (c *UsersDeletePhotoCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the UsersDeletePhotoCall object as url.Values
 func (c *UsersDeletePhotoCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil
@@ -78,7 +88,7 @@ func (c *UsersDeletePhotoCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.deletePhoto`)
@@ -90,6 +100,13 @@ func (c *UsersDeletePhotoCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *UsersDeletePhotoCall) FromValues(v url.Values) error {
+	var tmp UsersDeletePhotoCall
+	*c = tmp
+	return nil
+}
+
 // GetPresence creates a UsersGetPresenceCall object in preparation for accessing the users.getPresence endpoint
 func (s *UsersService) GetPresence(user string) *UsersGetPresenceCall {
 	var call UsersGetPresenceCall
@@ -98,14 +115,22 @@ func (s *UsersService) GetPresence(user string) *UsersGetPresenceCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the UsersGetPresenceCall object
+func (c *UsersGetPresenceCall) ValidateArgs() error {
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsersGetPresenceCall object as url.Values
 func (c *UsersGetPresenceCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.user) <= 0 {
-		return nil, errors.New(`missing required parameter user`)
-	}
 	v.Set("user", c.user)
 	return v, nil
 }
@@ -118,7 +143,7 @@ func (c *UsersGetPresenceCall) Do(ctx context.Context) (*objects.UserPresence, e
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.UserPresence
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -131,6 +156,16 @@ func (c *UsersGetPresenceCall) Do(ctx context.Context) (*objects.UserPresence, e
 	return res.UserPresence, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *UsersGetPresenceCall) FromValues(v url.Values) error {
+	var tmp UsersGetPresenceCall
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Identity creates a UsersIdentityCall object in preparation for accessing the users.identity endpoint
 func (s *UsersService) Identity() *UsersIdentityCall {
 	var call UsersIdentityCall
@@ -138,8 +173,16 @@ func (s *UsersService) Identity() *UsersIdentityCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the UsersIdentityCall object
+func (c *UsersIdentityCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the UsersIdentityCall object as url.Values
 func (c *UsersIdentityCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil
@@ -153,7 +196,7 @@ func (c *UsersIdentityCall) Do(ctx context.Context) (*objects.UserProfile, *obje
 		return nil, nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.UserProfile `json:"user"`
 		*objects.Team        `json:"team"`
 	}
@@ -165,6 +208,13 @@ func (c *UsersIdentityCall) Do(ctx context.Context) (*objects.UserProfile, *obje
 	}
 
 	return res.UserProfile, res.Team, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersIdentityCall) FromValues(v url.Values) error {
+	var tmp UsersIdentityCall
+	*c = tmp
+	return nil
 }
 
 // Info creates a UsersInfoCall object in preparation for accessing the users.info endpoint
@@ -181,8 +231,19 @@ func (c *UsersInfoCall) IncludeLocale(includeLocale bool) *UsersInfoCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the UsersInfoCall object
+func (c *UsersInfoCall) ValidateArgs() error {
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsersInfoCall object as url.Values
 func (c *UsersInfoCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -190,9 +251,6 @@ func (c *UsersInfoCall) Values() (url.Values, error) {
 		v.Set("include_locale", "true")
 	}
 
-	if len(c.user) <= 0 {
-		return nil, errors.New(`missing required parameter user`)
-	}
 	v.Set("user", c.user)
 	return v, nil
 }
@@ -205,7 +263,7 @@ func (c *UsersInfoCall) Do(ctx context.Context) (*objects.User, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.User
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -216,6 +274,23 @@ func (c *UsersInfoCall) Do(ctx context.Context) (*objects.User, error) {
 	}
 
 	return res.User, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersInfoCall) FromValues(v url.Values) error {
+	var tmp UsersInfoCall
+	if raw := strings.TrimSpace(v.Get("include_locale")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_locale"`)
+		}
+		tmp.includeLocale = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // List creates a UsersListCall object in preparation for accessing the users.list endpoint
@@ -243,8 +318,16 @@ func (c *UsersListCall) Presence(presence bool) *UsersListCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the UsersListCall object
+func (c *UsersListCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the UsersListCall object as url.Values
 func (c *UsersListCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -270,7 +353,7 @@ func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.UserList `json:"members"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -283,6 +366,34 @@ func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
 	return res.UserList, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *UsersListCall) FromValues(v url.Values) error {
+	var tmp UsersListCall
+	if raw := strings.TrimSpace(v.Get("include_locale")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_locale"`)
+		}
+		tmp.includeLocale = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("limit")); len(raw) > 0 {
+		parsed, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse integer value "limit"`)
+		}
+		tmp.limit = int(parsed)
+	}
+	if raw := strings.TrimSpace(v.Get("presence")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "presence"`)
+		}
+		tmp.presence = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // SetActive creates a UsersSetActiveCall object in preparation for accessing the users.setActive endpoint
 func (s *UsersService) SetActive() *UsersSetActiveCall {
 	var call UsersSetActiveCall
@@ -290,8 +401,16 @@ func (s *UsersService) SetActive() *UsersSetActiveCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the UsersSetActiveCall object
+func (c *UsersSetActiveCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the UsersSetActiveCall object as url.Values
 func (c *UsersSetActiveCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil
@@ -305,7 +424,7 @@ func (c *UsersSetActiveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.setActive`)
@@ -317,6 +436,13 @@ func (c *UsersSetActiveCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *UsersSetActiveCall) FromValues(v url.Values) error {
+	var tmp UsersSetActiveCall
+	*c = tmp
+	return nil
+}
+
 // SetPresence creates a UsersSetPresenceCall object in preparation for accessing the users.setPresence endpoint
 func (s *UsersService) SetPresence(presence string) *UsersSetPresenceCall {
 	var call UsersSetPresenceCall
@@ -325,14 +451,22 @@ func (s *UsersService) SetPresence(presence string) *UsersSetPresenceCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the UsersSetPresenceCall object
+func (c *UsersSetPresenceCall) ValidateArgs() error {
+	if len(c.presence) <= 0 {
+		return errors.New(`required field presence not initialized`)
+	}
+	return nil
+}
+
 // Values returns the UsersSetPresenceCall object as url.Values
 func (c *UsersSetPresenceCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.presence) <= 0 {
-		return nil, errors.New(`missing required parameter presence`)
-	}
 	v.Set("presence", c.presence)
 	return v, nil
 }
@@ -345,7 +479,7 @@ func (c *UsersSetPresenceCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.setPresence`)
@@ -354,5 +488,15 @@ func (c *UsersSetPresenceCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersSetPresenceCall) FromValues(v url.Values) error {
+	var tmp UsersSetPresenceCall
+	if raw := strings.TrimSpace(v.Get("presence")); len(raw) > 0 {
+		tmp.presence = raw
+	}
+	*c = tmp
 	return nil
 }

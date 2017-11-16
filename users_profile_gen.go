@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // UsersProfileGetCall is created by UsersProfileService.Get method call
@@ -49,8 +51,16 @@ func (c *UsersProfileGetCall) User(user string) *UsersProfileGetCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the UsersProfileGetCall object
+func (c *UsersProfileGetCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the UsersProfileGetCall object as url.Values
 func (c *UsersProfileGetCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -72,7 +82,7 @@ func (c *UsersProfileGetCall) Do(ctx context.Context) (*objects.UserProfile, err
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.UserProfile
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -83,6 +93,23 @@ func (c *UsersProfileGetCall) Do(ctx context.Context) (*objects.UserProfile, err
 	}
 
 	return res.UserProfile, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersProfileGetCall) FromValues(v url.Values) error {
+	var tmp UsersProfileGetCall
+	if raw := strings.TrimSpace(v.Get("include_labels")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_labels"`)
+		}
+		tmp.includeLabels = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // Set creates a UsersProfileSetCall object in preparation for accessing the users.profile.set endpoint
@@ -116,8 +143,16 @@ func (c *UsersProfileSetCall) Value(value string) *UsersProfileSetCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the UsersProfileSetCall object
+func (c *UsersProfileSetCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the UsersProfileSetCall object as url.Values
 func (c *UsersProfileSetCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -151,7 +186,7 @@ func (c *UsersProfileSetCall) Do(ctx context.Context) (*objects.UserProfile, err
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.UserProfile
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -162,4 +197,25 @@ func (c *UsersProfileSetCall) Do(ctx context.Context) (*objects.UserProfile, err
 	}
 
 	return res.UserProfile, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersProfileSetCall) FromValues(v url.Values) error {
+	var tmp UsersProfileSetCall
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("profile")); len(raw) > 0 {
+		if err := tmp.profile.Decode(raw); err != nil {
+			return errors.Wrap(err, `failed to decode value "profile"`)
+		}
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	if raw := strings.TrimSpace(v.Get("value")); len(raw) > 0 {
+		tmp.value = raw
+	}
+	*c = tmp
+	return nil
 }

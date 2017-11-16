@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // ChatDeleteCall is created by ChatService.Delete method call
@@ -88,8 +90,19 @@ func (c *ChatDeleteCall) Timestamp(timestamp string) *ChatDeleteCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the ChatDeleteCall object
+func (c *ChatDeleteCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChatDeleteCall object as url.Values
 func (c *ChatDeleteCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -97,9 +110,6 @@ func (c *ChatDeleteCall) Values() (url.Values, error) {
 		v.Set("as_user", "true")
 	}
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if len(c.timestamp) > 0 {
@@ -109,15 +119,15 @@ func (c *ChatDeleteCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access chat.delete endpoint
-func (c *ChatDeleteCall) Do(ctx context.Context) (*ChatResponse, error) {
+func (c *ChatDeleteCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.delete"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ChatResponse
+		objects.GenericResponse
+		*objects.ChatResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.delete`)
@@ -127,6 +137,26 @@ func (c *ChatDeleteCall) Do(ctx context.Context) (*ChatResponse, error) {
 	}
 
 	return res.ChatResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChatDeleteCall) FromValues(v url.Values) error {
+	var tmp ChatDeleteCall
+	if raw := strings.TrimSpace(v.Get("as_user")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "as_user"`)
+		}
+		tmp.asUser = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // MeMessage creates a ChatMeMessageCall object in preparation for accessing the chat.meMessage endpoint
@@ -143,14 +173,22 @@ func (c *ChatMeMessageCall) Text(text string) *ChatMeMessageCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the ChatMeMessageCall object
+func (c *ChatMeMessageCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChatMeMessageCall object as url.Values
 func (c *ChatMeMessageCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if len(c.text) > 0 {
@@ -160,15 +198,15 @@ func (c *ChatMeMessageCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access chat.meMessage endpoint
-func (c *ChatMeMessageCall) Do(ctx context.Context) (*ChatResponse, error) {
+func (c *ChatMeMessageCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.meMessage"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ChatResponse
+		objects.GenericResponse
+		*objects.ChatResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.meMessage`)
@@ -178,6 +216,19 @@ func (c *ChatMeMessageCall) Do(ctx context.Context) (*ChatResponse, error) {
 	}
 
 	return res.ChatResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChatMeMessageCall) FromValues(v url.Values) error {
+	var tmp ChatMeMessageCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("text")); len(raw) > 0 {
+		tmp.text = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // PostMessage creates a ChatPostMessageCall object in preparation for accessing the chat.postMessage endpoint
@@ -266,8 +317,19 @@ func (c *ChatPostMessageCall) Username(username string) *ChatPostMessageCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the ChatPostMessageCall object
+func (c *ChatPostMessageCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChatPostMessageCall object as url.Values
 func (c *ChatPostMessageCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -283,9 +345,6 @@ func (c *ChatPostMessageCall) Values() (url.Values, error) {
 		v.Set("attachments", attachmentsEncoded)
 	}
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if c.escapeText {
@@ -331,15 +390,15 @@ func (c *ChatPostMessageCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access chat.postMessage endpoint
-func (c *ChatPostMessageCall) Do(ctx context.Context) (*ChatResponse, error) {
+func (c *ChatPostMessageCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.postMessage"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ChatResponse
+		objects.GenericResponse
+		*objects.ChatResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.postMessage`)
@@ -349,6 +408,78 @@ func (c *ChatPostMessageCall) Do(ctx context.Context) (*ChatResponse, error) {
 	}
 
 	return res.ChatResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChatPostMessageCall) FromValues(v url.Values) error {
+	var tmp ChatPostMessageCall
+	if raw := strings.TrimSpace(v.Get("as_user")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "as_user"`)
+		}
+		tmp.asUser = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("attachments")); len(raw) > 0 {
+		if err := tmp.attachments.Decode(raw); err != nil {
+			return errors.Wrap(err, `failed to decode value "attachments"`)
+		}
+	}
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("escapeText")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "escapeText"`)
+		}
+		tmp.escapeText = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("iconEmoji")); len(raw) > 0 {
+		tmp.iconEmoji = raw
+	}
+	if raw := strings.TrimSpace(v.Get("iconURL")); len(raw) > 0 {
+		tmp.iconURL = raw
+	}
+	if raw := strings.TrimSpace(v.Get("linkNames")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "linkNames"`)
+		}
+		tmp.linkNames = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("markdown")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "markdown"`)
+		}
+		tmp.markdown = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("parse")); len(raw) > 0 {
+		tmp.parse = raw
+	}
+	if raw := strings.TrimSpace(v.Get("text")); len(raw) > 0 {
+		tmp.text = raw
+	}
+	if raw := strings.TrimSpace(v.Get("unfurlLinks")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "unfurlLinks"`)
+		}
+		tmp.unfurlLinks = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("unfurlMedia")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "unfurlMedia"`)
+		}
+		tmp.unfurlMedia = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("username")); len(raw) > 0 {
+		tmp.username = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // Unfurl creates a ChatUnfurlCall object in preparation for accessing the chat.unfurl endpoint
@@ -367,24 +498,32 @@ func (c *ChatUnfurlCall) UserAuthRequired(userAuthRequired bool) *ChatUnfurlCall
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the ChatUnfurlCall object
+func (c *ChatUnfurlCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.timestamp) <= 0 {
+		return errors.New(`required field timestamp not initialized`)
+	}
+	if len(c.unfurls) <= 0 {
+		return errors.New(`required field unfurls not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChatUnfurlCall object as url.Values
 func (c *ChatUnfurlCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.timestamp) <= 0 {
-		return nil, errors.New(`missing required parameter timestamp`)
-	}
 	v.Set("ts", c.timestamp)
 
-	if len(c.unfurls) <= 0 {
-		return nil, errors.New(`missing required parameter unfurls`)
-	}
 	v.Set("unfurls", c.unfurls)
 
 	if c.userAuthRequired {
@@ -401,7 +540,7 @@ func (c *ChatUnfurlCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to chat.unfurl`)
@@ -410,6 +549,29 @@ func (c *ChatUnfurlCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChatUnfurlCall) FromValues(v url.Values) error {
+	var tmp ChatUnfurlCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	if raw := strings.TrimSpace(v.Get("unfurls")); len(raw) > 0 {
+		tmp.unfurls = raw
+	}
+	if raw := strings.TrimSpace(v.Get("user_auth_required")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "user_auth_required"`)
+		}
+		tmp.userAuthRequired = parsed
+	}
+	*c = tmp
 	return nil
 }
 
@@ -463,8 +625,19 @@ func (c *ChatUpdateCall) Timestamp(timestamp string) *ChatUpdateCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the ChatUpdateCall object
+func (c *ChatUpdateCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ChatUpdateCall object as url.Values
 func (c *ChatUpdateCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -480,9 +653,6 @@ func (c *ChatUpdateCall) Values() (url.Values, error) {
 		v.Set("attachments", attachmentsEncoded)
 	}
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if c.linkNames {
@@ -504,15 +674,15 @@ func (c *ChatUpdateCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access chat.update endpoint
-func (c *ChatUpdateCall) Do(ctx context.Context) (*ChatResponse, error) {
+func (c *ChatUpdateCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.update"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ChatResponse
+		objects.GenericResponse
+		*objects.ChatResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.update`)
@@ -522,4 +692,42 @@ func (c *ChatUpdateCall) Do(ctx context.Context) (*ChatResponse, error) {
 	}
 
 	return res.ChatResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChatUpdateCall) FromValues(v url.Values) error {
+	var tmp ChatUpdateCall
+	if raw := strings.TrimSpace(v.Get("as_user")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "as_user"`)
+		}
+		tmp.asUser = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("attachments")); len(raw) > 0 {
+		if err := tmp.attachments.Decode(raw); err != nil {
+			return errors.Wrap(err, `failed to decode value "attachments"`)
+		}
+	}
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("linkNames")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "linkNames"`)
+		}
+		tmp.linkNames = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("parse")); len(raw) > 0 {
+		tmp.parse = raw
+	}
+	if raw := strings.TrimSpace(v.Get("text")); len(raw) > 0 {
+		tmp.text = raw
+	}
+	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
+	return nil
 }

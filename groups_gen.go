@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // GroupsArchiveCall is created by GroupsService.Archive method call
@@ -134,14 +136,22 @@ func (s *GroupsService) Archive(channel string) *GroupsArchiveCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsArchiveCall object
+func (c *GroupsArchiveCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsArchiveCall object as url.Values
 func (c *GroupsArchiveCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -154,7 +164,7 @@ func (c *GroupsArchiveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.archive`)
@@ -163,6 +173,16 @@ func (c *GroupsArchiveCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsArchiveCall) FromValues(v url.Values) error {
+	var tmp GroupsArchiveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
 	return nil
 }
 
@@ -180,14 +200,22 @@ func (c *GroupsCreateCall) Validate(validate bool) *GroupsCreateCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsCreateCall object
+func (c *GroupsCreateCall) ValidateArgs() error {
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsCreateCall object as url.Values
 func (c *GroupsCreateCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if c.validate {
@@ -204,7 +232,7 @@ func (c *GroupsCreateCall) Do(ctx context.Context) (*objects.Group, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Group `json:"group"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -217,6 +245,23 @@ func (c *GroupsCreateCall) Do(ctx context.Context) (*objects.Group, error) {
 	return res.Group, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsCreateCall) FromValues(v url.Values) error {
+	var tmp GroupsCreateCall
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("validate")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "validate"`)
+		}
+		tmp.validate = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // CreateChild creates a GroupsCreateChildCall object in preparation for accessing the groups.createChild endpoint
 func (s *GroupsService) CreateChild(channel string) *GroupsCreateChildCall {
 	var call GroupsCreateChildCall
@@ -225,14 +270,22 @@ func (s *GroupsService) CreateChild(channel string) *GroupsCreateChildCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsCreateChildCall object
+func (c *GroupsCreateChildCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsCreateChildCall object as url.Values
 func (c *GroupsCreateChildCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -245,7 +298,7 @@ func (c *GroupsCreateChildCall) Do(ctx context.Context) (*objects.Group, error) 
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Group `json:"group"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -256,6 +309,16 @@ func (c *GroupsCreateChildCall) Do(ctx context.Context) (*objects.Group, error) 
 	}
 
 	return res.Group, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsCreateChildCall) FromValues(v url.Values) error {
+	var tmp GroupsCreateChildCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // History creates a GroupsHistoryCall object in preparation for accessing the groups.history endpoint
@@ -296,14 +359,22 @@ func (c *GroupsHistoryCall) Unreads(unreads bool) *GroupsHistoryCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsHistoryCall object
+func (c *GroupsHistoryCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsHistoryCall object as url.Values
 func (c *GroupsHistoryCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if c.count > 0 {
@@ -336,7 +407,7 @@ func (c *GroupsHistoryCall) Do(ctx context.Context) (*string, objects.MessageLis
 		return nil, nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*string             `json:"latest"`
 		objects.MessageList `json:"messages"`
 	}
@@ -348,6 +419,43 @@ func (c *GroupsHistoryCall) Do(ctx context.Context) (*string, objects.MessageLis
 	}
 
 	return res.string, res.MessageList, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsHistoryCall) FromValues(v url.Values) error {
+	var tmp GroupsHistoryCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("count")); len(raw) > 0 {
+		parsed, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse integer value "count"`)
+		}
+		tmp.count = int(parsed)
+	}
+	if raw := strings.TrimSpace(v.Get("inclusive")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "inclusive"`)
+		}
+		tmp.inclusive = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("latest")); len(raw) > 0 {
+		tmp.latest = raw
+	}
+	if raw := strings.TrimSpace(v.Get("oldest")); len(raw) > 0 {
+		tmp.oldest = raw
+	}
+	if raw := strings.TrimSpace(v.Get("unreads")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "unreads"`)
+		}
+		tmp.unreads = parsed
+	}
+	*c = tmp
+	return nil
 }
 
 // Info creates a GroupsInfoCall object in preparation for accessing the groups.info endpoint
@@ -364,14 +472,22 @@ func (c *GroupsInfoCall) IncludeLocale(includeLocale bool) *GroupsInfoCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsInfoCall object
+func (c *GroupsInfoCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsInfoCall object as url.Values
 func (c *GroupsInfoCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
 	if c.includeLocale {
@@ -388,7 +504,7 @@ func (c *GroupsInfoCall) Do(ctx context.Context) (*objects.Group, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Group `json:"group"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -401,6 +517,23 @@ func (c *GroupsInfoCall) Do(ctx context.Context) (*objects.Group, error) {
 	return res.Group, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsInfoCall) FromValues(v url.Values) error {
+	var tmp GroupsInfoCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("include_locale")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "include_locale"`)
+		}
+		tmp.includeLocale = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Invite creates a GroupsInviteCall object in preparation for accessing the groups.invite endpoint
 func (s *GroupsService) Invite(channel string, user string) *GroupsInviteCall {
 	var call GroupsInviteCall
@@ -410,19 +543,27 @@ func (s *GroupsService) Invite(channel string, user string) *GroupsInviteCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsInviteCall object
+func (c *GroupsInviteCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsInviteCall object as url.Values
 func (c *GroupsInviteCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.user) <= 0 {
-		return nil, errors.New(`missing required parameter user`)
-	}
 	v.Set("user", c.user)
 	return v, nil
 }
@@ -435,7 +576,7 @@ func (c *GroupsInviteCall) Do(ctx context.Context) (*objects.Group, *bool, error
 		return nil, nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Group `json:"group"`
 		*bool          `json:"already_in_group"`
 	}
@@ -449,6 +590,19 @@ func (c *GroupsInviteCall) Do(ctx context.Context) (*objects.Group, *bool, error
 	return res.Group, res.bool, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsInviteCall) FromValues(v url.Values) error {
+	var tmp GroupsInviteCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Kick creates a GroupsKickCall object in preparation for accessing the groups.kick endpoint
 func (s *GroupsService) Kick(channel string, user string) *GroupsKickCall {
 	var call GroupsKickCall
@@ -458,19 +612,27 @@ func (s *GroupsService) Kick(channel string, user string) *GroupsKickCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsKickCall object
+func (c *GroupsKickCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsKickCall object as url.Values
 func (c *GroupsKickCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.user) <= 0 {
-		return nil, errors.New(`missing required parameter user`)
-	}
 	v.Set("user", c.user)
 	return v, nil
 }
@@ -483,7 +645,7 @@ func (c *GroupsKickCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.kick`)
@@ -495,6 +657,19 @@ func (c *GroupsKickCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsKickCall) FromValues(v url.Values) error {
+	var tmp GroupsKickCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Leave creates a GroupsLeaveCall object in preparation for accessing the groups.leave endpoint
 func (s *GroupsService) Leave(channel string) *GroupsLeaveCall {
 	var call GroupsLeaveCall
@@ -503,14 +678,22 @@ func (s *GroupsService) Leave(channel string) *GroupsLeaveCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsLeaveCall object
+func (c *GroupsLeaveCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsLeaveCall object as url.Values
 func (c *GroupsLeaveCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -523,7 +706,7 @@ func (c *GroupsLeaveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.leave`)
@@ -532,6 +715,16 @@ func (c *GroupsLeaveCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsLeaveCall) FromValues(v url.Values) error {
+	var tmp GroupsLeaveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
 	return nil
 }
 
@@ -554,8 +747,16 @@ func (c *GroupsListCall) ExcludeMembers(excludeMembers bool) *GroupsListCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsListCall object
+func (c *GroupsListCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the GroupsListCall object as url.Values
 func (c *GroupsListCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -577,7 +778,7 @@ func (c *GroupsListCall) Do(ctx context.Context) (objects.GroupList, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.GroupList `json:"groups"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -590,6 +791,27 @@ func (c *GroupsListCall) Do(ctx context.Context) (objects.GroupList, error) {
 	return res.GroupList, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsListCall) FromValues(v url.Values) error {
+	var tmp GroupsListCall
+	if raw := strings.TrimSpace(v.Get("exclude_archived")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "exclude_archived"`)
+		}
+		tmp.excludeArchived = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("exclude_members")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "exclude_members"`)
+		}
+		tmp.excludeMembers = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Mark creates a GroupsMarkCall object in preparation for accessing the groups.mark endpoint
 func (s *GroupsService) Mark(channel string, timestamp string) *GroupsMarkCall {
 	var call GroupsMarkCall
@@ -599,19 +821,27 @@ func (s *GroupsService) Mark(channel string, timestamp string) *GroupsMarkCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsMarkCall object
+func (c *GroupsMarkCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.timestamp) <= 0 {
+		return errors.New(`required field timestamp not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsMarkCall object as url.Values
 func (c *GroupsMarkCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.timestamp) <= 0 {
-		return nil, errors.New(`missing required parameter timestamp`)
-	}
 	v.Set("ts", c.timestamp)
 	return v, nil
 }
@@ -624,7 +854,7 @@ func (c *GroupsMarkCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.mark`)
@@ -636,6 +866,19 @@ func (c *GroupsMarkCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsMarkCall) FromValues(v url.Values) error {
+	var tmp GroupsMarkCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Open creates a GroupsOpenCall object in preparation for accessing the groups.open endpoint
 func (s *GroupsService) Open(channel string) *GroupsOpenCall {
 	var call GroupsOpenCall
@@ -644,14 +887,22 @@ func (s *GroupsService) Open(channel string) *GroupsOpenCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsOpenCall object
+func (c *GroupsOpenCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsOpenCall object as url.Values
 func (c *GroupsOpenCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -664,7 +915,7 @@ func (c *GroupsOpenCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.open`)
@@ -673,6 +924,16 @@ func (c *GroupsOpenCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsOpenCall) FromValues(v url.Values) error {
+	var tmp GroupsOpenCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
 	return nil
 }
 
@@ -691,19 +952,27 @@ func (c *GroupsRenameCall) Validate(validate bool) *GroupsRenameCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsRenameCall object
+func (c *GroupsRenameCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsRenameCall object as url.Values
 func (c *GroupsRenameCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if c.validate {
@@ -720,7 +989,7 @@ func (c *GroupsRenameCall) Do(ctx context.Context) (*objects.Group, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Group `json:"group"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -733,6 +1002,26 @@ func (c *GroupsRenameCall) Do(ctx context.Context) (*objects.Group, error) {
 	return res.Group, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsRenameCall) FromValues(v url.Values) error {
+	var tmp GroupsRenameCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("validate")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "validate"`)
+		}
+		tmp.validate = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Replies creates a GroupsRepliesCall object in preparation for accessing the groups.replies endpoint
 func (s *GroupsService) Replies(channel string, threadTimestamp string) *GroupsRepliesCall {
 	var call GroupsRepliesCall
@@ -742,19 +1031,27 @@ func (s *GroupsService) Replies(channel string, threadTimestamp string) *GroupsR
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsRepliesCall object
+func (c *GroupsRepliesCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.threadTimestamp) <= 0 {
+		return errors.New(`required field threadTimestamp not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsRepliesCall object as url.Values
 func (c *GroupsRepliesCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.threadTimestamp) <= 0 {
-		return nil, errors.New(`missing required parameter threadTimestamp`)
-	}
 	v.Set("thread_ts", c.threadTimestamp)
 	return v, nil
 }
@@ -767,7 +1064,7 @@ func (c *GroupsRepliesCall) Do(ctx context.Context) (objects.MessageList, *objec
 		return nil, nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		objects.MessageList `json:"messages"`
 		*objects.ThreadInfo `json:"thread_info"`
 	}
@@ -781,6 +1078,19 @@ func (c *GroupsRepliesCall) Do(ctx context.Context) (objects.MessageList, *objec
 	return res.MessageList, res.ThreadInfo, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsRepliesCall) FromValues(v url.Values) error {
+	var tmp GroupsRepliesCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("thread_ts")); len(raw) > 0 {
+		tmp.threadTimestamp = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // SetPurpose creates a GroupsSetPurposeCall object in preparation for accessing the groups.setPurpose endpoint
 func (s *GroupsService) SetPurpose(channel string, purpose string) *GroupsSetPurposeCall {
 	var call GroupsSetPurposeCall
@@ -790,19 +1100,27 @@ func (s *GroupsService) SetPurpose(channel string, purpose string) *GroupsSetPur
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsSetPurposeCall object
+func (c *GroupsSetPurposeCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.purpose) <= 0 {
+		return errors.New(`required field purpose not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsSetPurposeCall object as url.Values
 func (c *GroupsSetPurposeCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.purpose) <= 0 {
-		return nil, errors.New(`missing required parameter purpose`)
-	}
 	v.Set("purpose", c.purpose)
 	return v, nil
 }
@@ -815,7 +1133,7 @@ func (c *GroupsSetPurposeCall) Do(ctx context.Context) (*string, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*string `json:"purpose"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -828,6 +1146,19 @@ func (c *GroupsSetPurposeCall) Do(ctx context.Context) (*string, error) {
 	return res.string, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsSetPurposeCall) FromValues(v url.Values) error {
+	var tmp GroupsSetPurposeCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("purpose")); len(raw) > 0 {
+		tmp.purpose = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // SetTopic creates a GroupsSetTopicCall object in preparation for accessing the groups.setTopic endpoint
 func (s *GroupsService) SetTopic(channel string, topic string) *GroupsSetTopicCall {
 	var call GroupsSetTopicCall
@@ -837,19 +1168,27 @@ func (s *GroupsService) SetTopic(channel string, topic string) *GroupsSetTopicCa
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsSetTopicCall object
+func (c *GroupsSetTopicCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.topic) <= 0 {
+		return errors.New(`required field topic not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsSetTopicCall object as url.Values
 func (c *GroupsSetTopicCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 
-	if len(c.topic) <= 0 {
-		return nil, errors.New(`missing required parameter topic`)
-	}
 	v.Set("topic", c.topic)
 	return v, nil
 }
@@ -862,7 +1201,7 @@ func (c *GroupsSetTopicCall) Do(ctx context.Context) (*string, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*string `json:"topic"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -875,6 +1214,19 @@ func (c *GroupsSetTopicCall) Do(ctx context.Context) (*string, error) {
 	return res.string, nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *GroupsSetTopicCall) FromValues(v url.Values) error {
+	var tmp GroupsSetTopicCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("topic")); len(raw) > 0 {
+		tmp.topic = raw
+	}
+	*c = tmp
+	return nil
+}
+
 // Unarchive creates a GroupsUnarchiveCall object in preparation for accessing the groups.unarchive endpoint
 func (s *GroupsService) Unarchive(channel string) *GroupsUnarchiveCall {
 	var call GroupsUnarchiveCall
@@ -883,14 +1235,22 @@ func (s *GroupsService) Unarchive(channel string) *GroupsUnarchiveCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the GroupsUnarchiveCall object
+func (c *GroupsUnarchiveCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	return nil
+}
+
 // Values returns the GroupsUnarchiveCall object as url.Values
 func (c *GroupsUnarchiveCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.channel) <= 0 {
-		return nil, errors.New(`missing required parameter channel`)
-	}
 	v.Set("channel", c.channel)
 	return v, nil
 }
@@ -903,7 +1263,7 @@ func (c *GroupsUnarchiveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.unarchive`)
@@ -912,5 +1272,15 @@ func (c *GroupsUnarchiveCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *GroupsUnarchiveCall) FromValues(v url.Values) error {
+	var tmp GroupsUnarchiveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	*c = tmp
 	return nil
 }

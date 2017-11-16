@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // ReactionsAddCall is created by ReactionsService.Add method call
@@ -85,8 +87,19 @@ func (c *ReactionsAddCall) Timestamp(timestamp string) *ReactionsAddCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the ReactionsAddCall object
+func (c *ReactionsAddCall) ValidateArgs() error {
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ReactionsAddCall object as url.Values
 func (c *ReactionsAddCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -102,9 +115,6 @@ func (c *ReactionsAddCall) Values() (url.Values, error) {
 		v.Set("fileComment", c.fileComment)
 	}
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if len(c.timestamp) > 0 {
@@ -121,7 +131,7 @@ func (c *ReactionsAddCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to reactions.add`)
@@ -130,6 +140,28 @@ func (c *ReactionsAddCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ReactionsAddCall) FromValues(v url.Values) error {
+	var tmp ReactionsAddCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("file")); len(raw) > 0 {
+		tmp.file = raw
+	}
+	if raw := strings.TrimSpace(v.Get("fileComment")); len(raw) > 0 {
+		tmp.fileComment = raw
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("timestamp")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
 	return nil
 }
 
@@ -170,8 +202,16 @@ func (c *ReactionsGetCall) Timestamp(timestamp string) *ReactionsGetCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the ReactionsGetCall object
+func (c *ReactionsGetCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the ReactionsGetCall object as url.Values
 func (c *ReactionsGetCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -198,15 +238,15 @@ func (c *ReactionsGetCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access reactions.get endpoint
-func (c *ReactionsGetCall) Do(ctx context.Context) (*ReactionsGetResponse, error) {
+func (c *ReactionsGetCall) Do(ctx context.Context) (*objects.ReactionsGetResponse, error) {
 	const endpoint = "reactions.get"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ReactionsGetResponse
+		objects.GenericResponse
+		*objects.ReactionsGetResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reactions.get`)
@@ -216,6 +256,32 @@ func (c *ReactionsGetCall) Do(ctx context.Context) (*ReactionsGetResponse, error
 	}
 
 	return res.ReactionsGetResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ReactionsGetCall) FromValues(v url.Values) error {
+	var tmp ReactionsGetCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("file")); len(raw) > 0 {
+		tmp.file = raw
+	}
+	if raw := strings.TrimSpace(v.Get("fileComment")); len(raw) > 0 {
+		tmp.fileComment = raw
+	}
+	if raw := strings.TrimSpace(v.Get("full")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "full"`)
+		}
+		tmp.full = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("timestamp")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // List creates a ReactionsListCall object in preparation for accessing the reactions.list endpoint
@@ -249,8 +315,16 @@ func (c *ReactionsListCall) User(user string) *ReactionsListCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the ReactionsListCall object
+func (c *ReactionsListCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the ReactionsListCall object as url.Values
 func (c *ReactionsListCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -273,15 +347,15 @@ func (c *ReactionsListCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access reactions.list endpoint
-func (c *ReactionsListCall) Do(ctx context.Context) (*ReactionsListResponse, error) {
+func (c *ReactionsListCall) Do(ctx context.Context) (*objects.ReactionsListResponse, error) {
 	const endpoint = "reactions.list"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*ReactionsListResponse
+		objects.GenericResponse
+		*objects.ReactionsListResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reactions.list`)
@@ -291,6 +365,37 @@ func (c *ReactionsListCall) Do(ctx context.Context) (*ReactionsListResponse, err
 	}
 
 	return res.ReactionsListResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ReactionsListCall) FromValues(v url.Values) error {
+	var tmp ReactionsListCall
+	if raw := strings.TrimSpace(v.Get("count")); len(raw) > 0 {
+		parsed, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse integer value "count"`)
+		}
+		tmp.count = int(parsed)
+	}
+	if raw := strings.TrimSpace(v.Get("full")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "full"`)
+		}
+		tmp.full = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("page")); len(raw) > 0 {
+		parsed, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse integer value "page"`)
+		}
+		tmp.page = int(parsed)
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
+	}
+	*c = tmp
+	return nil
 }
 
 // Remove creates a ReactionsRemoveCall object in preparation for accessing the reactions.remove endpoint
@@ -325,8 +430,19 @@ func (c *ReactionsRemoveCall) Timestamp(timestamp string) *ReactionsRemoveCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the ReactionsRemoveCall object
+func (c *ReactionsRemoveCall) ValidateArgs() error {
+	if len(c.name) <= 0 {
+		return errors.New(`required field name not initialized`)
+	}
+	return nil
+}
+
 // Values returns the ReactionsRemoveCall object as url.Values
 func (c *ReactionsRemoveCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -342,9 +458,6 @@ func (c *ReactionsRemoveCall) Values() (url.Values, error) {
 		v.Set("fileComment", c.fileComment)
 	}
 
-	if len(c.name) <= 0 {
-		return nil, errors.New(`missing required parameter name`)
-	}
 	v.Set("name", c.name)
 
 	if len(c.timestamp) > 0 {
@@ -361,7 +474,7 @@ func (c *ReactionsRemoveCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to reactions.remove`)
@@ -370,5 +483,27 @@ func (c *ReactionsRemoveCall) Do(ctx context.Context) error {
 		return errors.New(res.Error.String())
 	}
 
+	return nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ReactionsRemoveCall) FromValues(v url.Values) error {
+	var tmp ReactionsRemoveCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("file")); len(raw) > 0 {
+		tmp.file = raw
+	}
+	if raw := strings.TrimSpace(v.Get("fileComment")); len(raw) > 0 {
+		tmp.fileComment = raw
+	}
+	if raw := strings.TrimSpace(v.Get("name")); len(raw) > 0 {
+		tmp.name = raw
+	}
+	if raw := strings.TrimSpace(v.Get("timestamp")); len(raw) > 0 {
+		tmp.timestamp = raw
+	}
+	*c = tmp
 	return nil
 }

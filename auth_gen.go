@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // AuthRevokeCall is created by AuthService.Revoke method call
@@ -38,8 +40,16 @@ func (c *AuthRevokeCall) Test(test bool) *AuthRevokeCall {
 	return c
 }
 
+// ValidateArgs checks that all required fields are set in the AuthRevokeCall object
+func (c *AuthRevokeCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the AuthRevokeCall object as url.Values
 func (c *AuthRevokeCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
@@ -57,7 +67,7 @@ func (c *AuthRevokeCall) Do(ctx context.Context) error {
 		return err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to auth.revoke`)
@@ -69,6 +79,20 @@ func (c *AuthRevokeCall) Do(ctx context.Context) error {
 	return nil
 }
 
+// FromValues parses the data in v and populates `c`
+func (c *AuthRevokeCall) FromValues(v url.Values) error {
+	var tmp AuthRevokeCall
+	if raw := strings.TrimSpace(v.Get("test")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "test"`)
+		}
+		tmp.test = parsed
+	}
+	*c = tmp
+	return nil
+}
+
 // Test creates a AuthTestCall object in preparation for accessing the auth.test endpoint
 func (s *AuthService) Test() *AuthTestCall {
 	var call AuthTestCall
@@ -76,23 +100,31 @@ func (s *AuthService) Test() *AuthTestCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the AuthTestCall object
+func (c *AuthTestCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the AuthTestCall object as url.Values
 func (c *AuthTestCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil
 }
 
 // Do executes the call to access auth.test endpoint
-func (c *AuthTestCall) Do(ctx context.Context) (*AuthTestResponse, error) {
+func (c *AuthTestCall) Do(ctx context.Context) (*objects.AuthTestResponse, error) {
 	const endpoint = "auth.test"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*AuthTestResponse
+		objects.GenericResponse
+		*objects.AuthTestResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to auth.test`)
@@ -102,4 +134,11 @@ func (c *AuthTestCall) Do(ctx context.Context) (*AuthTestResponse, error) {
 	}
 
 	return res.AuthTestResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *AuthTestCall) FromValues(v url.Values) error {
+	var tmp AuthTestCall
+	*c = tmp
+	return nil
 }

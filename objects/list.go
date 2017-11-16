@@ -24,6 +24,13 @@ func (l *AttachmentList) Encode() (string, error) {
 	return string(buf), nil
 }
 
+func (l *AttachmentList) Decode(buf string) error {
+	if buf == "" {
+		return nil
+	}
+	return json.Unmarshal([]byte(buf), l)
+}
+
 func (l *AttachmentFieldList) Append(a *AttachmentField) *AttachmentFieldList {
 	*l = append(*l, a)
 	return l

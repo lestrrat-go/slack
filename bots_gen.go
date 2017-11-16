@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // BotsInfoCall is created by BotsService.Info method call
@@ -28,14 +30,22 @@ func (s *BotsService) Info(bot string) *BotsInfoCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the BotsInfoCall object
+func (c *BotsInfoCall) ValidateArgs() error {
+	if len(c.bot) <= 0 {
+		return errors.New(`required field bot not initialized`)
+	}
+	return nil
+}
+
 // Values returns the BotsInfoCall object as url.Values
 func (c *BotsInfoCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 
-	if len(c.bot) <= 0 {
-		return nil, errors.New(`missing required parameter bot`)
-	}
 	v.Set("bot", c.bot)
 	return v, nil
 }
@@ -48,7 +58,7 @@ func (c *BotsInfoCall) Do(ctx context.Context) (*objects.Bot, error) {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
+		objects.GenericResponse
 		*objects.Bot
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
@@ -59,4 +69,14 @@ func (c *BotsInfoCall) Do(ctx context.Context) (*objects.Bot, error) {
 	}
 
 	return res.Bot, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *BotsInfoCall) FromValues(v url.Values) error {
+	var tmp BotsInfoCall
+	if raw := strings.TrimSpace(v.Get("bot")); len(raw) > 0 {
+		tmp.bot = raw
+	}
+	*c = tmp
+	return nil
 }

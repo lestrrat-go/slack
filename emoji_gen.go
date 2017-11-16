@@ -6,12 +6,14 @@ import (
 	"context"
 	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/lestrrat/go-slack/objects"
 	"github.com/pkg/errors"
 )
 
 var _ = strconv.Itoa
+var _ = strings.Index
 var _ = objects.EpochTime(0)
 
 // EmojiListCall is created by EmojiService.List method call
@@ -26,23 +28,31 @@ func (s *EmojiService) List() *EmojiListCall {
 	return &call
 }
 
+// ValidateArgs checks that all required fields are set in the EmojiListCall object
+func (c *EmojiListCall) ValidateArgs() error {
+	return nil
+}
+
 // Values returns the EmojiListCall object as url.Values
 func (c *EmojiListCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
 	v := url.Values{}
 	v.Set(`token`, c.service.token)
 	return v, nil
 }
 
 // Do executes the call to access emoji.list endpoint
-func (c *EmojiListCall) Do(ctx context.Context) (*EmojiListResponse, error) {
+func (c *EmojiListCall) Do(ctx context.Context) (*objects.EmojiListResponse, error) {
 	const endpoint = "emoji.list"
 	v, err := c.Values()
 	if err != nil {
 		return nil, err
 	}
 	var res struct {
-		SlackResponse
-		*EmojiListResponse
+		objects.GenericResponse
+		*objects.EmojiListResponse
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to emoji.list`)
@@ -52,4 +62,11 @@ func (c *EmojiListCall) Do(ctx context.Context) (*EmojiListResponse, error) {
 	}
 
 	return res.EmojiListResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *EmojiListCall) FromValues(v url.Values) error {
+	var tmp EmojiListCall
+	*c = tmp
+	return nil
 }
