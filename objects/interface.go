@@ -525,6 +525,17 @@ type ReactionsListResponse struct {
 	Paging Paging                   `json:"paging"`
 }
 
+type Reminder struct {
+	ID                string    `json:"id"`
+	Creator           string    `json:"creator"`
+	User              string    `json:"user"`
+	Text              string    `json:"text"`
+	Recurring         bool      `json:"recurring"`
+	Time              EpochTime `json:"time,omitempty"`
+	CompleteTimestamp EpochTime `json:"complete_ts,omitempty"`
+}
+type ReminderList []*Reminder
+
 type RTMResponse struct {
 	URL      string       `json:"url"`
 	Self     *UserDetails `json:"self"`

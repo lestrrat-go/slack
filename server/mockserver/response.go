@@ -14,6 +14,16 @@ import (
 // https://github.com/golang/go/commit/6983b9a57955fa12ecd81ab8394ee09e64ef21b9
 const aLongLongTimeAgo = objects.EpochTime(233431200)
 
+var ReminderMeetMaceWindu = objects.Reminder{
+	ID:                "Rm72119BBY",
+	Creator:           UserObiwanKenobi.ID,
+	User:              UserObiwanKenobi.ID,
+	Text:              "Meet Mace Windu over lunch",
+	Recurring:         false,
+	Time:              aLongLongTimeAgo.Add(86400 * 25 * 365),
+	CompleteTimestamp: objects.EpochTime(0),
+}
+
 var FileComputer = objects.File{
 	Channels:      []string{ChannelJedis.ID},
 	CommentsCount: 1,
@@ -34,7 +44,7 @@ var ChannelJedis = objects.Channel{
 		Creator: UserYoda.ID,
 		Members: []string{
 			UserLukeSkywalker.ID,
-			UserObiwan.ID,
+			UserObiwanKenobi.ID,
 			UserYoda.ID,
 		},
 		Name:           "jedis",
@@ -64,7 +74,7 @@ var UserLukeSkywalker = objects.User{
 	ID:   "U0123456",
 	Name: "luke.skywalker",
 }
-var UserObiwan = objects.User{
+var UserObiwanKenobi = objects.User{
 	ID:   "U0012345",
 	Name: "obiwan.kenobi",
 }
@@ -131,7 +141,7 @@ func stockObjectsUserList() interface{} {
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
 		UserList: &objects.UserList{
 			&UserLukeSkywalker,
-			&UserObiwan,
+			&UserObiwanKenobi,
 			&UserYoda,
 		},
 	}
@@ -205,4 +215,15 @@ func stockObjectsChannelsHistoryResponse() interface{} {
 func stockObjectsGroup() interface{}                 { return StockResponse("dummy") }
 func stockObjectsGroupList() interface{}             { return StockResponse("dummy") }
 func stockObjectsReactionsListResponse() interface{} { return StockResponse("dummy") }
+func stockObjectsReminder() interface{}              {
+	var r = struct{
+		objects.GenericResponse
+		*objects.Reminder
+	}{
+		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
+		Reminder: &ReminderMeetMaceWindu,
+	}
+	return r
+}
+func stockObjectsReminderList() interface{}          { return StockResponse("dummy") }
 func stockObjectsChannelList() interface{}           { return StockResponse("dummy") }

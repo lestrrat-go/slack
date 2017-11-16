@@ -83,6 +83,7 @@ func New(token string, options ...Option) *Client {
 		emoji:           &EmojiService{client: wrappedcl, token: token},
 		groups:          &GroupsService{client: wrappedcl, token: token},
 		oauth:           &OAuthService{client: wrappedcl},
+		reminders:       &RemindersService{client: wrappedcl, token: token},
 		reactions:       &ReactionsService{client: wrappedcl, token: token},
 		rtm:             &RTMService{client: wrappedcl, token: token},
 		users:           &UsersService{client: wrappedcl, token: token},
@@ -131,6 +132,11 @@ func (c *Client) OAuth() *OAuthService {
 // Reactions returns the Service object for `reactions.*` endpoints
 func (c *Client) Reactions() *ReactionsService {
 	return c.reactions
+}
+
+// Reminders returns the Service object for `reminders.*` endpoints
+func (c *Client) Reminders() *RemindersService {
+	return c.reminders
 }
 
 // RTM returns the Service object for `rtm.*` endpoints
