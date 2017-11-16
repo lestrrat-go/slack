@@ -137,7 +137,7 @@ type Group struct {
 	Name           string   `json:"name"`
 	NameNormalized string   `json:"name_normalized"`
 	NumMembers     int      `json:"num_members,omitempty"`
-	PreviousNames  []string `json:"previous_names"`
+	PreviousNames  []string `json:"previous_names,omitempty"`
 	Purpose        Purpose  `json:"purpose"`
 	Topic          Topic    `json:"topic"`
 }

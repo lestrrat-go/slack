@@ -33,21 +33,21 @@ func ExampleMockServer() {
 	os.Stdout.Write(buf)
 	// OUTPUT:
 	//{
-	//   "id": "123456789ABCDEFG",
+	//   "id": "C1J3D1ZRUL3",
 	//   "created": 233431200,
 	//   "is_open": false,
-	//   "creator": "yoda",
+	//   "creator": "U0000001",
 	//   "is_archived": false,
 	//   "is_group": false,
 	//   "is_mpim": false,
 	//   "members": [
-	//     "obiwan",
-	//     "lukeskywalker"
+  //     "U0123456",
+  //     "U0012345",
+  //     "U0000001"
 	//   ],
 	//   "name": "jedis",
 	//   "name_normalized": "jedis",
-	//   "num_members": 2,
-	//   "previous_names": null,
+	//   "num_members": 3,
 	//   "purpose": {
 	//     "value": "There is no emotion, there is peace.\nThere is no ignorance, there is knowledge.\nThere is no passion, there is serenity.\nThere is no chaos, there is harmony.\nThere is no death, there is the Force.",
 	//     "creator": "yoda",
