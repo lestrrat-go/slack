@@ -9,6 +9,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+func (t EpochTime) Int() int {
+	return int(t)
+}
+func (t EpochTime) Add(seconds int64) EpochTime {
+	return EpochTime(int64(t) + seconds)
+}
+
 func (t *Timestamp) UnmarshalJSON(data []byte) error {
 	// check for the first non-whitespace character
 	for len(data) > 0 {

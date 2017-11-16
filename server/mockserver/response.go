@@ -14,6 +14,17 @@ import (
 // https://github.com/golang/go/commit/6983b9a57955fa12ecd81ab8394ee09e64ef21b9
 const aLongLongTimeAgo = objects.EpochTime(233431200)
 
+var FileComputer = objects.File{
+	Channels:      []string{ChannelJedis.ID},
+	CommentsCount: 1,
+	Created:       aLongLongTimeAgo.Add(86400).Int(),
+	ID:            "F00000001",
+	Name:          "computer.gif",
+	Timestamp:     aLongLongTimeAgo.Add(86400).Int(),
+	Title:         "computer.gif",
+	User:          UserLukeSkywalker.ID,
+}
+
 var ChannelJedis = objects.Channel{
 	Group: objects.Group{
 		Conversation: objects.Conversation{
@@ -91,7 +102,26 @@ func stockObjectsChannel() interface{} {
 	return r
 }
 
-func stockObjectsReactionsGetResponse() interface{}   { return StockResponse("dummy") }
+func stockObjectsReactionsGetResponse() interface{} {
+	f := FileComputer
+	f.Reactions = append(f.Reactions, &objects.Reaction{
+		Count: 1,
+		Name:  "stuck_out_tongue_winking_eye",
+		Users: []string{UserLukeSkywalker.ID},
+	})
+
+	var r = struct {
+		objects.GenericResponse
+		*objects.ReactionsGetResponse
+	}{
+		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
+		ReactionsGetResponse: &objects.ReactionsGetResponse{
+			File: &f,
+			Type: "file",
+		},
+	}
+	return r
+}
 func stockObjectsUserProfileObjectsTeam() interface{} { return StockResponse("dummy") }
 func stockObjectsUserList() interface{}               { return StockResponse("dummy") }
 func stockObjectsBot() interface{} {

@@ -29,6 +29,9 @@ func looksLikeChannelID(s string) bool {
 }
 
 func checkChannel(t *testing.T, channel *objects.Channel) bool {
+	if !assert.NotNil(t, channel, "channel should be non-nil") {
+		return false
+	}
 	if !assert.NotEmpty(t, channel.Name, "channel.Name should be populated") {
 		return false
 	}
@@ -163,6 +166,22 @@ func TestWithMockServer(t *testing.T) {
 				return
 			}
 			if !checkChannel(t, res) {
+				return
+			}
+		})
+	})
+	t.Run("Reactions", func(t *testing.T) {
+		t.Run("Get", func(t *testing.T) {
+			res, err := cl.Reactions().Get().
+				Channel(mockserver.ChannelJedis.ID).
+				// File, FileComment
+				Full(true).
+				// Timestamp
+				Do(ctx)
+			if !assert.NoError(t, err, "reactions.get should succeed") {
+				return
+			}
+			if !assert.NotNil(t, res, "reaction should be non-nil") {
 				return
 			}
 		})

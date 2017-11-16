@@ -148,20 +148,20 @@ type GroupList []*Group
 // InteractiveButtonRequest is a request that is sent when a user
 // hits a Slack button. Note: this is experimental
 type InteractiveButtonRequest struct {
-	ActionTimestamp string             `json:"action_ts"`
+	ActionTimestamp string     `json:"action_ts"`
 	Actions         ActionList `json:"actions"`
-	AttachmentID    int                `json:"attachment_id,string"`
-	CallbackID      string             `json:"callback_id"`
+	AttachmentID    int        `json:"attachment_id,string"`
+	CallbackID      string     `json:"callback_id"`
 	Channel         struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
 	} `json:"channel"`
-	IsAppUnfurl      bool                    `json:"is_app_unfurl"`
-	MessageTimestamp string                  `json:"message_ts"`
+	IsAppUnfurl      bool            `json:"is_app_unfurl"`
+	MessageTimestamp string          `json:"message_ts"`
 	OriginalMessage  *Message        `json:"original_message"`
 	Options          OptionList      `json:"options"`
 	OptionGroups     OptionGroupList `json:"option_groups"`
-	ResponseURL      string                  `json:"response_url"`
+	ResponseURL      string          `json:"response_url"`
 	Team             struct {
 		Domain string `json:"domain"`
 		ID     string `json:"id"`
@@ -263,7 +263,7 @@ type Message struct {
 	Team    string `json:"team,omitempty"`
 
 	// reactions
-	Reactions []ItemReaction `json:"reactions,omitempty"`
+	Reactions ReactionList `json:"reactions,omitempty"`
 }
 
 type MessageList []*Message
@@ -278,12 +278,6 @@ type IM struct {
 type Icon struct {
 	IconURL   string `json:"icon_url,omitempty"`
 	IconEmoji string `json:"icon_emoji,omitempty"`
-}
-
-type ItemReaction struct {
-	Name  string   `json:"name"`
-	Count int      `json:"count"`
-	Users []string `json:"users"`
 }
 
 type UserProfile struct {
@@ -445,6 +439,9 @@ type File struct {
 	CommentsCount   int      `json:"comments_count"`
 	NumStars        int      `json:"num_stars"`
 	IsStarred       bool     `json:"is_starred"`
+
+	Title string `json:"title"`
+	Reactions ReactionList `json:"reactions,omitempty"`
 }
 
 type Option struct {
@@ -492,7 +489,7 @@ type Usergroup struct {
 	UserCount           int             `json:"user_count"`
 }
 
-// UsergroupList is a list of UserGroup 
+// UsergroupList is a list of UserGroup
 type UsergroupList []*Usergroup
 
 // UsergroupPrefs is the list of preferences for channels and groups for a given
@@ -505,13 +502,21 @@ type UsergroupPrefs struct {
 // UsergroupUsersList is the list of users in a given Usergroup.
 type UsergroupUsersList []string
 
+type Reaction struct {
+	Count int      `json:"count"`
+	Name  string   `json:"name"`
+	Users []string `json:"users"`
+}
+type ReactionList []*Reaction
+
 // ReactionsGetResponse represents the response obtained from
 // reactions.get API (https://api.slack.com/methods/reactions.get)
 type ReactionsGetResponse struct {
-	Channel string           `json:"channel"`
-	Message *Message `json:"message"`
+	Channel string   `json:"channel"`
+	Comment string   `json:"comment"`
 	File    *File    `json:"file"`
-	Comment string           `json:"comment"`
+	Message *Message `json:"message"`
+	Type    string   `json:"type"`
 }
 
 type ReactionsGetResponseList []ReactionsGetResponse
@@ -521,7 +526,7 @@ type ReactionsListResponse struct {
 }
 
 type RTMResponse struct {
-	URL      string               `json:"url"`
+	URL      string       `json:"url"`
 	Self     *UserDetails `json:"self"`
 	Team     *Team        `json:"team"`
 	Users    []*User      `json:"users"`
@@ -544,4 +549,3 @@ type StarsListResponse struct {
 }
 type StarredItem interface{}
 type StarredItemList []StarredItem
-
