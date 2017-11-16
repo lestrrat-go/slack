@@ -124,7 +124,7 @@ func ExampleMockServer() {
 
 	cl := slack.New(token, slack.WithAPIEndpoint("htttp://localhost:8080"))
 	if err := cl.Auth().Test(); err != nil {
-		log.Printf("failed to call auth.test: %s", err)
+		log.Printf("failed to call auth.test: %s", err.Error())
 		return
 	}
 
