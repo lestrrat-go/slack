@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"regexp"
 	"strconv"
 	"testing"
 	"time"
@@ -21,8 +22,17 @@ import (
 
 const token = "AbCdEfG"
 
+var reLooksLikeChannelID = regexp.MustCompile(`^C[A-Z0-9]+`)
+
+func looksLikeChannelID(s string) bool {
+	return reLooksLikeChannelID.MatchString(s)
+}
+
 func checkChannel(t *testing.T, channel *objects.Channel) bool {
 	if !assert.NotEmpty(t, channel.Name, "channel.Name should be populated") {
+		return false
+	}
+	if !assert.True(t, looksLikeChannelID(channel.ID), "channel.ID looks like an ID") {
 		return false
 	}
 	return true
@@ -114,7 +124,7 @@ func TestWithMockServer(t *testing.T) {
 			}
 		})
 		t.Run("History", func(t *testing.T) {
-			res, err := cl.Channels().History("C0123456").
+			res, err := cl.Channels().History(mockserver.ChannelJedis.ID).
 				Count(1000).
 				Inclusive(true).
 				Latest("dummy").
@@ -132,6 +142,17 @@ func TestWithMockServer(t *testing.T) {
 				return
 			}
 			if !assert.NotEmpty(t, res.Messages, "res.Messages should be populated") {
+				return
+			}
+		})
+		t.Run("Info", func(t *testing.T) {
+			res, err := cl.Channels().Info(mockserver.ChannelJedis.ID).
+				IncludeLocale(true).
+				Do(ctx)
+			if !assert.NoError(t, err, "channels.info should succeed") {
+				return
+			}
+			if !checkChannel(t, res) {
 				return
 			}
 		})
