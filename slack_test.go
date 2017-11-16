@@ -186,6 +186,17 @@ func TestWithMockServer(t *testing.T) {
 			}
 		})
 	})
+	t.Run("Users", func(t *testing.T) {
+		t.Run("List", func(t *testing.T) {
+			res, err := cl.Users().List().Do(ctx)
+			if !assert.NoError(t, err, "users.list should succeed") {
+				return
+			}
+			if !assert.NotNil(t, res, "users should be non-nil") {
+				return
+			}
+		})
+	})
 }
 
 var testDmUser string

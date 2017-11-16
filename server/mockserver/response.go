@@ -123,7 +123,20 @@ func stockObjectsReactionsGetResponse() interface{} {
 	return r
 }
 func stockObjectsUserProfileObjectsTeam() interface{} { return StockResponse("dummy") }
-func stockObjectsUserList() interface{}               { return StockResponse("dummy") }
+func stockObjectsUserList() interface{} {
+	var r = struct {
+		objects.GenericResponse
+		*objects.UserList `json:"members,omitempty"`
+	}{
+		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
+		UserList: &objects.UserList{
+			&UserLukeSkywalker,
+			&UserObiwan,
+			&UserYoda,
+		},
+	}
+	return r
+}
 func stockObjectsBot() interface{} {
 	var r = struct {
 		objects.GenericResponse
