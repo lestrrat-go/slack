@@ -30,7 +30,7 @@ func checkChannel(t *testing.T, channel *objects.Channel) bool {
 
 // These tests just excercise the "regular" code path
 func TestWithMockServer(t *testing.T) {
-	h := mockserver.New(token)
+	h := mockserver.New(mockserver.WithToken(token))
 	s := server.New()
 	h.InstallHandlers(s)
 

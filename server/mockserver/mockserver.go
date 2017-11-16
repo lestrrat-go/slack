@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/lestrrat/go-slack"
@@ -15,13 +16,70 @@ import (
 )
 
 type Handler struct {
-	token string
+	muTokens sync.RWMutex
+	tokens   map[string]struct{}
 }
 
-func New(token string) *Handler {
-	return &Handler{
-		token: token,
+type Option interface {
+	Name() string
+	Value() interface{}
+}
+
+type option struct {
+	name  string
+	value interface{}
+}
+
+func (o *option) Name() string {
+	return o.name
+}
+
+func (o *option) Value() interface{} {
+	return o.value
+}
+
+const (
+	optTokenKey = `token`
+)
+
+func WithToken(s string) Option {
+	return &option{
+		name:  optTokenKey,
+		value: s,
 	}
+}
+
+// New creates a new mock Slack API Handler object. You may pass optional
+// parameters, which can be one of the following:
+//
+// `mockserver.WithToken(string)`: specifies the token to accept. Multiple
+// tokens may be specified, and given any one of them, the server will
+// accept the request.
+func New(options ...Option) *Handler {
+	tokens := make(map[string]struct{})
+	for _, option := range options {
+		switch option.Name() {
+		case optTokenKey:
+			tokens[option.Value().(string)] = struct{}{}
+		}
+	}
+	return &Handler{
+		tokens: tokens,
+	}
+}
+
+func (h *Handler) validateToken(r *http.Request) bool {
+	if len(h.tokens) == 0 { // only check token if specified to do so
+		return true
+	}
+	token := r.FormValue(`token`)
+
+	if len(token) == 0 {
+		return false
+	}
+
+	_, ok := h.tokens[token]
+	return ok
 }
 
 func (h *Handler) InstallHandlers(s *server.Server) {
@@ -95,7 +153,7 @@ func (h *Handler) HandleAuthRevoke(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -120,7 +178,7 @@ func (h *Handler) HandleAuthTest(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -145,7 +203,7 @@ func (h *Handler) HandleBotsInfo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -170,7 +228,7 @@ func (h *Handler) HandleChannelsArchive(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -195,7 +253,7 @@ func (h *Handler) HandleChannelsCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -220,7 +278,7 @@ func (h *Handler) HandleChannelsHistory(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -245,7 +303,7 @@ func (h *Handler) HandleChannelsInfo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -270,7 +328,7 @@ func (h *Handler) HandleChannelsInvite(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -295,7 +353,7 @@ func (h *Handler) HandleChannelsJoin(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -320,7 +378,7 @@ func (h *Handler) HandleChannelsKick(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -345,7 +403,7 @@ func (h *Handler) HandleChannelsLeave(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -370,7 +428,7 @@ func (h *Handler) HandleChannelsList(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -395,7 +453,7 @@ func (h *Handler) HandleChannelsMark(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -420,7 +478,7 @@ func (h *Handler) HandleChannelsRename(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -445,7 +503,7 @@ func (h *Handler) HandleChannelsReplies(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -470,7 +528,7 @@ func (h *Handler) HandleChannelsSetPurpose(w http.ResponseWriter, r *http.Reques
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -495,7 +553,7 @@ func (h *Handler) HandleChannelsSetTopic(w http.ResponseWriter, r *http.Request)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -520,7 +578,7 @@ func (h *Handler) HandleChannelsUnarchive(w http.ResponseWriter, r *http.Request
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -545,7 +603,7 @@ func (h *Handler) HandleChatDelete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -570,7 +628,7 @@ func (h *Handler) HandleChatMeMessage(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -595,7 +653,7 @@ func (h *Handler) HandleChatPostMessage(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -620,7 +678,7 @@ func (h *Handler) HandleChatUnfurl(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -645,7 +703,7 @@ func (h *Handler) HandleChatUpdate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -670,7 +728,7 @@ func (h *Handler) HandleEmojiList(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -695,7 +753,7 @@ func (h *Handler) HandleGroupsArchive(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -720,7 +778,7 @@ func (h *Handler) HandleGroupsCreate(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -745,7 +803,7 @@ func (h *Handler) HandleGroupsCreateChild(w http.ResponseWriter, r *http.Request
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -770,7 +828,7 @@ func (h *Handler) HandleGroupsHistory(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -795,7 +853,7 @@ func (h *Handler) HandleGroupsInfo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -820,7 +878,7 @@ func (h *Handler) HandleGroupsInvite(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -845,7 +903,7 @@ func (h *Handler) HandleGroupsKick(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -870,7 +928,7 @@ func (h *Handler) HandleGroupsLeave(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -895,7 +953,7 @@ func (h *Handler) HandleGroupsList(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -920,7 +978,7 @@ func (h *Handler) HandleGroupsMark(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -945,7 +1003,7 @@ func (h *Handler) HandleGroupsOpen(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -970,7 +1028,7 @@ func (h *Handler) HandleGroupsRename(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -995,7 +1053,7 @@ func (h *Handler) HandleGroupsReplies(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1020,7 +1078,7 @@ func (h *Handler) HandleGroupsSetPurpose(w http.ResponseWriter, r *http.Request)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1045,7 +1103,7 @@ func (h *Handler) HandleGroupsSetTopic(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1070,7 +1128,7 @@ func (h *Handler) HandleGroupsUnarchive(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1116,7 +1174,7 @@ func (h *Handler) HandleReactionsAdd(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1141,7 +1199,7 @@ func (h *Handler) HandleReactionsGet(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1166,7 +1224,7 @@ func (h *Handler) HandleReactionsList(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1191,7 +1249,7 @@ func (h *Handler) HandleReactionsRemove(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1216,7 +1274,7 @@ func (h *Handler) HandleRTMStart(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1241,7 +1299,7 @@ func (h *Handler) HandleUsergroupsCreate(w http.ResponseWriter, r *http.Request)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1266,7 +1324,7 @@ func (h *Handler) HandleUsergroupsDisable(w http.ResponseWriter, r *http.Request
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1291,7 +1349,7 @@ func (h *Handler) HandleUsergroupsEnable(w http.ResponseWriter, r *http.Request)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1316,7 +1374,7 @@ func (h *Handler) HandleUsergroupsList(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1341,7 +1399,7 @@ func (h *Handler) HandleUsergroupsUpdate(w http.ResponseWriter, r *http.Request)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1366,7 +1424,7 @@ func (h *Handler) HandleUsergroupsUsersList(w http.ResponseWriter, r *http.Reque
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1391,7 +1449,7 @@ func (h *Handler) HandleUsergroupsUsersUpdate(w http.ResponseWriter, r *http.Req
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1416,7 +1474,7 @@ func (h *Handler) HandleUsersDeletePhoto(w http.ResponseWriter, r *http.Request)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1441,7 +1499,7 @@ func (h *Handler) HandleUsersGetPresence(w http.ResponseWriter, r *http.Request)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1466,7 +1524,7 @@ func (h *Handler) HandleUsersIdentity(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1491,7 +1549,7 @@ func (h *Handler) HandleUsersInfo(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1516,7 +1574,7 @@ func (h *Handler) HandleUsersList(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1541,7 +1599,7 @@ func (h *Handler) HandleUsersProfileGet(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1566,7 +1624,7 @@ func (h *Handler) HandleUsersProfileSet(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1591,7 +1649,7 @@ func (h *Handler) HandleUsersSetActive(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}
@@ -1616,7 +1674,7 @@ func (h *Handler) HandleUsersSetPresence(w http.ResponseWriter, r *http.Request)
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
-	if token := r.FormValue(`token`); len(token) == 0 || h.token != token {
+	if !h.validateToken(r) {
 		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 		return
 	}

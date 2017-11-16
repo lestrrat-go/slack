@@ -15,7 +15,7 @@ import (
 const token = "AbCdEfG"
 
 func ExampleMockServer() {
-	h := mockserver.New(token)
+	h := mockserver.New(mockserver.WithToken(token))
 	s := server.New()
 	h.InstallHandlers(s)
 	ts := httptest.NewServer(s)

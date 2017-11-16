@@ -4,7 +4,6 @@ package proxyserver
 
 import (
 	"io"
-	"log"
 	"net/http"
 
 	"github.com/lestrrat/go-slack"
@@ -19,13 +18,12 @@ type Handler struct {
 
 func New(token string) *Handler {
 	return &Handler{
-		mock:  mockserver.New(token),
+		mock:  mockserver.New(mockserver.WithToken(token)),
 		token: token,
 	}
 }
 
 func (h *Handler) ProxyHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Proxxying to '%s'", slack.DefaultAPIEndpoint+r.URL.Path[1:])
 	res, err := http.Post(slack.DefaultAPIEndpoint+r.URL.Path[1:], r.Header.Get(`Content-Type`), r.Body)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadGateway), http.StatusBadGateway)
