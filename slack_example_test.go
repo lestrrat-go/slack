@@ -4,12 +4,16 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"golang.org/x/oauth2"
 
 	slack "github.com/lestrrat/go-slack"
+	"github.com/lestrrat/go-slack/server"
+	"github.com/lestrrat/go-slack/server/mockserver"
 )
 
 func ExampleClient() {
@@ -106,4 +110,25 @@ func ExampleOAuth2() {
 	})
 
 	http.ListenAndServe(":8080", nil)
+}
+
+func ExampleMockServer() {
+	token := "..."
+	h := mockserver.New(mockserver.WithToken(token))
+	s := server.New()
+
+	h.InstallHandlers(s)
+
+	srv := http.Server{Handler: s, Addr: ":8080"}
+	go srv.ListenAndServe()
+
+	cl := slack.New(token, slack.WithAPIEndpoint("htttp://localhost:8080"))
+	if err := cl.Auth().Test(); err != nil {
+		log.Printf("failed to call auth.test: %s", err)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	srv.Shutdown(ctx)
 }
