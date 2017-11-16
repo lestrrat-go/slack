@@ -128,6 +128,11 @@ func (h *Handler) InstallHandlers(s *server.Server) {
 	s.Handle("reactions.get", http.HandlerFunc(h.HandleReactionsGet))
 	s.Handle("reactions.list", http.HandlerFunc(h.HandleReactionsList))
 	s.Handle("reactions.remove", http.HandlerFunc(h.HandleReactionsRemove))
+	s.Handle("reminders.add", http.HandlerFunc(h.HandleRemindersAdd))
+	s.Handle("reminders.complete", http.HandlerFunc(h.HandleRemindersComplete))
+	s.Handle("reminders.delete", http.HandlerFunc(h.HandleRemindersDelete))
+	s.Handle("reminders.info", http.HandlerFunc(h.HandleRemindersInfo))
+	s.Handle("reminders.list", http.HandlerFunc(h.HandleRemindersList))
 	s.Handle("rtm.start", http.HandlerFunc(h.HandleRTMStart))
 	s.Handle("usergroups.create", http.HandlerFunc(h.HandleUsergroupsCreate))
 	s.Handle("usergroups.disable", http.HandlerFunc(h.HandleUsergroupsDisable))
@@ -1268,6 +1273,131 @@ func (h *Handler) HandleReactionsRemove(w http.ResponseWriter, r *http.Request) 
 	buf.WriteTo(w)
 }
 
+// HandleRemindersAdd is the default handler method for the Slack reminders.add API
+func (h *Handler) HandleRemindersAdd(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if !h.validateToken(r) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+	var c slack.RemindersAddCall
+	if err := c.FromValues(r.Form); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(StockResponse("reminders.add")); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
+}
+
+// HandleRemindersComplete is the default handler method for the Slack reminders.complete API
+func (h *Handler) HandleRemindersComplete(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if !h.validateToken(r) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+	var c slack.RemindersCompleteCall
+	if err := c.FromValues(r.Form); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(StockResponse("reminders.complete")); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
+}
+
+// HandleRemindersDelete is the default handler method for the Slack reminders.delete API
+func (h *Handler) HandleRemindersDelete(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if !h.validateToken(r) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+	var c slack.RemindersDeleteCall
+	if err := c.FromValues(r.Form); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(StockResponse("reminders.delete")); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
+}
+
+// HandleRemindersInfo is the default handler method for the Slack reminders.info API
+func (h *Handler) HandleRemindersInfo(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if !h.validateToken(r) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+	var c slack.RemindersInfoCall
+	if err := c.FromValues(r.Form); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(StockResponse("reminders.info")); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
+}
+
+// HandleRemindersList is the default handler method for the Slack reminders.list API
+func (h *Handler) HandleRemindersList(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if !h.validateToken(r) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+	var c slack.RemindersListCall
+	if err := c.FromValues(r.Form); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(StockResponse("reminders.list")); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
+}
+
 // HandleRTMStart is the default handler method for the Slack rtm.start API
 func (h *Handler) HandleRTMStart(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
@@ -1727,6 +1857,10 @@ func StockResponse(method string) interface{} {
 		return stockObjectsReactionsGetResponse()
 	case "reactions.list":
 		return stockObjectsReactionsListResponse()
+	case "reminders.add", "reminders.info":
+		return stockObjectsReminder()
+	case "reminders.list":
+		return stockObjectsReminderList()
 	case "users.info":
 		return stockObjectsUser()
 	case "users.list":

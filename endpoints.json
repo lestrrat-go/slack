@@ -865,6 +865,61 @@
     ]
   },
   {
+    "name": "reminders.add",
+    "return": "objects.Reminder",
+    "args": [
+      {
+        "name": "text",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "time",
+        "type": "int",
+        "required": true
+      },
+      {
+        "name": "user",
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "name": "reminders.complete",
+    "args": [
+      {
+        "name": "reminder",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "reminders.delete",
+    "args": [
+      {
+        "name": "reminder",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "reminders.info",
+    "return": "objects.Reminder",
+    "args": [
+      {
+        "name": "reminder",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "reminders.list",
+    "return": "objects.ReminderList"
+  },
+  {
     "name": "rtm.start",
     "proxy": true,
     "return": "objects.RTMResponse",

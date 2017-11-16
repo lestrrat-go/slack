@@ -41,6 +41,26 @@ func checkChannel(t *testing.T, channel *objects.Channel) bool {
 	return true
 }
 
+func checkReminder(t *testing.T, reminder *objects.Reminder) bool {
+	if !assert.NotNil(t, reminder, "reminder should be non-nil") {
+		return false
+	}
+
+	if !assert.NotEmpty(t, reminder.ID, "reminder.ID should be populated") {
+		return false
+	}
+	if !assert.NotEmpty(t, reminder.Text, "reminder.Text should be populated") {
+		return false
+	}
+	if !assert.NotEmpty(t, reminder.Time, "reminder.Time should be populated") {
+		return false
+	}
+	if !assert.NotEmpty(t, reminder.User, "reminder.User should be populated") {
+		return false
+	}
+	return true
+}
+
 // These tests just excercise the "regular" code path
 func TestWithMockServer(t *testing.T) {
 	h := mockserver.New(mockserver.WithToken(token))
@@ -182,6 +202,17 @@ func TestWithMockServer(t *testing.T) {
 				return
 			}
 			if !assert.NotNil(t, res, "reaction should be non-nil") {
+				return
+			}
+		})
+	})
+	t.Run("Reminder", func(t *testing.T) {
+		t.Run("Add", func(t *testing.T) {
+			res, err := cl.Reminders().Add("Meet Mace Windu over lunch", mockserver.ReminderMeetMaceWindu.Time.Int()).Do(ctx)
+			if !assert.NoError(t, err, "reminders.add should succeed") {
+				return
+			}
+			if !assert.NotNil(t, res, "reminder should be non-nil") {
 				return
 			}
 		})

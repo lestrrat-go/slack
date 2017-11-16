@@ -56,6 +56,12 @@ type ReactionsService struct {
 	token  string
 }
 
+// RemindersService handles Reminders related endpoints
+type RemindersService struct {
+	client *httpClient
+	token  string
+}
+
 // UsergroupsService handles Usergroups related endpoints
 type UsergroupsService struct {
 	client *httpClient

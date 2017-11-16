@@ -64,6 +64,7 @@ type Client struct {
 	groups          *GroupsService
 	oauth           *OAuthService
 	reactions       *ReactionsService
+	reminders       *RemindersService
 	rtm             *RTMService
 	users           *UsersService
 	usersProfile    *UsersProfileService
