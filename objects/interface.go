@@ -106,6 +106,36 @@ type Conversation struct {
 	UnreadCountDisplay int       `json:"unread_count_display,omitempty"`
 }
 
+// DialogElements represents elements in dialog, including text, textarea,
+// and select
+type DialogElement struct {
+	Label       string `json:"label"`
+	Type        string `json:"type"`
+	Name        string `json:"name"`
+	Hint        string `json:"hint,omitempty"`
+	MaxLength   int    `json:"max_length,omitempty"`
+	MinLength   int    `json:"min_length,omitempty"`
+	Optional    bool   `json:"optional,omitempty"`
+	Placeholder string `json:"placeholder,omitempty"`
+	Subtype     string `json:"subtype,omitempty"`
+	Value       string `json:"value,omitempty"`
+}
+
+type DialogElements []*DialogElement
+
+type Dialog struct {
+	CallbackID  string         `json:"callback_id"`
+	Title       string         `json:"title"`
+	SubmitLabel string         `json:"submit_label"`
+	Elements    DialogElements `json:"elements"`
+}
+
+type DialogResponse struct {
+	ResponseMetadata struct {
+		Messages []string `json:"messages"`
+	} `json:"response_metadata"`
+}
+
 type EmojiListResponse map[string]string
 
 // ErrorResponse wraps errors returned by Slack. It's usually a string,
@@ -166,8 +196,28 @@ type InteractiveButtonRequest struct {
 		Domain string `json:"domain"`
 		ID     string `json:"id"`
 	} `json:"team"`
-	Token string `json:"token"`
-	User  struct {
+	Token     string `json:"token"`
+	TriggerID string `json:"trigger_id"`
+	User      struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	} `json:"user"`
+}
+
+type DialogSubmission struct {
+	ActionTimestamp string            `json:"action_ts"`
+	Submission      map[string]string `json:"submission"`
+	Token           string            `json:"token"`
+	TriggerID       string            `json:"trigger_id"`
+	Team            struct {
+		Domain string `json:"domain"`
+		ID     string `json:"id"`
+	} `json:"team"`
+	Channel struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+	} `json:"channel"`
+	User struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
 	} `json:"user"`
@@ -440,7 +490,7 @@ type File struct {
 	NumStars        int      `json:"num_stars"`
 	IsStarred       bool     `json:"is_starred"`
 
-	Title string `json:"title"`
+	Title     string       `json:"title"`
 	Reactions ReactionList `json:"reactions,omitempty"`
 }
 

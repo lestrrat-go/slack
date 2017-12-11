@@ -42,6 +42,7 @@ func New() *Server {
 			"chat.postMessage":        http.HandlerFunc(unimplemented),
 			"chat.unfurl":             http.HandlerFunc(unimplemented),
 			"chat.update":             http.HandlerFunc(unimplemented),
+			"dialog.open":             http.HandlerFunc(unimplemented),
 			"emoji.list":              http.HandlerFunc(unimplemented),
 			"groups.archive":          http.HandlerFunc(unimplemented),
 			"groups.create":           http.HandlerFunc(unimplemented),

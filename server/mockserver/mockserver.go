@@ -106,6 +106,7 @@ func (h *Handler) InstallHandlers(s *server.Server) {
 	s.Handle("chat.postMessage", http.HandlerFunc(h.HandleChatPostMessage))
 	s.Handle("chat.unfurl", http.HandlerFunc(h.HandleChatUnfurl))
 	s.Handle("chat.update", http.HandlerFunc(h.HandleChatUpdate))
+	s.Handle("dialog.open", http.HandlerFunc(h.HandleDialogOpen))
 	s.Handle("emoji.list", http.HandlerFunc(h.HandleEmojiList))
 	s.Handle("groups.archive", http.HandlerFunc(h.HandleGroupsArchive))
 	s.Handle("groups.create", http.HandlerFunc(h.HandleGroupsCreate))
@@ -719,6 +720,31 @@ func (h *Handler) HandleChatUpdate(w http.ResponseWriter, r *http.Request) {
 	}
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(StockResponse("chat.update")); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
+}
+
+// HandleDialogOpen is the default handler method for the Slack dialog.open API
+func (h *Handler) HandleDialogOpen(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if !h.validateToken(r) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+	var c slack.DialogOpenCall
+	if err := c.FromValues(r.Form); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(StockResponse("dialog.open")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -1837,6 +1863,8 @@ func StockResponse(method string) interface{} {
 		return stockObjectsChannelsHistoryResponse()
 	case "chat.delete", "chat.meMessage", "chat.postMessage", "chat.update":
 		return stockObjectsChatResponse()
+	case "dialog.open":
+		return stockObjectsDialogResponse()
 	case "emoji.list":
 		return stockObjectsEmojiListResponse()
 	case "groups.create", "groups.createChild", "groups.info", "groups.rename":

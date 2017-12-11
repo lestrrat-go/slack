@@ -80,6 +80,7 @@ func New(token string, options ...Option) *Client {
 		bots:            &BotsService{client: wrappedcl, token: token},
 		channels:        &ChannelsService{client: wrappedcl, token: token},
 		chat:            &ChatService{client: wrappedcl, token: token},
+		dialog:          &DialogService{client: wrappedcl, token: token},
 		emoji:           &EmojiService{client: wrappedcl, token: token},
 		groups:          &GroupsService{client: wrappedcl, token: token},
 		oauth:           &OAuthService{client: wrappedcl},
@@ -112,6 +113,11 @@ func (c *Client) Channels() *ChannelsService {
 // Chat returns the Service object for `chat.*` endpoints
 func (c *Client) Chat() *ChatService {
 	return c.chat
+}
+
+// Dialog returns the Service object for `dialog.*` endpoints
+func (c *Client) Dialog() *DialogService {
+	return c.dialog
 }
 
 // Emoji returns the Service object for `emoji.*` endpoints

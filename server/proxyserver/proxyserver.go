@@ -63,6 +63,7 @@ func (h *Handler) InstallHandlers(s *server.Server) {
 	s.Handle("chat.postMessage", http.HandlerFunc(h.mock.HandleChatPostMessage))
 	s.Handle("chat.unfurl", http.HandlerFunc(h.mock.HandleChatUnfurl))
 	s.Handle("chat.update", http.HandlerFunc(h.mock.HandleChatUpdate))
+	s.Handle("dialog.open", http.HandlerFunc(h.mock.HandleDialogOpen))
 	s.Handle("emoji.list", http.HandlerFunc(h.ProxyHandler))
 	s.Handle("groups.archive", http.HandlerFunc(h.mock.HandleGroupsArchive))
 	s.Handle("groups.create", http.HandlerFunc(h.mock.HandleGroupsCreate))

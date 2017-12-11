@@ -26,6 +26,12 @@ type ChatService struct {
 	token  string
 }
 
+// DialogService handles Dialog related endpoints
+type DialogService struct {
+	client *httpClient
+	token  string
+}
+
 // EmojiService handles Emoji related endpoints
 type EmojiService struct {
 	client *httpClient

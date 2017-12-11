@@ -450,6 +450,22 @@
     ]
   },
   {
+    "name": "dialog.open",
+    "return": "objects.DialogResponse",
+    "args": [
+      {
+        "name": "dialog",
+        "type": "*objects.Dialog",
+        "required": true
+      },
+      {
+        "name": "trigger_id",
+        "type": "string",
+        "required": true
+      }
+    ]
+  },
+  {
     "name": "emoji.list",
     "proxy": true,
     "return": "objects.EmojiListResponse"
