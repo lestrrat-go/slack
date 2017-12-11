@@ -60,6 +60,7 @@ type Client struct {
 	bots            *BotsService
 	channels        *ChannelsService
 	chat            *ChatService
+	dialog          *DialogService
 	emoji           *EmojiService
 	groups          *GroupsService
 	oauth           *OAuthService

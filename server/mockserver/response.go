@@ -215,15 +215,29 @@ func stockObjectsChannelsHistoryResponse() interface{} {
 func stockObjectsGroup() interface{}                 { return StockResponse("dummy") }
 func stockObjectsGroupList() interface{}             { return StockResponse("dummy") }
 func stockObjectsReactionsListResponse() interface{} { return StockResponse("dummy") }
-func stockObjectsReminder() interface{}              {
-	var r = struct{
+func stockObjectsReminder() interface{} {
+	var r = struct {
 		objects.GenericResponse
 		*objects.Reminder
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
-		Reminder: &ReminderMeetMaceWindu,
+		Reminder:        &ReminderMeetMaceWindu,
 	}
 	return r
 }
-func stockObjectsReminderList() interface{}          { return StockResponse("dummy") }
-func stockObjectsChannelList() interface{}           { return StockResponse("dummy") }
+func stockObjectsReminderList() interface{} { return StockResponse("dummy") }
+func stockObjectsChannelList() interface{}  { return StockResponse("dummy") }
+
+func stockObjectsDialogResponse() interface{} {
+	return struct {
+		objects.GenericResponse
+		objects.DialogResponse
+	}{
+		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
+		DialogResponse: objects.DialogResponse{
+			ResponseMetadata: struct {
+				Messages []string `json:"messages"`
+			}{[]string{""}},
+		},
+	}
+}
