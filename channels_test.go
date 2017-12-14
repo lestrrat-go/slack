@@ -173,8 +173,12 @@ func TestChannelsInfoUnit(t *testing.T) {
 	defer s.Close()
 
 	c := newSlackWithDummy(s)
-	_, err := c.Channels().Info("foo").IncludeLocale(true).Do(ctx)
+	channel, err := c.Channels().Info("foo").IncludeLocale(true).Do(ctx)
 	if !assert.NoError(t, err, "Info should succeed") {
+		return
+	}
+
+	if !assert.NotNil(t, channel, "channel should not be nil") {
 		return
 	}
 }
