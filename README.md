@@ -44,6 +44,19 @@ A server that mocks the Slack API calls is available, which should help you inte
 
 Note: many mock methods are still NOT properly implemented. Please see `server/mockserver/mockserver.go` and `server/mockserver/response.go`. PRs welcome!
 
+## Slack Proxy
+
+Sometimes you want a tool that talks to the Slack API, but don't want to really
+send messages. We have a simple server that can intercept methods that have
+side effects, while sending everything else to the real Slack API server, called
+slaproxy (you can compile it from `cmd/slaproxy/slaproxy.go`)
+
+We even have Docker container for it
+
+```
+docker run -e SLACK_TOKEN=xxx -e SLACK_LISTEN=:9999 lestrrat/slaproxy
+```
+
 # Synopsis
 
 Simple REST Client:
@@ -183,6 +196,16 @@ To add REST endpoints, edit [endpoints.json](endpoints.json), and then run
 
 ```
 make generate
+```
+
+New code will be generated, and you can run your tests, or compile your program
+with it.
+
+If you want to dump what go-slack is sending/receiving you can compile your
+program using the "debug0" tag. Just be aware that it will be very noisy:
+
+```
+go build -tags debug0 -o your-program your-code.go 
 ```
 
 # Acknowledgements
