@@ -526,7 +526,7 @@ func (c *ChannelsInviteCall) Do(ctx context.Context) (*objects.Channel, error) {
 	}
 	var res struct {
 		objects.GenericResponse
-		*objects.Channel
+		*objects.Channel `json:"channel"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.invite`)

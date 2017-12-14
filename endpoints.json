@@ -113,6 +113,7 @@
   {
     "name": "channels.invite",
     "return": "objects.Channel",
+    "json": "channel",
     "args": [
       {
         "name": "channel",
