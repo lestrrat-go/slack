@@ -96,6 +96,7 @@
     "name": "channels.info",
     "proxy": true,
     "return": "objects.Channel",
+    "json": "channel",
     "args": [
       {
         "name": "channel",
