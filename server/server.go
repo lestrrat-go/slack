@@ -4,20 +4,24 @@ package server
 
 import (
 	"net/http"
-	"sync"
+	"strings"
 )
-
-type Server struct {
-	handlers   map[string]http.Handler
-	muHandlers sync.RWMutex
-}
 
 func unimplemented(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, `method `+r.URL.Path[1:]+` is unimplemented on this server`, http.StatusBadRequest)
 }
 
-func New() *Server {
+func New(options ...Option) *Server {
+	prefix := "/api"
+	for _, option := range options {
+		switch option.Name() {
+		case optkeyPrefix:
+			prefix = option.Value().(string)
+		}
+	}
+
 	return &Server{
+		prefix: prefix,
 		handlers: map[string]http.Handler{
 			"auth.revoke":             http.HandlerFunc(unimplemented),
 			"auth.test":               http.HandlerFunc(unimplemented),
@@ -104,6 +108,7 @@ func (s *Server) GetHandler(method string) (http.Handler, bool) {
 	return h, ok
 }
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	r.URL.Path = strings.TrimPrefix(r.URL.Path, s.prefix)
 	h, ok := s.GetHandler(r.URL.Path[1:])
 	if !ok {
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)

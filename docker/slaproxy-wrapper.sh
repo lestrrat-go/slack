@@ -6,4 +6,8 @@ if [[ -z "$SLACK_TOKEN" ]]; then
     exit 1
 fi
 
-exec /slaproxy -token "$SLACK_TOKEN"
+if [[ -z "$SLACK_LISTEN" ]]; then
+    SLACK_LISTEN=:8080
+fi
+
+exec /slaproxy -token "$SLACK_TOKEN" -listen "$SLACK_LISTEN"
