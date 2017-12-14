@@ -165,20 +165,6 @@ func TestChannelsHistoryUnit(t *testing.T) {
 	}
 }
 
-func TestChannelsInfoUnit(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	s := httptest.NewServer(newDummyServer())
-	defer s.Close()
-
-	c := newSlackWithDummy(s)
-	_, err := c.Channels().Info("foo").IncludeLocale(true).Do(ctx)
-	if !assert.NoError(t, err, "Info should succeed") {
-		return
-	}
-}
-
 func TestChannelsInviteUnit(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

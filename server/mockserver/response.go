@@ -104,7 +104,7 @@ func stockObjectsAuthTestResponse() interface{} {
 func stockObjectsChannel() interface{} {
 	var r = struct {
 		objects.GenericResponse
-		objects.Channel
+		objects.Channel `json:"channel"`
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
 		Channel:         ChannelJedis,
