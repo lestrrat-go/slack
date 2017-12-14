@@ -1,0 +1,12 @@
+package: github.com/lestrrat/go-slack
+import:
+- package: github.com/cenkalti/backoff
+- package: github.com/gorilla/websocket
+- package: github.com/lestrrat/go-apache-logformat
+- package: github.com/lestrrat/go-pdebug
+- package: github.com/pkg/errors
+- package: golang.org/x/oauth2
+testImport:
+- package: github.com/stretchr/testify
+  subpackages:
+  - assert

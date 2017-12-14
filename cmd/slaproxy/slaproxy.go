@@ -21,6 +21,8 @@ func main() {
 
 func _main() error {
 	var token string
+	var listen string
+	flag.StringVar(&listen, "listen", ":8080", "listen address")
 	flag.StringVar(&token, "token", "", "slack API token")
 	flag.Parse()
 
@@ -32,5 +34,6 @@ func _main() error {
 	s := server.New()
 	h.InstallHandlers(s)
 
-	return http.ListenAndServe(":8080", apachelog.CombinedLog.Wrap(s, os.Stdout))
+	log.Printf("Listening on address %s", listen)
+	return http.ListenAndServe(listen, apachelog.CombinedLog.Wrap(s, os.Stdout))
 }
