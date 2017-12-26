@@ -125,7 +125,7 @@ func ExampleMockServer() {
   go srv.ListenAndServe()
   ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
   defer cancel()
-  cl := slack.New(token, slack.WithAPIEndpoint("htttp://localhost:8080"))
+  cl := slack.New(token, slack.WithAPIEndpoint("http://localhost:8080"))
   if _, err := cl.Auth().Test().Do(ctx); err != nil {
     log.Printf("failed to call auth.test: %s", err)
     return
