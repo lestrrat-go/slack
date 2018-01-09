@@ -187,7 +187,7 @@ And you are done. Don't for get to pass a `context.Context` to all `Do` calls.
 Also, for your convenience these `call` object methods can all be chained. So the above example could look like the following:
 
 ```go
-  res, err := client.Users().PostMessage(channel).Text(yourMessage).Do(ctx)
+  res, err := client.Chat().PostMessage(channel).Text(yourMessage).Do(ctx)
 ```
 
 # Hacking
