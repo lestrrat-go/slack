@@ -1112,21 +1112,21 @@ func (c *ChannelsSetPurposeCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access channels.setPurpose endpoint
-func (c *ChannelsSetPurposeCall) Do(ctx context.Context) (*string, error) {
+func (c *ChannelsSetPurposeCall) Do(ctx context.Context) (string, error) {
 	const endpoint = "channels.setPurpose"
 	v, err := c.Values()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	var res struct {
 		objects.GenericResponse
-		*string `json:"purpose"`
+		string `json:"purpose"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
-		return nil, errors.Wrap(err, `failed to post to channels.setPurpose`)
+		return "", errors.Wrap(err, `failed to post to channels.setPurpose`)
 	}
 	if !res.OK {
-		return nil, errors.New(res.Error.String())
+		return "", errors.New(res.Error.String())
 	}
 
 	return res.string, nil
@@ -1180,21 +1180,21 @@ func (c *ChannelsSetTopicCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access channels.setTopic endpoint
-func (c *ChannelsSetTopicCall) Do(ctx context.Context) (*string, error) {
+func (c *ChannelsSetTopicCall) Do(ctx context.Context) (string, error) {
 	const endpoint = "channels.setTopic"
 	v, err := c.Values()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	var res struct {
 		objects.GenericResponse
-		*string `json:"topic"`
+		string `json:"topic"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
-		return nil, errors.Wrap(err, `failed to post to channels.setTopic`)
+		return "", errors.Wrap(err, `failed to post to channels.setTopic`)
 	}
 	if !res.OK {
-		return nil, errors.New(res.Error.String())
+		return "", errors.New(res.Error.String())
 	}
 
 	return res.string, nil

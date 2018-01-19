@@ -400,22 +400,22 @@ func (c *GroupsHistoryCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access groups.history endpoint
-func (c *GroupsHistoryCall) Do(ctx context.Context) (*string, objects.MessageList, error) {
+func (c *GroupsHistoryCall) Do(ctx context.Context) (string, objects.MessageList, error) {
 	const endpoint = "groups.history"
 	v, err := c.Values()
 	if err != nil {
-		return nil, nil, err
+		return "", nil, err
 	}
 	var res struct {
 		objects.GenericResponse
-		*string             `json:"latest"`
+		string              `json:"latest"`
 		objects.MessageList `json:"messages"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
-		return nil, nil, errors.Wrap(err, `failed to post to groups.history`)
+		return "", nil, errors.Wrap(err, `failed to post to groups.history`)
 	}
 	if !res.OK {
-		return nil, nil, errors.New(res.Error.String())
+		return "", nil, errors.New(res.Error.String())
 	}
 
 	return res.string, res.MessageList, nil
@@ -569,22 +569,22 @@ func (c *GroupsInviteCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access groups.invite endpoint
-func (c *GroupsInviteCall) Do(ctx context.Context) (*objects.Group, *bool, error) {
+func (c *GroupsInviteCall) Do(ctx context.Context) (*objects.Group, bool, error) {
 	const endpoint = "groups.invite"
 	v, err := c.Values()
 	if err != nil {
-		return nil, nil, err
+		return nil, false, err
 	}
 	var res struct {
 		objects.GenericResponse
 		*objects.Group `json:"group"`
-		*bool          `json:"already_in_group"`
+		bool           `json:"already_in_group"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
-		return nil, nil, errors.Wrap(err, `failed to post to groups.invite`)
+		return nil, false, errors.Wrap(err, `failed to post to groups.invite`)
 	}
 	if !res.OK {
-		return nil, nil, errors.New(res.Error.String())
+		return nil, false, errors.New(res.Error.String())
 	}
 
 	return res.Group, res.bool, nil
@@ -1126,21 +1126,21 @@ func (c *GroupsSetPurposeCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access groups.setPurpose endpoint
-func (c *GroupsSetPurposeCall) Do(ctx context.Context) (*string, error) {
+func (c *GroupsSetPurposeCall) Do(ctx context.Context) (string, error) {
 	const endpoint = "groups.setPurpose"
 	v, err := c.Values()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	var res struct {
 		objects.GenericResponse
-		*string `json:"purpose"`
+		string `json:"purpose"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
-		return nil, errors.Wrap(err, `failed to post to groups.setPurpose`)
+		return "", errors.Wrap(err, `failed to post to groups.setPurpose`)
 	}
 	if !res.OK {
-		return nil, errors.New(res.Error.String())
+		return "", errors.New(res.Error.String())
 	}
 
 	return res.string, nil
@@ -1194,21 +1194,21 @@ func (c *GroupsSetTopicCall) Values() (url.Values, error) {
 }
 
 // Do executes the call to access groups.setTopic endpoint
-func (c *GroupsSetTopicCall) Do(ctx context.Context) (*string, error) {
+func (c *GroupsSetTopicCall) Do(ctx context.Context) (string, error) {
 	const endpoint = "groups.setTopic"
 	v, err := c.Values()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	var res struct {
 		objects.GenericResponse
-		*string `json:"topic"`
+		string `json:"topic"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
-		return nil, errors.Wrap(err, `failed to post to groups.setTopic`)
+		return "", errors.Wrap(err, `failed to post to groups.setTopic`)
 	}
 	if !res.OK {
-		return nil, errors.New(res.Error.String())
+		return "", errors.New(res.Error.String())
 	}
 
 	return res.string, nil

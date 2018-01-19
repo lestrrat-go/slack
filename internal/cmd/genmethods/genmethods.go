@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go/format"
+	"io"
 	"log"
 	"os"
 	"sort"
@@ -19,6 +20,27 @@ func main() {
 	if err := _main(); err != nil {
 		log.Printf("%s", err)
 		os.Exit(1)
+	}
+}
+
+func isBuiltin(typ string) bool {
+	switch typ {
+	case "bool", "byte", "complex128", "complex64", "float32", "float64", "int", "int8", "int16", "int32", "int64", "rune", "string", "uint", "uint8", "uint16", "uint32", "uint64", "uintptr":
+		return true
+	}
+	return false
+}
+
+func zeroValue(typ string) string {
+	switch typ {
+	case "bool":
+		return "false"
+	case "string":
+		return `""`
+	case "byte", "complex128", "complex64", "float32", "float64", "int", "int8", "int16", "int32", "int64", "rune", "uint", "uint8", "uint16", "uint32", "uint64", "uintptr":
+		return "0"
+	default:
+		return "nil"
 	}
 }
 
@@ -157,6 +179,12 @@ func generateServicesFile(groups map[string]struct{}) error {
 	return nil
 }
 
+func writeZeroReturnValues(dst io.Writer, endpoint *Endpoint) {
+	for _, typ := range endpoint.ReturnType {
+		fmt.Fprintf(dst, "%s, ", zeroValue(typ))
+	}
+}
+
 func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 	sort.Slice(endpoints, func(i, j int) bool {
 		return strings.Compare(endpoints[i].Name, endpoints[j].Name) < 0
@@ -258,9 +286,9 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 			}
 		}
 
-		type argCheck struct{
-			Assign string
-			Prelude string
+		type argCheck struct {
+			Assign   string
+			Prelude  string
 			Optional string
 			Required string
 		}
@@ -273,7 +301,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 				check.Optional = fmt.Sprintf("\nif len(c.%s) > 0 {", arg.Name)
 				check.Required = fmt.Sprintf("\nif len(c.%s) <= 0 {", arg.Name)
 			case "bool":
-				check.Assign= `"true"`
+				check.Assign = `"true"`
 				check.Optional = fmt.Sprintf("\nif c.%s {", arg.Name)
 				check.Required = fmt.Sprintf("\nif !c.%s {", arg.Name)
 			case "int":
@@ -348,7 +376,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 			var rtbuf bytes.Buffer
 
 			for i, typ := range endpoint.ReturnType {
-				if !strings.HasSuffix(typ, "List") {
+				if !isBuiltin(typ) && !strings.HasSuffix(typ, "List") {
 					rtbuf.WriteByte('*')
 				}
 				fmt.Fprintf(&rtbuf, typ)
@@ -373,9 +401,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		fmt.Fprintf(&buf, "\nif err != nil {")
 		fmt.Fprintf(&buf, "\nreturn ")
 		if hasReturn {
-			for i := 0; i < len(endpoint.ReturnType); i++ {
-				fmt.Fprintf(&buf, "nil, ")
-			}
+			writeZeroReturnValues(&buf, &endpoint)
 		}
 		fmt.Fprintf(&buf, "err")
 		fmt.Fprintf(&buf, "\n}")
@@ -384,7 +410,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		if hasReturn {
 			fmt.Fprintf(&buf, "\n")
 			for i, typ := range endpoint.ReturnType {
-				if !strings.HasSuffix(typ, "List") {
+				if !isBuiltin(typ) && !strings.HasSuffix(typ, "List") {
 					fmt.Fprintf(&buf, "*")
 				}
 				fmt.Fprintf(&buf, typ)
@@ -403,9 +429,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		fmt.Fprintf(&buf, "\nif err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {")
 		fmt.Fprintf(&buf, "\nreturn ")
 		if hasReturn {
-			for i := 0; i < len(endpoint.ReturnType); i++ {
-				fmt.Fprintf(&buf, "nil, ")
-			}
+			writeZeroReturnValues(&buf, &endpoint)
 		}
 		fmt.Fprintf(&buf, "errors.Wrap(err, `failed to post to %s`)", endpoint.Name)
 		fmt.Fprintf(&buf, "\n}")
@@ -413,9 +437,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		fmt.Fprintf(&buf, "\nif !res.OK {")
 		fmt.Fprintf(&buf, "\nreturn ")
 		if hasReturn {
-			for i := 0; i < len(endpoint.ReturnType); i++ {
-				fmt.Fprintf(&buf, "nil, ")
-			}
+			writeZeroReturnValues(&buf, &endpoint)
 		}
 		fmt.Fprintf(&buf, "errors.New(res.Error.String())")
 		fmt.Fprintf(&buf, "\n}")
