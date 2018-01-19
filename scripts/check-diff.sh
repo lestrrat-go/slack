@@ -2,7 +2,7 @@
 
 DIFF=$(git diff)
 
-if [[ -z "$DIFF" ]]; then
+if [ -z "$DIFF" ]; then
     exit 0
 fi
 
