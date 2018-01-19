@@ -1,4 +1,4 @@
-.PHONY: all test
+.PHONY: all test test-no-generate installdeps generate check-diff
 
 installdeps:
 	go get -t -v ./...
@@ -14,3 +14,6 @@ test-no-generate:
 slaproxy-docker:
 	docker build -t lestrrat/slaproxy -f docker/Dockerfile.slaproxy .
 	docker push lestrrat/slaproxy
+
+check-diff:
+	@./scripts/check-diff.sh
