@@ -3,10 +3,7 @@
 UNTRACKED=$(git ls-files --others --exclude-standard)
 DIFF=$(git diff)
 
-if [ [ -z "$DIFF" ] && [ -z "$UNTRACKED" ] ]; then
-    exit 0
-fi
-
+st=0
 if [ ! -z "$DIFF" ]; then
     echo "==== START OF DIFF FOUND ==="
     echo ""
@@ -16,6 +13,7 @@ if [ ! -z "$DIFF" ]; then
     echo ""
     echo "==== END OF DIFF FOUND ==="
     echo ""
+    st=1
 fi
 
 if [ ! -z "$UNTRACKED" ]; then
@@ -27,6 +25,7 @@ if [ ! -z "$UNTRACKED" ]; then
     echo ""
     echo "==== END OF UNTRACKED FILES FOUND ==="
     echo ""
+    st=1
 fi
 
-exit 1
+exit $st
