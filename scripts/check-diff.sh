@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 UNTRACKED=$(git ls-files --others --exclude-standard)
 DIFF=$(git diff)
