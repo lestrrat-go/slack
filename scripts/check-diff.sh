@@ -3,7 +3,7 @@
 UNTRACKED=$(git ls-files --others --exclude-standard)
 DIFF=$(git diff)
 
-if [ -z "$DIFF" && -z "$UNTRACKED" ]; then
+if [ [ -z "$DIFF" ] && [ -z "$UNTRACKED" ] ]; then
     exit 0
 fi
 
