@@ -973,6 +973,7 @@
     "name": "users.info",
     "proxy": true,
     "return": "objects.User",
+    "json": "user",
     "args": [
       {
         "name": "user",

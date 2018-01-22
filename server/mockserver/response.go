@@ -180,10 +180,19 @@ func stockObjectsChatResponse() interface{} {
 	}
 	return r
 }
-func stockObjectsGroupBool() interface{}                    { return StockResponse("dummy") }
-func stockObjectsOAuthAccessResponse() interface{}          { return StockResponse("dummy") }
-func stockObjectsUsergroupUsersList() interface{}           { return StockResponse("dummy") }
-func stockObjectsUser() interface{}                         { return StockResponse("dummy") }
+func stockObjectsGroupBool() interface{}           { return StockResponse("dummy") }
+func stockObjectsOAuthAccessResponse() interface{} { return StockResponse("dummy") }
+func stockObjectsUsergroupUsersList() interface{}  { return StockResponse("dummy") }
+func stockObjectsUser() interface{} {
+	var r = struct {
+		objects.GenericResponse
+		objects.User `json:"user"`
+	}{
+		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
+		User:            UserLukeSkywalker,
+	}
+	return r
+}
 func stockObjectsEmojiListResponse() interface{}            { return StockResponse("dummy") }
 func stockObjectsMessageListObjectsThreadInfo() interface{} { return StockResponse("dummy") }
 func stockObjectsRTMResponse() interface{}                  { return StockResponse("dummy") }
