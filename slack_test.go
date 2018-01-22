@@ -226,6 +226,17 @@ func TestWithMockServer(t *testing.T) {
 			if !assert.NotNil(t, res, "users should be non-nil") {
 				return
 			}
+
+			for _, u := range res {
+				u2, err := cl.Users().Info(u.ID).Do(ctx)
+				if !assert.NoError(t, err, `users.info should succeed`) {
+					return
+				}
+
+				if !assert.Equal(t, u2, u, `user should match`) {
+					return
+				}
+			}
 		})
 	})
 }
