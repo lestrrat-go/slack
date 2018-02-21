@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/lestrrat/go-slack/objects"
+	"github.com/lestrrat-go/slack/objects"
 )
 
 // These stock responses do not necessarily represent the actual format used

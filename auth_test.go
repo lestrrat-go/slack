@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/lestrrat/go-slack"
+	"github.com/lestrrat-go/slack"
 	"github.com/stretchr/testify/assert"
 )
 

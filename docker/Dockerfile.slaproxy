@@ -10,8 +10,8 @@ FROM golang:1.9.2-alpine3.6 AS build
 RUN apk add --no-cache --update git
 
 COPY --from=glide /usr/local/bin/glide /usr/local/bin
-COPY . /go/src/github.com/lestrrat/go-slack
-RUN cd /go/src/github.com/lestrrat/go-slack && \
+COPY . /go/src/github.com/lestrrat-go/slack
+RUN cd /go/src/github.com/lestrrat-go/slack && \
     glide --yaml docker/slaproxy-glide.yaml install && \
     go build -o /slaproxy cmd/slaproxy/slaproxy.go
 

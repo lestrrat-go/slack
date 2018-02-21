@@ -7,8 +7,8 @@ import (
 	"os"
 	"time"
 
-	slack "github.com/lestrrat/go-slack"
-	"github.com/lestrrat/go-slack/server"
+	slack "github.com/lestrrat-go/slack"
+	"github.com/lestrrat-go/slack/server"
 )
 
 func ExampleServer() {

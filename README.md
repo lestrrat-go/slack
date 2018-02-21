@@ -1,8 +1,8 @@
-# go-slack
+# slack
 
-[![Build Status](https://travis-ci.org/lestrrat/go-slack.png?branch=master)](https://travis-ci.org/lestrrat/go-slack)
+[![Build Status](https://travis-ci.org/lestrrat-go/slack.png?branch=master)](https://travis-ci.org/lestrrat-go/slack)
 
-[![GoDoc](https://godoc.org/github.com/lestrrat/go-slack?status.svg)](https://godoc.org/github.com/lestrrat/go-slack)
+[![GoDoc](https://godoc.org/github.com/lestrrat-go/slack?status.svg)](https://godoc.org/github.com/lestrrat-go/slack)
 
 # Status
 
@@ -11,7 +11,7 @@
 
 Missing parts are missing only because the author does not have immediate need for them. With proper prodding, I will gladly take on implementing them.
 
-Please see [#4](https://github.com/lestrrat/go-slack/issues/4) for a list of currently known unimplemented methods.
+Please see [#4](https://github.com/lestrrat-go/slack/issues/4) for a list of currently known unimplemented methods.
 
 # Features
 
@@ -69,7 +69,7 @@ import (
   "fmt"
   "os"
 
-  "github.com/lestrrat/go-slack"
+  "github.com/lestrrat-go/slack"
 )
 
 func ExampleClient() {
@@ -109,9 +109,9 @@ import (
   "net/http"
   "time"
 
-  "github.com/lestrrat/go-slack"
-  "github.com/lestrrat/go-slack/server"
-  "github.com/lestrrat/go-slack/server/mockserver"
+  "github.com/lestrrat-go/slack"
+  "github.com/lestrrat-go/slack/server"
+  "github.com/lestrrat-go/slack/server/mockserver"
 )
 
 func ExampleMockServer() {

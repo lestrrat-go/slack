@@ -9,8 +9,8 @@ import (
 
 	"github.com/cenkalti/backoff"
 	"github.com/gorilla/websocket"
-	pdebug "github.com/lestrrat/go-pdebug"
-	"github.com/lestrrat/go-slack"
+	pdebug "github.com/lestrrat-go/pdebug"
+	"github.com/lestrrat-go/slack"
 	"github.com/pkg/errors"
 )
 

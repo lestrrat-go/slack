@@ -3,7 +3,7 @@ package slack
 import (
 	"net/http"
 
-	"github.com/lestrrat/go-slack/internal/option"
+	"github.com/lestrrat-go/slack/internal/option"
 )
 
 // WithClient allows you to specify an net/http.Client object to

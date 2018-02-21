@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lestrrat/go-slack"
+	"github.com/lestrrat-go/slack"
 )
 
 func TestGroups_Integration(t *testing.T) {

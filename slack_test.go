@@ -12,10 +12,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lestrrat/go-slack"
-	"github.com/lestrrat/go-slack/objects"
-	"github.com/lestrrat/go-slack/server"
-	"github.com/lestrrat/go-slack/server/mockserver"
+	"github.com/lestrrat-go/slack"
+	"github.com/lestrrat-go/slack/objects"
+	"github.com/lestrrat-go/slack/server"
+	"github.com/lestrrat-go/slack/server/mockserver"
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 )

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/lestrrat/go-slack/events"
+	"github.com/lestrrat-go/slack/events"
 	"github.com/stretchr/testify/assert"
 )
 

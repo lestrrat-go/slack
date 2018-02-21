@@ -3,7 +3,7 @@ package events
 import (
 	"encoding/json"
 
-	"github.com/lestrrat/go-slack/objects"
+	"github.com/lestrrat-go/slack/objects"
 	"github.com/pkg/errors"
 )
 

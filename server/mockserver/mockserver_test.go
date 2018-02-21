@@ -7,9 +7,9 @@ import (
 	"net/http/httptest"
 	"os"
 
-	"github.com/lestrrat/go-slack"
-	"github.com/lestrrat/go-slack/server"
-	"github.com/lestrrat/go-slack/server/mockserver"
+	"github.com/lestrrat-go/slack"
+	"github.com/lestrrat-go/slack/server"
+	"github.com/lestrrat-go/slack/server/mockserver"
 )
 
 const token = "AbCdEfG"

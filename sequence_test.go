@@ -3,7 +3,7 @@ package slack_test
 import (
 	"testing"
 
-	slack "github.com/lestrrat/go-slack"
+	slack "github.com/lestrrat-go/slack"
 	"github.com/stretchr/testify/assert"
 )
 

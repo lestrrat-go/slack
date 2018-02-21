@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	apachelog "github.com/lestrrat/go-apache-logformat"
-	"github.com/lestrrat/go-slack/server"
-	"github.com/lestrrat/go-slack/server/proxyserver"
+	apachelog "github.com/lestrrat-go/apache-logformat"
+	"github.com/lestrrat-go/slack/server"
+	"github.com/lestrrat-go/slack/server/proxyserver"
 )
 
 func main() {

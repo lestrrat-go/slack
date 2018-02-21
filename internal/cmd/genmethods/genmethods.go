@@ -198,7 +198,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		fmt.Fprintf(&buf, "\n%s", strconv.Quote(pkg))
 	}
 	fmt.Fprintf(&buf, "\n")
-	for _, pkg := range []string{"github.com/lestrrat/go-slack/objects", "github.com/pkg/errors"} {
+	for _, pkg := range []string{"github.com/lestrrat-go/slack/objects", "github.com/pkg/errors"} {
 		fmt.Fprintf(&buf, "\n%s", strconv.Quote(pkg))
 	}
 	fmt.Fprintf(&buf, "\n)")

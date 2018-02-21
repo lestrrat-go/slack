@@ -11,9 +11,9 @@ import (
 
 	"golang.org/x/oauth2"
 
-	slack "github.com/lestrrat/go-slack"
-	"github.com/lestrrat/go-slack/server"
-	"github.com/lestrrat/go-slack/server/mockserver"
+	slack "github.com/lestrrat-go/slack"
+	"github.com/lestrrat-go/slack/server"
+	"github.com/lestrrat-go/slack/server/mockserver"
 )
 
 func ExampleClient() {

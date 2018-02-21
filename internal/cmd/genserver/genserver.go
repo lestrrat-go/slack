@@ -219,7 +219,7 @@ func generateMockServerFile(endpoints []*Endpoint) error {
 		fmt.Fprintf(&buf, "\n%s", strconv.Quote(pkg))
 	}
 	buf.WriteString("\n")
-	for _, pkg := range []string{"github.com/lestrrat/go-slack", "github.com/lestrrat/go-slack/objects", "github.com/lestrrat/go-slack/server"} {
+	for _, pkg := range []string{"github.com/lestrrat-go/slack", "github.com/lestrrat-go/slack/objects", "github.com/lestrrat-go/slack/server"} {
 		fmt.Fprintf(&buf, "\n%s", strconv.Quote(pkg))
 	}
 	buf.WriteString("\n)")
@@ -391,7 +391,7 @@ func generateProxyServerFile(endpoints []*Endpoint) error {
 		fmt.Fprintf(&buf, "\n%s", strconv.Quote(pkg))
 	}
 	buf.WriteString("\n")
-	for _, pkg := range []string{"github.com/lestrrat/go-slack", "github.com/lestrrat/go-slack/server", "github.com/lestrrat/go-slack/server/mockserver"} {
+	for _, pkg := range []string{"github.com/lestrrat-go/slack", "github.com/lestrrat-go/slack/server", "github.com/lestrrat-go/slack/server/mockserver"} {
 		fmt.Fprintf(&buf, "\n%s", strconv.Quote(pkg))
 	}
 	buf.WriteString("\n)")

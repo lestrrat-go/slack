@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lestrrat/go-slack/objects"
+	"github.com/lestrrat-go/slack/objects"
 	"github.com/stretchr/testify/assert"
 )
 

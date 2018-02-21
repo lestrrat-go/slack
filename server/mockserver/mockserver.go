@@ -10,9 +10,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lestrrat/go-slack"
-	"github.com/lestrrat/go-slack/objects"
-	"github.com/lestrrat/go-slack/server"
+	"github.com/lestrrat-go/slack"
+	"github.com/lestrrat-go/slack/objects"
+	"github.com/lestrrat-go/slack/server"
 )
 
 type Handler struct {

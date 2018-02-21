@@ -1,6 +1,6 @@
 package server
 
-import "github.com/lestrrat/go-slack/internal/option"
+import "github.com/lestrrat-go/slack/internal/option"
 
 // WithPrefix allows you to specify a custom prefix in the URL path
 // for the server. By default, "/api" is used
