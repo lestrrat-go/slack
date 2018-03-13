@@ -43,6 +43,7 @@ func New(options ...Option) *Server {
 			"channels.unarchive":      http.HandlerFunc(unimplemented),
 			"chat.delete":             http.HandlerFunc(unimplemented),
 			"chat.meMessage":          http.HandlerFunc(unimplemented),
+			"chat.postEphemeral":      http.HandlerFunc(unimplemented),
 			"chat.postMessage":        http.HandlerFunc(unimplemented),
 			"chat.unfurl":             http.HandlerFunc(unimplemented),
 			"chat.update":             http.HandlerFunc(unimplemented),

@@ -250,3 +250,5 @@ func stockObjectsDialogResponse() interface{} {
 		},
 	}
 }
+
+func stockObjectsEphemeralResponse() interface{} { return StockResponse("dummy") }

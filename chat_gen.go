@@ -31,6 +31,18 @@ type ChatMeMessageCall struct {
 	text    string
 }
 
+// ChatPostEphemeralCall is created by ChatService.PostEphemeral method call
+type ChatPostEphemeralCall struct {
+	service     *ChatService
+	asUser      bool
+	attachments objects.AttachmentList
+	channel     string
+	linkNames   bool
+	parse       string
+	text        string
+	user        string
+}
+
 // ChatPostMessageCall is created by ChatService.PostMessage method call
 type ChatPostMessageCall struct {
 	service     *ChatService
@@ -226,6 +238,155 @@ func (c *ChatMeMessageCall) FromValues(v url.Values) error {
 	}
 	if raw := strings.TrimSpace(v.Get("text")); len(raw) > 0 {
 		tmp.text = raw
+	}
+	*c = tmp
+	return nil
+}
+
+// PostEphemeral creates a ChatPostEphemeralCall object in preparation for accessing the chat.postEphemeral endpoint
+func (s *ChatService) PostEphemeral(channel string, text string, user string) *ChatPostEphemeralCall {
+	var call ChatPostEphemeralCall
+	call.service = s
+	call.channel = channel
+	call.text = text
+	call.user = user
+	return &call
+}
+
+// AsUser sets the value for optional asUser parameter
+func (c *ChatPostEphemeralCall) AsUser(asUser bool) *ChatPostEphemeralCall {
+	c.asUser = asUser
+	return c
+}
+
+// SetAttachments sets the attachments list
+func (c *ChatPostEphemeralCall) SetAttachments(attachments objects.AttachmentList) *ChatPostEphemeralCall {
+	c.attachments = attachments
+	return c
+}
+
+// Attachment appends to the attachments list
+func (c *ChatPostEphemeralCall) Attachment(attachment *objects.Attachment) *ChatPostEphemeralCall {
+	c.attachments.Append(attachment)
+	return c
+}
+
+// LinkNames sets the value for optional linkNames parameter
+func (c *ChatPostEphemeralCall) LinkNames(linkNames bool) *ChatPostEphemeralCall {
+	c.linkNames = linkNames
+	return c
+}
+
+// Parse sets the value for optional parse parameter
+func (c *ChatPostEphemeralCall) Parse(parse string) *ChatPostEphemeralCall {
+	c.parse = parse
+	return c
+}
+
+// ValidateArgs checks that all required fields are set in the ChatPostEphemeralCall object
+func (c *ChatPostEphemeralCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.text) <= 0 {
+		return errors.New(`required field text not initialized`)
+	}
+	if len(c.user) <= 0 {
+		return errors.New(`required field user not initialized`)
+	}
+	return nil
+}
+
+// Values returns the ChatPostEphemeralCall object as url.Values
+func (c *ChatPostEphemeralCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	if c.asUser {
+		v.Set("as_user", "true")
+	}
+
+	if len(c.attachments) > 0 {
+		attachmentsEncoded, err := c.attachments.Encode()
+		if err != nil {
+			return nil, errors.Wrap(err, `failed to encode field`)
+		}
+		v.Set("attachments", attachmentsEncoded)
+	}
+
+	v.Set("channel", c.channel)
+
+	if c.linkNames {
+		v.Set("linkNames", "true")
+	}
+
+	if len(c.parse) > 0 {
+		v.Set("parse", c.parse)
+	}
+
+	v.Set("text", c.text)
+
+	v.Set("user", c.user)
+	return v, nil
+}
+
+// Do executes the call to access chat.postEphemeral endpoint
+func (c *ChatPostEphemeralCall) Do(ctx context.Context) (*objects.EphemeralResponse, error) {
+	const endpoint = "chat.postEphemeral"
+	v, err := c.Values()
+	if err != nil {
+		return nil, err
+	}
+	var res struct {
+		objects.GenericResponse
+		*objects.EphemeralResponse
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return nil, errors.Wrap(err, `failed to post to chat.postEphemeral`)
+	}
+	if !res.OK {
+		return nil, errors.New(res.Error.String())
+	}
+
+	return res.EphemeralResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChatPostEphemeralCall) FromValues(v url.Values) error {
+	var tmp ChatPostEphemeralCall
+	if raw := strings.TrimSpace(v.Get("as_user")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "as_user"`)
+		}
+		tmp.asUser = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("attachments")); len(raw) > 0 {
+		if err := tmp.attachments.Decode(raw); err != nil {
+			return errors.Wrap(err, `failed to decode value "attachments"`)
+		}
+	}
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("linkNames")); len(raw) > 0 {
+		parsed, err := strconv.ParseBool(raw)
+		if err != nil {
+			return errors.Wrap(err, `failed to parse boolean value "linkNames"`)
+		}
+		tmp.linkNames = parsed
+	}
+	if raw := strings.TrimSpace(v.Get("parse")); len(raw) > 0 {
+		tmp.parse = raw
+	}
+	if raw := strings.TrimSpace(v.Get("text")); len(raw) > 0 {
+		tmp.text = raw
+	}
+	if raw := strings.TrimSpace(v.Get("user")); len(raw) > 0 {
+		tmp.user = raw
 	}
 	*c = tmp
 	return nil

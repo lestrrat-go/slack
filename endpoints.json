@@ -293,6 +293,44 @@
     ]
   },
   {
+    "name": "chat.postEphemeral",
+    "return": "objects.EphemeralResponse",
+    "args": [
+      {
+        "name": "channel",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "text",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "user",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "asUser",
+        "query_name": "as_user",
+        "type": "bool"
+      },
+      {
+        "name": "attachments",
+        "type": "objects.AttachmentList"
+      },
+      {
+        "name": "linkNames",
+        "type": "bool"
+      },
+      {
+        "name": "parse",
+        "type": "string"
+      }
+    ]
+  },
+  {
     "name": "chat.postMessage",
     "return": "objects.ChatResponse",
     "args": [
