@@ -250,3 +250,5 @@ func stockObjectsDialogResponse() interface{} {
 		},
 	}
 }
+
+func stockObjectsPermalinkResponse() interface{} { return StockResponse("dummy") }
