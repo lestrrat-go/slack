@@ -604,6 +604,11 @@ type Paging struct {
 	Pages int `json:"pages"`
 }
 
+type PermalinkResponse struct {
+	Channel   string `json:"channel"`
+	Permalink string `json:"permalink"`
+}
+
 type StarsListResponse struct {
 	Items  StarredItemList `json:"items"`
 	Paging Paging          `json:"paging"`

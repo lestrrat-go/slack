@@ -102,6 +102,7 @@ func (h *Handler) InstallHandlers(s *server.Server) {
 	s.Handle("channels.setTopic", http.HandlerFunc(h.HandleChannelsSetTopic))
 	s.Handle("channels.unarchive", http.HandlerFunc(h.HandleChannelsUnarchive))
 	s.Handle("chat.delete", http.HandlerFunc(h.HandleChatDelete))
+	s.Handle("chat.getPermalink", http.HandlerFunc(h.HandleChatGetPermalink))
 	s.Handle("chat.meMessage", http.HandlerFunc(h.HandleChatMeMessage))
 	s.Handle("chat.postMessage", http.HandlerFunc(h.HandleChatPostMessage))
 	s.Handle("chat.unfurl", http.HandlerFunc(h.HandleChatUnfurl))
@@ -620,6 +621,31 @@ func (h *Handler) HandleChatDelete(w http.ResponseWriter, r *http.Request) {
 	}
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(StockResponse("chat.delete")); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
+}
+
+// HandleChatGetPermalink is the default handler method for the Slack chat.getPermalink API
+func (h *Handler) HandleChatGetPermalink(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if !h.validateToken(r) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+	var c slack.ChatGetPermalinkCall
+	if err := c.FromValues(r.Form); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(StockResponse("chat.getPermalink")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -1879,6 +1905,8 @@ func StockResponse(method string) interface{} {
 		return stockObjectsMessageListObjectsThreadInfo()
 	case "oauth.access":
 		return stockObjectsOAuthAccessResponse()
+	case "chat.getPermalink":
+		return stockObjectsPermalinkResponse()
 	case "rtm.start":
 		return stockObjectsRTMResponse()
 	case "reactions.get":
