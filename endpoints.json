@@ -326,6 +326,18 @@
       },
       {
         "name": "parse",
+    "name": "chat.getPermalink",
+    "return": "objects.PermalinkResponse",
+    "args": [
+      {
+        "name": "channel",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "messageTimestamp",
+        "query_name": "message_ts",
+        "required": true,
         "type": "string"
       }
     ]
@@ -973,7 +985,8 @@
   },
   {
     "name": "reminders.list",
-    "return": "objects.ReminderList"
+    "return": "objects.ReminderList",
+    "json": "reminders"
   },
   {
     "name": "rtm.start",

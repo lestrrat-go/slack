@@ -42,6 +42,7 @@ func New(options ...Option) *Server {
 			"channels.setTopic":       http.HandlerFunc(unimplemented),
 			"channels.unarchive":      http.HandlerFunc(unimplemented),
 			"chat.delete":             http.HandlerFunc(unimplemented),
+			"chat.getPermalink":       http.HandlerFunc(unimplemented),
 			"chat.meMessage":          http.HandlerFunc(unimplemented),
 			"chat.postEphemeral":      http.HandlerFunc(unimplemented),
 			"chat.postMessage":        http.HandlerFunc(unimplemented),

@@ -24,6 +24,13 @@ type ChatDeleteCall struct {
 	timestamp string
 }
 
+// ChatGetPermalinkCall is created by ChatService.GetPermalink method call
+type ChatGetPermalinkCall struct {
+	service          *ChatService
+	channel          string
+	messageTimestamp string
+}
+
 // ChatMeMessageCall is created by ChatService.MeMessage method call
 type ChatMeMessageCall struct {
 	service *ChatService
@@ -166,6 +173,74 @@ func (c *ChatDeleteCall) FromValues(v url.Values) error {
 	}
 	if raw := strings.TrimSpace(v.Get("ts")); len(raw) > 0 {
 		tmp.timestamp = raw
+	}
+	*c = tmp
+	return nil
+}
+
+// GetPermalink creates a ChatGetPermalinkCall object in preparation for accessing the chat.getPermalink endpoint
+func (s *ChatService) GetPermalink(channel string, messageTimestamp string) *ChatGetPermalinkCall {
+	var call ChatGetPermalinkCall
+	call.service = s
+	call.channel = channel
+	call.messageTimestamp = messageTimestamp
+	return &call
+}
+
+// ValidateArgs checks that all required fields are set in the ChatGetPermalinkCall object
+func (c *ChatGetPermalinkCall) ValidateArgs() error {
+	if len(c.channel) <= 0 {
+		return errors.New(`required field channel not initialized`)
+	}
+	if len(c.messageTimestamp) <= 0 {
+		return errors.New(`required field messageTimestamp not initialized`)
+	}
+	return nil
+}
+
+// Values returns the ChatGetPermalinkCall object as url.Values
+func (c *ChatGetPermalinkCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	v.Set("channel", c.channel)
+
+	v.Set("message_ts", c.messageTimestamp)
+	return v, nil
+}
+
+// Do executes the call to access chat.getPermalink endpoint
+func (c *ChatGetPermalinkCall) Do(ctx context.Context) (*objects.PermalinkResponse, error) {
+	const endpoint = "chat.getPermalink"
+	v, err := c.Values()
+	if err != nil {
+		return nil, err
+	}
+	var res struct {
+		objects.GenericResponse
+		*objects.PermalinkResponse
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return nil, errors.Wrap(err, `failed to post to chat.getPermalink`)
+	}
+	if !res.OK {
+		return nil, errors.New(res.Error.String())
+	}
+
+	return res.PermalinkResponse, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *ChatGetPermalinkCall) FromValues(v url.Values) error {
+	var tmp ChatGetPermalinkCall
+	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
+		tmp.channel = raw
+	}
+	if raw := strings.TrimSpace(v.Get("message_ts")); len(raw) > 0 {
+		tmp.messageTimestamp = raw
 	}
 	*c = tmp
 	return nil
