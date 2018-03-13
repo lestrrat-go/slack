@@ -935,7 +935,8 @@
   },
   {
     "name": "reminders.list",
-    "return": "objects.ReminderList"
+    "return": "objects.ReminderList",
+    "json": "reminders"
   },
   {
     "name": "rtm.start",

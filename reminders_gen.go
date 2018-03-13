@@ -338,7 +338,7 @@ func (c *RemindersListCall) Do(ctx context.Context) (objects.ReminderList, error
 	}
 	var res struct {
 		objects.GenericResponse
-		objects.ReminderList
+		objects.ReminderList `json:"reminders"`
 	}
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reminders.list`)
