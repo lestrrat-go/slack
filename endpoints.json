@@ -326,6 +326,11 @@
       },
       {
         "name": "parse",
+        "type": "string"
+      }
+    ]
+  },
+  {
     "name": "chat.getPermalink",
     "return": "objects.PermalinkResponse",
     "args": [
