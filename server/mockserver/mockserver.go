@@ -104,6 +104,7 @@ func (h *Handler) InstallHandlers(s *server.Server) {
 	s.Handle("chat.delete", http.HandlerFunc(h.HandleChatDelete))
 	s.Handle("chat.getPermalink", http.HandlerFunc(h.HandleChatGetPermalink))
 	s.Handle("chat.meMessage", http.HandlerFunc(h.HandleChatMeMessage))
+	s.Handle("chat.postEphemeral", http.HandlerFunc(h.HandleChatPostEphemeral))
 	s.Handle("chat.postMessage", http.HandlerFunc(h.HandleChatPostMessage))
 	s.Handle("chat.unfurl", http.HandlerFunc(h.HandleChatUnfurl))
 	s.Handle("chat.update", http.HandlerFunc(h.HandleChatUpdate))
@@ -671,6 +672,31 @@ func (h *Handler) HandleChatMeMessage(w http.ResponseWriter, r *http.Request) {
 	}
 	var buf bytes.Buffer
 	if err := json.NewEncoder(&buf).Encode(StockResponse("chat.meMessage")); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
+}
+
+// HandleChatPostEphemeral is the default handler method for the Slack chat.postEphemeral API
+func (h *Handler) HandleChatPostEphemeral(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if !h.validateToken(r) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+	var c slack.ChatPostEphemeralCall
+	if err := c.FromValues(r.Form); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(StockResponse("chat.postEphemeral")); err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
@@ -1893,6 +1919,8 @@ func StockResponse(method string) interface{} {
 		return stockObjectsDialogResponse()
 	case "emoji.list":
 		return stockObjectsEmojiListResponse()
+	case "chat.postEphemeral":
+		return stockObjectsEphemeralResponse()
 	case "groups.create", "groups.createChild", "groups.info", "groups.rename":
 		return stockObjectsGroup()
 	case "groups.invite":

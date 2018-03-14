@@ -138,6 +138,10 @@ type DialogResponse struct {
 
 type EmojiListResponse map[string]string
 
+type EphemeralResponse struct {
+	MessageTimestamp string `json:"message_ts"`
+}
+
 // ErrorResponse wraps errors returned by Slack. It's usually a string,
 // but it could be a structure.
 // https://api.slack.com/rtm#handling_responses

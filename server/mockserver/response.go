@@ -251,4 +251,6 @@ func stockObjectsDialogResponse() interface{} {
 	}
 }
 
+func stockObjectsEphemeralResponse() interface{} { return StockResponse("dummy") }
+
 func stockObjectsPermalinkResponse() interface{} { return StockResponse("dummy") }

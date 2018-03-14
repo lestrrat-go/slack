@@ -61,6 +61,7 @@ func (h *Handler) InstallHandlers(s *server.Server) {
 	s.Handle("chat.delete", http.HandlerFunc(h.mock.HandleChatDelete))
 	s.Handle("chat.getPermalink", http.HandlerFunc(h.mock.HandleChatGetPermalink))
 	s.Handle("chat.meMessage", http.HandlerFunc(h.mock.HandleChatMeMessage))
+	s.Handle("chat.postEphemeral", http.HandlerFunc(h.mock.HandleChatPostEphemeral))
 	s.Handle("chat.postMessage", http.HandlerFunc(h.mock.HandleChatPostMessage))
 	s.Handle("chat.unfurl", http.HandlerFunc(h.mock.HandleChatUnfurl))
 	s.Handle("chat.update", http.HandlerFunc(h.mock.HandleChatUpdate))
