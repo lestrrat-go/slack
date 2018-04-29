@@ -27,7 +27,7 @@ This library allows you to pass the HTTP client that it should use:
 ```go
 ctx := appengine.NewContext(r)
 httpCl := urlfetch.Client(ctx)
-slackCl := slack.New(token, slack.WithToken(httpCl))
+slackCl := slack.New(token, slack.WithClient(httpCl))
 ```
 
 ## Google API style library
