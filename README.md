@@ -101,7 +101,7 @@ func ExampleClient() {
 
 A mock server
 
-```
+```go
 package slack_test
 
 import (
