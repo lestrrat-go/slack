@@ -89,6 +89,7 @@ func New(options ...Option) *Server {
 			"users.identity":          http.HandlerFunc(unimplemented),
 			"users.info":              http.HandlerFunc(unimplemented),
 			"users.list":              http.HandlerFunc(unimplemented),
+			"users.lookupByEmail":     http.HandlerFunc(unimplemented),
 			"users.profile.get":       http.HandlerFunc(unimplemented),
 			"users.profile.set":       http.HandlerFunc(unimplemented),
 			"users.setActive":         http.HandlerFunc(unimplemented),

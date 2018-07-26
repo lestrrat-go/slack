@@ -149,6 +149,7 @@ func (h *Handler) InstallHandlers(s *server.Server) {
 	s.Handle("users.identity", http.HandlerFunc(h.HandleUsersIdentity))
 	s.Handle("users.info", http.HandlerFunc(h.HandleUsersInfo))
 	s.Handle("users.list", http.HandlerFunc(h.HandleUsersList))
+	s.Handle("users.lookupByEmail", http.HandlerFunc(h.HandleUsersLookupByEmail))
 	s.Handle("users.profile.get", http.HandlerFunc(h.HandleUsersProfileGet))
 	s.Handle("users.profile.set", http.HandlerFunc(h.HandleUsersProfileSet))
 	s.Handle("users.setActive", http.HandlerFunc(h.HandleUsersSetActive))
@@ -1801,6 +1802,31 @@ func (h *Handler) HandleUsersList(w http.ResponseWriter, r *http.Request) {
 	buf.WriteTo(w)
 }
 
+// HandleUsersLookupByEmail is the default handler method for the Slack users.lookupByEmail API
+func (h *Handler) HandleUsersLookupByEmail(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if !h.validateToken(r) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+	var c slack.UsersLookupByEmailCall
+	if err := c.FromValues(r.Form); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(StockResponse("users.lookupByEmail")); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
+}
+
 // HandleUsersProfileGet is the default handler method for the Slack users.profile.get API
 func (h *Handler) HandleUsersProfileGet(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
@@ -1945,7 +1971,7 @@ func StockResponse(method string) interface{} {
 		return stockObjectsReminder()
 	case "reminders.list":
 		return stockObjectsReminderList()
-	case "users.info":
+	case "users.info", "users.lookupByEmail":
 		return stockObjectsUser()
 	case "users.list":
 		return stockObjectsUserList()

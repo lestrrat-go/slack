@@ -1065,6 +1065,19 @@
     ]
   },
   {
+    "name": "users.lookupByEmail",
+    "proxy": true,
+    "return": "objects.User",
+    "json": "user",
+    "args": [
+      {
+        "name": "email",
+        "required": true,
+        "type": "string"
+      }
+    ]
+  },
+  {
     "name": "users.setActive"
   },
   {
