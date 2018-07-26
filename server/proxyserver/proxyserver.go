@@ -106,6 +106,7 @@ func (h *Handler) InstallHandlers(s *server.Server) {
 	s.Handle("users.identity", http.HandlerFunc(h.ProxyHandler))
 	s.Handle("users.info", http.HandlerFunc(h.ProxyHandler))
 	s.Handle("users.list", http.HandlerFunc(h.ProxyHandler))
+	s.Handle("users.lookupByEmail", http.HandlerFunc(h.ProxyHandler))
 	s.Handle("users.profile.get", http.HandlerFunc(h.ProxyHandler))
 	s.Handle("users.profile.set", http.HandlerFunc(h.mock.HandleUsersProfileSet))
 	s.Handle("users.setActive", http.HandlerFunc(h.mock.HandleUsersSetActive))

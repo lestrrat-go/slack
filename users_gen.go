@@ -47,6 +47,12 @@ type UsersListCall struct {
 	presence      bool
 }
 
+// UsersLookupByEmailCall is created by UsersService.LookupByEmail method call
+type UsersLookupByEmailCall struct {
+	service *UsersService
+	email   string
+}
+
 // UsersSetActiveCall is created by UsersService.SetActive method call
 type UsersSetActiveCall struct {
 	service *UsersService
@@ -389,6 +395,65 @@ func (c *UsersListCall) FromValues(v url.Values) error {
 			return errors.Wrap(err, `failed to parse boolean value "presence"`)
 		}
 		tmp.presence = parsed
+	}
+	*c = tmp
+	return nil
+}
+
+// LookupByEmail creates a UsersLookupByEmailCall object in preparation for accessing the users.lookupByEmail endpoint
+func (s *UsersService) LookupByEmail(email string) *UsersLookupByEmailCall {
+	var call UsersLookupByEmailCall
+	call.service = s
+	call.email = email
+	return &call
+}
+
+// ValidateArgs checks that all required fields are set in the UsersLookupByEmailCall object
+func (c *UsersLookupByEmailCall) ValidateArgs() error {
+	if len(c.email) <= 0 {
+		return errors.New(`required field email not initialized`)
+	}
+	return nil
+}
+
+// Values returns the UsersLookupByEmailCall object as url.Values
+func (c *UsersLookupByEmailCall) Values() (url.Values, error) {
+	if err := c.ValidateArgs(); err != nil {
+		return nil, errors.Wrap(err, `failed validation`)
+	}
+	v := url.Values{}
+	v.Set(`token`, c.service.token)
+
+	v.Set("email", c.email)
+	return v, nil
+}
+
+// Do executes the call to access users.lookupByEmail endpoint
+func (c *UsersLookupByEmailCall) Do(ctx context.Context) (*objects.User, error) {
+	const endpoint = "users.lookupByEmail"
+	v, err := c.Values()
+	if err != nil {
+		return nil, err
+	}
+	var res struct {
+		objects.GenericResponse
+		*objects.User `json:"user"`
+	}
+	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
+		return nil, errors.Wrap(err, `failed to post to users.lookupByEmail`)
+	}
+	if !res.OK {
+		return nil, errors.New(res.Error.String())
+	}
+
+	return res.User, nil
+}
+
+// FromValues parses the data in v and populates `c`
+func (c *UsersLookupByEmailCall) FromValues(v url.Values) error {
+	var tmp UsersLookupByEmailCall
+	if raw := strings.TrimSpace(v.Get("email")); len(raw) > 0 {
+		tmp.email = raw
 	}
 	*c = tmp
 	return nil
