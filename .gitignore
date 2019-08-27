@@ -22,3 +22,7 @@ _testmain.go
 *.exe
 *.test
 *.prof
+
+go.sum
+/vendor
+/cmd/slaproxy/vendor

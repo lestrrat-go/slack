@@ -6,6 +6,6 @@ script:
   - make test
   - make check-diff
 go:
-  - 1.9.x
-  - 1.8.x
+  - 1.12.x
+  - 1.11.x
   - tip
