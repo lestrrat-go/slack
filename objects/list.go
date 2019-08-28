@@ -16,6 +16,26 @@ func (l *AttachmentList) Append(a *Attachment) *AttachmentList {
 	return l
 }
 
+func (l *BlockList) Encode() (string, error) {
+	buf, err := json.Marshal(l)
+	if err != nil {
+		return "", errors.Wrap(err, `failed to encode block list`)
+	}
+	return string(buf), nil
+}
+
+func (l *BlockList) Decode(buf string) error {
+	if buf == "" {
+		return nil
+	}
+	return json.Unmarshal([]byte(buf), l)
+}
+
+func (l *BlockList) Append(b *Block) *BlockList {
+	*l = append(*l, b)
+	return l
+}
+
 func (l *AttachmentList) Encode() (string, error) {
 	buf, err := json.Marshal(l)
 	if err != nil {

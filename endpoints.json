@@ -327,6 +327,10 @@
       {
         "name": "parse",
         "type": "string"
+      },
+      {
+        "name": "blocks",
+        "type": "objects.BlockList"
       }
     ]
   },
@@ -404,6 +408,10 @@
       {
         "name": "username",
         "type": "string"
+      },
+      {
+        "name": "blocks",
+        "type": "objects.BlockList"
       }
     ]
   },
@@ -467,6 +475,10 @@
       {
         "name": "text",
         "type": "string"
+      },
+      {
+        "name": "blocks",
+        "type": "objects.BlockList"
       }
     ]
   },

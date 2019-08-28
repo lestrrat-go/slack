@@ -54,6 +54,12 @@ type AuthTestResponse struct {
 	UserID string `json:"user_id"`
 }
 
+type Block interface {
+	blockType() blockType
+}
+
+type BlockList []*Block
+
 type Channel struct {
 	Group
 	IsChannel   bool `json:"is_channel"`
@@ -318,6 +324,8 @@ type Message struct {
 
 	// reactions
 	Reactions ReactionList `json:"reactions,omitempty"`
+
+	Blocks BlockList `json:"blocks,omitempty"`
 }
 
 type MessageList []*Message

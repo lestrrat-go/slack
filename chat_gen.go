@@ -43,6 +43,7 @@ type ChatPostEphemeralCall struct {
 	service     *ChatService
 	asUser      bool
 	attachments objects.AttachmentList
+	blocks      objects.BlockList
 	channel     string
 	linkNames   bool
 	parse       string
@@ -55,6 +56,7 @@ type ChatPostMessageCall struct {
 	service     *ChatService
 	asUser      bool
 	attachments objects.AttachmentList
+	blocks      objects.BlockList
 	channel     string
 	escapeText  bool
 	iconEmoji   string
@@ -82,6 +84,7 @@ type ChatUpdateCall struct {
 	service     *ChatService
 	asUser      bool
 	attachments objects.AttachmentList
+	blocks      objects.BlockList
 	channel     string
 	linkNames   bool
 	parse       string
@@ -346,6 +349,18 @@ func (c *ChatPostEphemeralCall) Attachment(attachment *objects.Attachment) *Chat
 	return c
 }
 
+// SetBlocks sets the blocks list
+func (c *ChatPostEphemeralCall) SetBlocks(blocks objects.BlockList) *ChatPostEphemeralCall {
+	c.blocks = blocks
+	return c
+}
+
+// Block appends to the blocks list
+func (c *ChatPostEphemeralCall) Block(block *objects.Block) *ChatPostEphemeralCall {
+	c.blocks.Append(block)
+	return c
+}
+
 // LinkNames sets the value for optional linkNames parameter
 func (c *ChatPostEphemeralCall) LinkNames(linkNames bool) *ChatPostEphemeralCall {
 	c.linkNames = linkNames
@@ -390,6 +405,14 @@ func (c *ChatPostEphemeralCall) Values() (url.Values, error) {
 			return nil, errors.Wrap(err, `failed to encode field`)
 		}
 		v.Set("attachments", attachmentsEncoded)
+	}
+
+	if len(c.blocks) > 0 {
+		blocksEncoded, err := c.blocks.Encode()
+		if err != nil {
+			return nil, errors.Wrap(err, `failed to encode field`)
+		}
+		v.Set("blocks", blocksEncoded)
 	}
 
 	v.Set("channel", c.channel)
@@ -444,6 +467,11 @@ func (c *ChatPostEphemeralCall) FromValues(v url.Values) error {
 			return errors.Wrap(err, `failed to decode value "attachments"`)
 		}
 	}
+	if raw := strings.TrimSpace(v.Get("blocks")); len(raw) > 0 {
+		if err := tmp.blocks.Decode(raw); err != nil {
+			return errors.Wrap(err, `failed to decode value "blocks"`)
+		}
+	}
 	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
 		tmp.channel = raw
 	}
@@ -490,6 +518,18 @@ func (c *ChatPostMessageCall) SetAttachments(attachments objects.AttachmentList)
 // Attachment appends to the attachments list
 func (c *ChatPostMessageCall) Attachment(attachment *objects.Attachment) *ChatPostMessageCall {
 	c.attachments.Append(attachment)
+	return c
+}
+
+// SetBlocks sets the blocks list
+func (c *ChatPostMessageCall) SetBlocks(blocks objects.BlockList) *ChatPostMessageCall {
+	c.blocks = blocks
+	return c
+}
+
+// Block appends to the blocks list
+func (c *ChatPostMessageCall) Block(block *objects.Block) *ChatPostMessageCall {
+	c.blocks.Append(block)
 	return c
 }
 
@@ -581,6 +621,14 @@ func (c *ChatPostMessageCall) Values() (url.Values, error) {
 		v.Set("attachments", attachmentsEncoded)
 	}
 
+	if len(c.blocks) > 0 {
+		blocksEncoded, err := c.blocks.Encode()
+		if err != nil {
+			return nil, errors.Wrap(err, `failed to encode field`)
+		}
+		v.Set("blocks", blocksEncoded)
+	}
+
 	v.Set("channel", c.channel)
 
 	if c.escapeText {
@@ -659,6 +707,11 @@ func (c *ChatPostMessageCall) FromValues(v url.Values) error {
 	if raw := strings.TrimSpace(v.Get("attachments")); len(raw) > 0 {
 		if err := tmp.attachments.Decode(raw); err != nil {
 			return errors.Wrap(err, `failed to decode value "attachments"`)
+		}
+	}
+	if raw := strings.TrimSpace(v.Get("blocks")); len(raw) > 0 {
+		if err := tmp.blocks.Decode(raw); err != nil {
+			return errors.Wrap(err, `failed to decode value "blocks"`)
 		}
 	}
 	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
@@ -837,6 +890,18 @@ func (c *ChatUpdateCall) Attachment(attachment *objects.Attachment) *ChatUpdateC
 	return c
 }
 
+// SetBlocks sets the blocks list
+func (c *ChatUpdateCall) SetBlocks(blocks objects.BlockList) *ChatUpdateCall {
+	c.blocks = blocks
+	return c
+}
+
+// Block appends to the blocks list
+func (c *ChatUpdateCall) Block(block *objects.Block) *ChatUpdateCall {
+	c.blocks.Append(block)
+	return c
+}
+
 // LinkNames sets the value for optional linkNames parameter
 func (c *ChatUpdateCall) LinkNames(linkNames bool) *ChatUpdateCall {
 	c.linkNames = linkNames
@@ -887,6 +952,14 @@ func (c *ChatUpdateCall) Values() (url.Values, error) {
 			return nil, errors.Wrap(err, `failed to encode field`)
 		}
 		v.Set("attachments", attachmentsEncoded)
+	}
+
+	if len(c.blocks) > 0 {
+		blocksEncoded, err := c.blocks.Encode()
+		if err != nil {
+			return nil, errors.Wrap(err, `failed to encode field`)
+		}
+		v.Set("blocks", blocksEncoded)
 	}
 
 	v.Set("channel", c.channel)
@@ -943,6 +1016,11 @@ func (c *ChatUpdateCall) FromValues(v url.Values) error {
 	if raw := strings.TrimSpace(v.Get("attachments")); len(raw) > 0 {
 		if err := tmp.attachments.Decode(raw); err != nil {
 			return errors.Wrap(err, `failed to decode value "attachments"`)
+		}
+	}
+	if raw := strings.TrimSpace(v.Get("blocks")); len(raw) > 0 {
+		if err := tmp.blocks.Decode(raw); err != nil {
+			return errors.Wrap(err, `failed to decode value "blocks"`)
 		}
 	}
 	if raw := strings.TrimSpace(v.Get("channel")); len(raw) > 0 {
