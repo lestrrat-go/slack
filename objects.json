@@ -1,0 +1,142 @@
+[
+	{
+		"name": "Text",
+		"group": "Object",
+		"validate": true,
+		"fields": [
+			{ "name": "typ", "type": "string", "required": true, "accessor_name": "Type" },
+			{ "name": "text", "type": "string", "required": true },
+			{ "name": "emoji", "type": "bool" },
+			{ "name": "verbatim", "type": "bool" }
+		]
+	},
+	{
+		"name": "ConfirmObject",
+		"fields": [
+			{ "name": "title", "type": "string", "required": true },
+			{ "name": "text", "type": "string", "required": true },
+			{ "name": "confirm", "type": "string", "required": true },
+			{ "name": "deny", "type": "string", "required": true }
+		]
+	},
+	{
+		"name": "OptionObject",
+		"fields": [
+			{ "name": "text", "type": "string", "required": true },
+			{ "name": "value", "type": "string", "required": true },
+			{ "name": "url", "type": "string" }
+		]
+	},
+	{
+		"name": "OptionGroupObject",
+		"fields": [
+			{ "name": "label", "type": "string", "required": true },
+			{ "name": "options", "type": "[]OptionObject", "required": true }
+		]
+	},
+	{
+		"name": "SectionBlock",
+		"fields": [
+			{ "name": "text", "type": "*Text", "required": true },
+			{ "name": "fields", "type": "[]*Text" },
+			{ "name": "block_id", "type": "string" },
+			{ "name": "accessory", "type": "BlockElement" }
+		]
+	},
+	{
+		"name": "DividerBlock",
+		"fields": [
+			{ "name": "block_id", "type": "string" }
+		]
+	},
+	{
+		"name": "ImageBlock",
+		"fields": [
+			{ "name": "image_url", "type": "string", "required": true },
+			{ "name": "alt_text", "type": "string", "required": true },
+			{ "name": "title", "type": "string" },
+			{ "name": "block_id", "type": "string" }
+		]
+	},
+	{
+		"name": "ActionsBlock",
+		"fields": [
+			{ "name": "elements", "type": "[]BlockElement", "required": true },
+			{ "name": "block_id", "type": "string" }
+		]
+	},
+	{
+		"name": "ImageElement",
+		"fields": [
+			{ "name": "image_url", "type": "string", "required": true },
+			{ "name": "alt_text", "type": "string", "required": true }
+		]
+	},
+	{
+		"name": "ButtonElement",
+		"fields": [
+			{ "name": "text", "type": "*Text", "required": true },
+			{ "name": "action_id", "type": "string", "required": true },
+			{ "name": "url", "type": "string" },
+			{ "name": "value", "type": "string" },
+			{ "name": "style", "type": "string" },
+			{ "name": "confirm", "type": "ConfirmObject" }
+		]
+	},
+	{
+		"name": "SelectElement",
+		"fields": [
+			{ "name": "placeholder", "type": "*Text", "required": true },
+			{ "name": "action_id", "type": "string", "required": true },
+			{ "name": "options", "type": "[]OptionObject", "required": true },
+			{ "name": "option_groups", "type": "[]OptionGroupObject" },
+			{ "name": "initial_option", "type": "interface{}" },
+			{ "name": "confirm", "type": "ConfirmObject" }
+		]
+	},
+	{
+		"name": "ContextBlock",
+		"fields": [
+			{ "name": "elements", "type": "[]interface{}", "required": true },
+			{ "name": "block_id", "type": "string" }
+		]
+	},
+	{
+		"name": "InputBlock",
+		"fields": [
+			{ "name": "label", "type": "string", "required": true },
+			{ "name": "element", "type": "interface{}" },
+			{ "name": "hint", "type": "*Text" },
+			{ "name": "optional", "type": "bool" }
+		]
+	},
+	{
+		"name": "FileBlock",
+		"fields": [
+			{ "name": "external_id", "type": "string", "required": true },
+			{ "name": "source", "type": "string" },
+			{ "name": "block_id", "type": "string" }
+		]
+	},
+	{
+		"name": "UserProfile",
+		"group": "Object",
+		"fields": [
+			{ "name": "always_active", "type": "bool" },
+			{ "name": "avatar_hash", "type": "string" },
+			{ "name": "email", "type": "string" },
+			{ "name": "first_name", "type": "string" },
+			{ "name": "image_24", "type": "string" },
+			{ "name": "image_32", "type": "string" },
+			{ "name": "image_48", "type": "string" },
+			{ "name": "image_72", "type": "string" },
+			{ "name": "image_192", "type": "string" },
+			{ "name": "image_512", "type": "string" },
+			{ "name": "last_name", "type": "string" },
+			{ "name": "real_name", "type": "string" },
+			{ "name": "real_name_normalized", "type": "string" },
+			{ "name": "status_text", "type": "string" },
+			{ "name": "status_emoji", "type": "string" }
+		]
+	}
+]

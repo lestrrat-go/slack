@@ -5,6 +5,7 @@ go 1.11
 require (
 	github.com/cenkalti/backoff v2.2.1+incompatible
 	github.com/gorilla/websocket v1.4.1
+	github.com/iancoleman/strcase v0.0.0-20190422225806-e506e3ef7365
 	github.com/lestrrat-go/pdebug v0.0.0-20180220043849-39f9a71bcabe
 	github.com/pkg/errors v0.8.1
 	github.com/stretchr/testify v1.4.0
