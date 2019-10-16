@@ -21,6 +21,7 @@ type Action struct {
 	Type            string          `json:"type"`
 	Value           string          `json:"value"`
 }
+
 type ActionList []*Action
 
 type Attachment struct {
@@ -43,6 +44,7 @@ type Attachment struct {
 	Title          string              `json:"title"`
 	TitleLink      string              `json:"title_link"`
 }
+
 type AttachmentList []*Attachment
 
 // AuthTestResponse is the data structure response from auth.test
@@ -58,7 +60,233 @@ type Block interface {
 	blockType() blockType
 }
 
-type BlockList []*Block
+type SectionBlock struct {
+	Text      TextBlockObject   `json:"text,omitempty"`
+	BlockID   string            `json:"block_id,omitempty"`
+	Fields    []TextBlockObject `json:"fields,omitempty"`
+	Accessory *Accessory        `json:"accessory,omitempty"`
+}
+
+type ActionsBlock struct {
+	BlockID  string         `json:"block_id,omitempty"`
+	Elements *BlockElements `json:"elements"`
+}
+
+type DividerBlock struct {
+	BlockID string `json:"block_id,omitempty"`
+}
+
+type FileBlock struct {
+	BlockID    string `json:"block_id,omitempty"`
+	ExternalID string `json:"external_id,omitempty"`
+	Source     string `json:"source,omitempty"`
+}
+
+type ImageBlock struct {
+	ImageURL string          `json:"image_url"`
+	AltText  string          `json:"alt_text"`
+	BlockID  string          `json:"block_id,omitempty"`
+	Title    TextBlockObject `json:"title"`
+}
+
+type ContextBlock struct {
+	BlockID  string           `json:"block_id,omitempty"`
+	Elements *ContextElements `json:"elements,omitempty"`
+}
+
+type BlockList []Block
+
+type BlockObjects struct {
+	TextBlockObject          []TextBlockObject
+	ConfirmationDialogObject []*ConfirmationDialogBlockObject
+	OptionObjects            []*OptionBlockObject
+	OptionGroupObjects       []*OptionGroupBlockObject
+}
+
+type TextBlockObject interface {
+	textBlockObjectType() textBlockObjectType
+	contextElementType() contextElementType
+}
+
+type PlainTextBlock struct {
+	Text  string `json:"text"`
+	Emoji bool   `json:"emoji,omitempty"`
+}
+
+func (PlainTextBlock) textBlockObjectType() textBlockObjectType { return textBlockPlainText }
+func (PlainTextBlock) contextElementType() contextElementType   { return contextElementText }
+
+type MarkdownTextBlock struct {
+	Text     string `json:"text"`
+	Verbatim bool   `json:"verbatim,omitempty"`
+}
+
+func (MarkdownTextBlock) textBlockObjectType() textBlockObjectType { return textBlockMarkdown }
+func (MarkdownTextBlock) contextElementType() contextElementType   { return contextElementText }
+
+type BlockObject interface {
+	blockObjectType() blockObjectType
+}
+
+type ConfirmationDialogBlockObject struct {
+	Title   *PlainTextBlock `json:"title"`
+	Text    TextBlockObject `json:"text"`
+	Confirm *PlainTextBlock `json:"confirm"`
+	Deny    *PlainTextBlock `json:"deny"`
+}
+
+func (ConfirmationDialogBlockObject) blockObjectType() blockObjectType { return objectsConfirmation }
+
+type OptionBlockObject struct {
+	Text  *PlainTextBlock `json:"text"`
+	Value string          `json:"value"`
+	URL   string          `json:"url,omitempty"`
+}
+
+func (OptionBlockObject) blockObjectType() blockObjectType { return objectsOptionObjects }
+
+type OptionGroupBlockObject struct {
+	Label   *PlainTextBlock      `json:"label"`
+	Options []*OptionBlockObject `json:"options"`
+}
+
+func (OptionGroupBlockObject) blockObjectType() blockObjectType { return objectsOptionGroupObjects }
+
+type BlockElement interface {
+	messageElementType() messageElementType
+}
+
+type BlockElements struct {
+	ElementSet []BlockElement `json:"elements,omitempty"`
+}
+
+type ContextElement interface {
+	contextElementType() contextElementType
+}
+
+type ContextElements struct {
+	Elements []ContextElement
+}
+
+type ImageBlockElement struct {
+	ImageURL string `json:"image_url"`
+	AltText  string `json:"alt_text"`
+}
+
+func (ImageBlockElement) messageElementType() messageElementType { return messageElementTImage }
+func (ImageBlockElement) contextElementType() contextElementType { return contextElementImage }
+
+type ButtonBlockElement struct {
+	Text     TextBlockObject                `json:"text"`
+	ActionID string                         `json:"action_id,omitempty"`
+	URL      string                         `json:"url,omitempty"`
+	Value    string                         `json:"value,omitempty"`
+	Confirm  *ConfirmationDialogBlockObject `json:"confirm,omitempty"`
+	Style    ButtonBlockStyle               `json:"style,omitempty"`
+}
+
+func (ButtonBlockElement) messageElementType() messageElementType { return messageElementTButton }
+
+type SelectBlockElement interface {
+	selectBlockElementType() messageElementType
+}
+
+type SelectBlockElementStatic struct {
+	*selectBlockElementStatic
+}
+
+func (SelectBlockElementStatic) selectBlockElementType() messageElementType {
+	return messageElementType(selectBlockElementTypeExternal)
+}
+
+type MultiSelectBlockElementStatic struct {
+	*selectBlockElementStatic
+}
+
+func (MultiSelectBlockElementStatic) selectBlockElementType() messageElementType {
+	return messageElementType(multiSelectBlockElementTypeStatic)
+}
+
+type SelectBlockElementExternal struct {
+	*selectBlockElementExternal
+}
+
+func (SelectBlockElementExternal) selectBlockElementType() messageElementType {
+	return messageElementType(selectBlockElementTypeExternal)
+}
+
+type MultiSelectBlockElementExternal struct {
+	*selectBlockElementExternal
+}
+
+func (MultiSelectBlockElementExternal) selectBlockElementType() messageElementType {
+	return messageElementType(multiSelectBlockElementTypeExternal)
+}
+
+type SelectBlockElementUsers struct {
+	*selectBlockElementUsers
+}
+
+func (SelectBlockElementUsers) selectBlockElementType() messageElementType {
+	return messageElementType(selectBlockElementTypeUsers)
+}
+
+type MultiSelectBlockElementUsers struct {
+	*selectBlockElementUsers
+}
+
+func (MultiSelectBlockElementUsers) selectBlockElementType() messageElementType {
+	return messageElementType(multiSelectBlockElementTypeUsers)
+}
+
+type SelectBlockElementConversations struct {
+	*selectBlockElementConversations
+}
+
+func (SelectBlockElementConversations) selectBlockElementType() messageElementType {
+	return messageElementType(selectBlockElementTypeConversations)
+}
+
+type MultiSelectBlockElementConversations struct {
+	*selectBlockElementConversations
+}
+
+func (MultiSelectBlockElementConversations) selectBlockElementType() messageElementType {
+	return messageElementType(multiSelectBlockElementTypeConversations)
+}
+
+type SelectBlockElementChannels struct {
+	*selectBlockElementChannels
+}
+
+func (SelectBlockElementChannels) selectBlockElementType() messageElementType {
+	return messageElementType(selectBlockElementTypeChannels)
+}
+
+type MultiSelectBlockElementChannels struct {
+	*selectBlockElementChannels
+}
+
+func (MultiSelectBlockElementChannels) selectBlockElementType() messageElementType {
+	return messageElementType(multiSelectBlockElementTypeChannels)
+}
+
+type OverflowBlockElement struct {
+	ActionID string                         `json:"action_id"`
+	Options  []*OptionBlockObject           `json:"options"`
+	Confirm  *ConfirmationDialogBlockObject `json:"confirm,omitempty"`
+}
+
+func (OverflowBlockElement) messageElementType() messageElementType { return messageElementTOverflow }
+
+type DatePickerElement struct {
+	ActionID    string                         `json:"action_id"`
+	Placeholder TextBlockObject                `json:"placeholder,omitempty"`
+	InitialDate string                         `json:"initial_date,omitempty"`
+	Confirm     *ConfirmationDialogBlockObject `json:"confirm,omitempty"`
+}
+
+func (DatePickerElement) messageElementType() messageElementType { return messageElementTDatepicker }
 
 type Channel struct {
 	Group
