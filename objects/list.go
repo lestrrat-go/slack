@@ -32,7 +32,7 @@ func (l *BlockList) Decode(buf string) error {
 }
 
 func (l *BlockList) Append(b *Block) *BlockList {
-	*l = append(*l, b)
+	*l = append(*l, *b)
 	return l
 }
 
