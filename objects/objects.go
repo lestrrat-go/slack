@@ -1,3 +1,6 @@
+// Package objects provide the building blocks to creating the various
+// objects used within the Slack API. It provides Builder objects 
+// to cleanly create objects to be consumed by API calls
 package objects
 
 import "fmt"

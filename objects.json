@@ -2,6 +2,7 @@
 	{
 		"name": "Text",
 		"group": "Object",
+		"skip_list": true,
 		"validate": true,
 		"fields": [
 			{ "name": "typ", "type": "string", "required": true, "accessor_name": "Type" },
@@ -137,6 +138,274 @@
 			{ "name": "real_name_normalized", "type": "string" },
 			{ "name": "status_text", "type": "string" },
 			{ "name": "status_emoji", "type": "string" }
+		]
+	},
+	{
+		"name": "AuthTestResponse",
+		"group": "Object",
+		"skip_list": true,
+		"description": "AuthTestResponse is the data structure response from auth.test",
+		"fields": [
+			{ "name": "url", "type": "string" },
+			{ "name": "team", "type": "string" },
+			{ "name": "user", "type": "string" },
+			{ "name": "team_id", "type": "string" },
+			{ "name": "user_id", "type": "string" }
+		]
+	},
+	{
+		"name": "Bot",
+		"group": "Object",
+		"skip_list": true,
+		"fields": [
+			{ "name": "id", "type": "string" },
+			{ "name": "app_id", "type": "string" },
+			{ "name": "deleted", "type": "bool" },
+			{ "name": "name", "type": "string" },
+			{ "name": "icons", "type": "Icons" }
+		]
+	},
+	{
+		"name": "Icons",
+		"group": "Object",
+		"skip_list": true,
+		"fields": [
+			{ "name": "image_36", "type": "string" },
+			{ "name": "image_48", "type": "string" },
+			{ "name": "image_72", "type": "string" }
+		]
+	},
+	{
+		"name": "Channel",
+		"group": "Object",
+		"fields": [
+			{ "name": "id", "type": "string" },
+			{ "name": "created", "type": "EpochTime" },
+			{ "name": "is_open", "type": "bool" },
+			{ "name": "last_read", "type": "string" },
+			{ "name": "latest", "type": "*Message" },
+			{ "name": "unread_count", "type": "int" },
+			{ "name": "unread_count_display", "type": "int" },
+			{ "name": "creator", "type": "string" },
+			{ "name": "is_archived", "type": "bool" },
+			{ "name": "is_group", "type": "bool" },
+			{ "name": "is_mpim", "type": "bool" },
+			{ "name": "members", "type": "[]string" },
+			{ "name": "name", "type": "string" },
+			{ "name": "name_normalized", "type": "string" },
+			{ "name": "num_members", "type": "int" },
+			{ "name": "previous_names", "type": "[]string" },
+			{ "name": "purpose", "type": "Purpose" },
+			{ "name": "topic", "type": "Topic" },
+			{ "name": "is_channel", "type": "bool" },
+			{ "name": "is_general", "type": "bool" },
+			{ "name": "is_member", "type": "bool" },
+			{ "name": "is_org_shared", "type": "bool" },
+			{ "name": "is_shared", "type": "bool" }
+		]
+	},
+	{
+		"name": "Group",
+		"group": "Object",
+		"skip_list": true,
+		"description": "Group contains information about a private channel. Private channels were once known as private groups.",
+		"fields": [
+			{ "name": "id", "type": "string" },
+			{ "name": "created", "type": "EpochTime" },
+			{ "name": "is_open", "type": "bool" },
+			{ "name": "last_read", "type": "string" },
+			{ "name": "latest", "type": "*Message" },
+			{ "name": "unread_count", "type": "int" },
+			{ "name": "unread_count_display", "type": "int" },
+			{ "name": "creator", "type": "string" },
+			{ "name": "is_archived", "type": "bool" },
+			{ "name": "is_group", "type": "bool" },
+			{ "name": "is_mpim", "type": "bool" },
+			{ "name": "members", "type": "[]string" },
+			{ "name": "name", "type": "string" },
+			{ "name": "name_normalized", "type": "string" },
+			{ "name": "num_members", "type": "int" },
+			{ "name": "previous_names", "type": "[]string" },
+			{ "name": "purpose", "type": "Purpose" },
+			{ "name": "topic", "type": "Topic" }
+		]
+	},
+	{
+		"name": "Purpose",
+		"skip_list": true,
+		"group": "Object",
+		"fields": [
+			{ "name": "value", "type": "string" },
+			{ "name": "creator", "type": "string" },
+			{ "name": "last_set", "type": "EpochTime" }
+		]
+	},
+	{
+		"name": "Topic",
+		"group": "Object",
+		"skip_list": true,
+		"fields": [
+			{ "name": "value", "type": "string" },
+			{ "name": "creator", "type": "string" },
+			{ "name": "last_set", "type": "EpochTime" }
+		]
+	},
+	{
+		"name": "Conversation",
+		"group": "Object",
+		"fields": [
+			{ "name": "id", "type": "string" },
+			{ "name": "created", "type": "EpochTime" },
+			{ "name": "is_open", "type": "bool" },
+			{ "name": "last_read", "type": "string" },
+			{ "name": "latest", "type": "*Message" },
+			{ "name": "unread_count", "type": "int" },
+			{ "name": "unread_count_display", "type": "int" }
+		]
+	},
+	{
+		"name": "Edited",
+		"group": "Object",
+		"skip_list": true,
+		"fields": [
+			{ "name": "ts", "type": "string", "go_name": "Timestamp" },
+			{ "name": "user", "type": "string" }
+		]
+	},
+	{
+		"name": "Message",
+		"group": "Object",
+		"description": "Message is a representation of a message, as obtained by the RTM or Events API. This is NOT what you use when you are posting a message. See ChatService#PostMessage and MessageParams for that.",
+		"fields": [
+			{ "name": "attachments", "type": "AttachmentList" },
+			{ "name": "channel", "type": "string" },
+			{ "name": "edited", "type": "*Edited" },
+			{ "name": "is_starred", "type": "bool" },
+			{ "name": "pinned_to", "type": "[]string" },
+			{ "name": "text", "type": "string" },
+			{ "name": "ts", "type": "string", "accessor_name": "Timestamp" },
+			{ "name": "typ", "type": "string", "accessor_name": "Type" },
+			{ "name": "user", "type": "string" },
+			{ "name": "subtype", "type": "string" },
+			{ "name": "hidden", "type": "bool", "comment": "message_changed, message_deleted, unpinned_item" },
+			{ "name": "deleted_ts", "type": "string", "accessor_name": "DeletedTimestamkp", "comment": "message_deleted" },
+			{ "name": "event_ts", "type": "string", "accessor_name": "EventTimestamkp" },
+			{ "name": "bot_id", "type": "string", "comment": "bot_message (https://api.slack.com/events/message/bot_message)" },
+			{ "name": "username", "type": "string" },
+			{ "name": "icons", "type": "*Icons" },
+			{ "name": "inviter", "type": "string", "comment": "channel_join, group_join" },
+			{ "name": "topic", "type": "string", "comment": "channel_topic, group_topic" },
+			{ "name": "purpose", "type": "string", "comment": "channel_purpose, group_purpose" },
+			{ "name": "name", "type": "string", "comment": "channel_name, group_name" },
+			{ "name": "old_name", "type": "string" },
+			{ "name": "members", "type": "[]string", "comment": "channel_archive, group_archive" },
+			{ "name": "upload", "type": "bool", "comment": "file_share" },
+			{ "name": "comment", "type": "*Comment", "comment": "file_comment" },
+			{	"name": "item_type", "type": "string", "comment": "pinned_item" },
+			{ "name": "reply_to", "type": "int", "comment": "https://api.slack.com/rtm" },
+			{ "name": "team", "type": "string" },
+			{ "name": "reactions", "type": "ReactionList" },
+			{ "name": "blocks", "type": "BlockList" }
+		]
+	},
+	{
+		"name": "Attachment",
+		"group": "Object",
+		"fields": [
+			{ "name": "actions", "type": "ActionList", "comment": "for buttons" },
+			{ "name": "attachment_type", "type": "string" },
+			{ "name": "author_name", "type": "string" },
+			{ "name": "author_link", "type": "string" },
+			{ "name": "author_icon", "type": "string" },
+			{ "name": "callback_id", "type": "string", "comment": "for buttons" },
+			{ "name": "color", "type": "string" },
+			{ "name": "fallback", "type": "string" },
+			{ "name": "fields", "type": "AttachmentFieldList" },
+			{ "name": "footer", "type": "string" },
+			{ "name": "footer_icon", "type": "string" },
+			{ "name": "image_url", "type": "string" },
+			{ "name": "thumb_url", "type": "string" },
+			{ "name": "pretext", "type": "string" },
+			{ "name": "text", "type": "string" },
+			{ "name": "timestamp", "type": "Timestamp" },
+			{ "name": "title", "type": "string" },
+			{ "name": "title_link", "type": "string" }
+		]
+	},
+	{
+		"name": "AttachmentField",
+		"group": "Object",
+		"fields": [
+			{ "name": "title", "type": "string" },
+			{ "name": "value", "type": "string" },
+			{ "name": "short", "type": "string" }
+		]
+	},
+	{
+		"name": "Action",
+		"description": "Action is used in conjunction with message buttons",
+		"group": "Object",
+		"fields": [
+			{ "name": "confirm", "type": "*Confirmation" },
+			{ "name": "data_source", "type": "string" },
+			{ "name": "min_query_length", "type": "int" },
+			{ "name": "name", "type": "string" },
+			{ "name": "option_groups", "type": "OptionGroupList" },
+			{ "name": "options", "type": "OptionList" },
+			{ "name": "selected_options", "type": "OptionList" },
+			{ "name": "style", "type": "string" },
+			{ "name": "text", "type": "string" },
+			{ "name": "typ", "type": "string", "accessor_name": "Type" },
+			{ "name": "value", "type": "string" }
+		]
+	},
+	{
+		"name": "Confirmation",
+		"group": "Object",
+		"description": "Confirmation is used in conjunction with message buttons",
+		"fields": [
+			{ "name": "title", "type": "string" },
+			{ "name": "text", "type": "string" },
+			{ "name": "ok_text", "type": "string" },
+			{ "name": "dismiss_text", "type": "string" }
+		]
+	},
+	{
+		"name": "Option",
+		"group": "Object",
+		"fields": [
+			{ "name": "text", "type": "string" },
+			{ "name": "value", "type": "string" },
+			{ "name": "description", "type": "string" }
+		]
+	},
+	{
+		"name": "OptionGroup",
+		"group": "Object",
+		"fields": [
+			{ "name": "text", "type": "string" },
+			{ "name": "options", "type": "OptionList" }
+		]
+	},
+	{
+		"name": "Comment",
+		"group": "object",
+		"skip_list": true,
+		"fields": [
+			{ "name": "id", "type": "string" },
+			{ "name": "created", "type": "EpochTime" },
+			{ "name": "timestamkp", "type": "EpochTime" },
+			{ "name": "user", "type": "string" },
+			{ "name": "comment", "type": "string" }
+		]
+	},
+	{
+		"name": "Reaction",
+		"group": "Object",
+		"fields": [
+			{ "name": "count", "type": "int" },
+			{ "name": "name", "type": "string" },
+			{ "name": "users", "type": "[]string" }
 		]
 	}
 ]

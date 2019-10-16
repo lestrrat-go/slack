@@ -22,11 +22,19 @@ type field struct {
 }
 
 func (f *field) IsSliceType() bool {
-	return strings.HasPrefix(f.Type, "[]")
+	return strings.HasPrefix(f.Type, "[]") ||
+		strings.HasSuffix(f.Type, "List")
 }
 
 func (f *field) SliceElementType() string {
-	return f.Type[2:]
+	if strings.HasPrefix(f.Type, "[]") {
+		return f.Type[2:]
+	}
+
+	if f.Type == "BlockList" {
+		return "Block"
+	}
+	return "*" + f.Type[:len(f.Type)-4]
 }
 
 func (f *field) Tag() string {
@@ -49,11 +57,12 @@ func (f *field) GoAccessorName() string {
 }
 
 type definition struct {
-	Group string `json:"group"`
-	Name   string  `json:"name"`
-	Fields []field `json:"fields"`
-	Typ    string  `json:"type"`
-	Validate bool `json:"validate"`
+	Group    string  `json:"group"`
+	SkipList bool    `json:"skip_list"`
+	Name     string  `json:"name"`
+	Fields   []field `json:"fields"`
+	Typ      string  `json:"type"`
+	Validate bool    `json:"validate"`
 }
 
 func (d *definition) GoName() string {
@@ -99,6 +108,9 @@ func _main() error {
 	if err := writeObjects(list); err != nil {
 		return errors.Wrap(err, `failed to write objects file`)
 	}
+	if err := writeLists(list); err != nil {
+		return errors.Wrap(err, `failed to write lists file`)
+	}
 
 	return nil
 }
@@ -124,6 +136,11 @@ func writeInterface(list []definition) error {
 	}
 	fmt.Fprintf(&buf, "\n)")
 
+	fmt.Fprintf(&buf, "\n\ntype Block interface {")
+	fmt.Fprintf(&buf, "\nType() BlockType")
+	fmt.Fprintf(&buf, "\n}")
+	fmt.Fprintf(&buf, "\ntype BlockList []Block")
+
 	fmt.Fprintf(&buf, "\n\ntype ElementType string")
 	fmt.Fprintf(&buf, "\n\nconst (")
 	for _, elementType := range []string{"Image", "Button", "SelectMenu", "MultiSelectMenu", "OverflowMenu", "DatePicker", "Input"} {
@@ -146,6 +163,10 @@ func writeInterface(list []definition) error {
 			fmt.Fprintf(&buf, "\n\t%s %s", field.GoName(), field.Type)
 		}
 		fmt.Fprintf(&buf, "\n}")
+
+		if def.Group == "Object" && !def.SkipList {
+			fmt.Fprintf(&buf, "\n\ntype %[1]sList []*%[1]s", def.Name)
+		}
 	}
 
 	return codegen.WriteGoCodeToFile("objects/interface_gen.go", buf.Bytes())
@@ -237,7 +258,11 @@ func writeObjects(list []definition) error {
 				continue
 			}
 			requireds = append(requireds, field)
-			fmt.Fprintf(&buf, "%s %s, ", field.GoName(), field.Type)
+			if field.IsSliceType() {
+				fmt.Fprintf(&buf, "%s ...%s, ", field.GoName(), field.SliceElementType())
+			} else {
+				fmt.Fprintf(&buf, "%s %s, ", field.GoName(), field.Type)
+			}
 		}
 		if len(requireds) > 0 {
 			buf.Truncate(buf.Len() - 2)
@@ -251,8 +276,18 @@ func writeObjects(list []definition) error {
 		fmt.Fprintf(&buf, "\n}")
 
 		for _, field := range optionals {
-			fmt.Fprintf(&buf, "\n\nfunc (b *%sBuilder) %s(v %s) *%sBuilder {", def.GoName(), field.GoAccessorName(), field.Type, def.GoName())
-			fmt.Fprintf(&buf, "\nb.%s = v", field.GoName())
+			fmt.Fprintf(&buf, "\n\nfunc (b *%sBuilder) %s(v ", def.GoName(), field.GoAccessorName())
+			if field.IsSliceType() {
+				fmt.Fprintf(&buf, "...%s", field.SliceElementType())
+			} else {
+				fmt.Fprintf(&buf, "%s", field.Type)
+			}
+ 			fmt.Fprintf(&buf, ") *%sBuilder {", def.GoName())
+//			if field.IsSliceType() {
+//				fmt.Fprintf(&buf, "\nb.%s = %s(v)", field.GoName(), field.Type)
+//			} else {
+				fmt.Fprintf(&buf, "\nb.%s = v", field.GoName())
+//			}
 			fmt.Fprintf(&buf, "\nreturn b")
 			fmt.Fprintf(&buf, "\n}")
 		}
@@ -264,7 +299,7 @@ func writeObjects(list []definition) error {
 			fmt.Fprintf(&buf, "\n}")
 		}
 
-		fmt.Fprintf(&buf, "\n\nvar v %s", def.GoName())
+		fmt.Fprintf(&buf, "\nvar v %s", def.GoName())
 		for _, field := range def.Fields {
 			fmt.Fprintf(&buf, "\nv.%s = b.%s", field.GoName(), field.GoName())
 		}
@@ -280,4 +315,22 @@ func writeObjects(list []definition) error {
 	}
 
 	return codegen.WriteGoCodeToFile("objects/objects_gen.go", buf.Bytes())
+}
+
+func writeLists(list []definition) error {
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, "\npackage objects")
+
+	for _, def := range list {
+		if def.Group != "Object" || def.SkipList {
+			continue
+		}
+
+		fmt.Fprintf(&buf, "\n\nfunc (l *%[1]sList) Append(v *%[1]s) *%[1]sList {", def.Name)
+		fmt.Fprintf(&buf, "\n*l = append(*l, v)")
+		fmt.Fprintf(&buf, "\nreturn l")
+		fmt.Fprintf(&buf, "\n}")
+	}
+
+	return codegen.WriteGoCodeToFile("objects/lists_gen.go", buf.Bytes())
 }
