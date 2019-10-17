@@ -142,7 +142,6 @@
 	},
 	{
 		"name": "AuthTestResponse",
-		"group": "Object",
 		"skip_list": true,
 		"description": "AuthTestResponse is the data structure response from auth.test",
 		"fields": [
@@ -207,7 +206,6 @@
 	{
 		"name": "Group",
 		"group": "Object",
-		"skip_list": true,
 		"description": "Group contains information about a private channel. Private channels were once known as private groups.",
 		"fields": [
 			{ "name": "id", "type": "string" },
@@ -406,6 +404,247 @@
 			{ "name": "count", "type": "int" },
 			{ "name": "name", "type": "string" },
 			{ "name": "users", "type": "[]string" }
+		]
+	},
+	{
+		"name": "ChatResponse",
+		"fields": [
+			{ "name": "channel", "type": "string" },
+			{ "name": "ts", "type": "string", "accessor_name": "Timestamp" },
+			{ "name": "message", "type": "interface{}" }
+		]
+	},
+	{
+		"name": "PermalinkResponse",
+		"fields": [
+			{ "name": "channel", "type": "string" },
+			{ "name": "permalink", "type": "string" }
+		]
+	},
+	{
+		"name": "EphemeralResponse",
+		"fields": [
+			{ "name": "message_ts", "type": "string" }
+		]
+	},
+	{
+		"name": "ChannelsHistoryResponse",
+		"fields": [
+			{ "name": "has_more", "type": "bool" },
+			{ "name": "latest", "type": "string" },
+			{ "name": "messages", "type": "MessageList" }
+		]
+	},
+	{
+		"name": "Dialog",
+		"group": "Object",
+		"skip_list": true,
+		"fields": [
+			{ "name": "callback_id", "type": "string" },
+			{ "name": "title", "type": "string" },
+			{ "name": "submit_label", "type": "string" },
+			{ "name": "elements", "type": "DialogElementList" }
+		]
+	},
+	{
+		"name": "DialogElement",
+		"group": "Object",
+		"fields": [
+			{ "name": "label", "type": "string" },
+			{ "name": "typ", "type": "string", "accessor_name": "Type" },
+			{ "name": "name", "type": "string" },
+			{ "name": "hint", "type": "string" },
+			{ "name": "max_length", "type": "string" },
+			{ "name": "min_length", "type": "string" },
+			{ "name": "optional", "type": "bool" },
+			{ "name": "placeholder", "type": "string" },
+			{ "name": "subtype", "type": "string" },
+			{ "name": "value", "type": "string" }
+		]
+	},
+	{
+		"name": "ThreadInfo",
+		"group": "Object",
+		"skip_list": true,
+		"fields": [
+			{ "name": "complete", "type": "bool" },
+			{ "name": "count", "type": "int" }
+		]
+	},
+	{
+		"name": "Usergroup",
+		"description": "Usergroup represents a single UserGroup (like @accounting or @marketing). This should not be confused with private channels or multi-person messages. This is an alias that points to a collection of users and/or channels for notification purposes.",
+		"group": "Object",
+		"fields": [
+			{ "name": "auto_provision", "type": "bool" },
+			{ "name": "auto_type", "type": "string" },
+			{ "name": "created_by", "type": "string" },
+			{ "name": "date_create", "type": "EpochTime" },
+			{ "name": "date_delete", "type": "EpochTime" },
+			{ "name": "date_update", "type": "EpochTime" },
+			{ "name": "deleted_by", "type": "string" },
+			{ "name": "description", "type": "string" },
+			{ "name": "enterprise_subteam_id", "type": "string" },
+			{ "name": "handle", "type": "string" },
+			{ "name": "id", "type": "string" },
+			{ "name": "is_external", "type": "bool" },
+			{ "name": "is_subteam", "type": "bool" },
+			{ "name": "is_usergroup", "type": "bool" },
+			{ "name": "name", "type": "string" },
+			{ "name": "prefs", "type": "*UsergroupPrefs" },
+			{ "name": "team_id", "type": "string" },
+			{ "name": "updated_by", "type": "string" },
+			{ "name": "users", "type": "[]string" },
+			{ "name": "user_count", "type": "int" }
+		]
+	},
+	{
+		"name": "UsergroupPrefs",
+		"group": "Object",
+		"description": "UsergroupPrefs is the list of preferences for channels and groups for a given Usergroup.",
+		"skip_list": true,
+		"fields": [
+			{ "name": "channels", "type": "[]string" },
+			{ "name": "groups", "type": "[]string" }
+		]
+	},
+	{
+		"name": "Team",
+		"group": "Object",
+		"fields": [
+			{ "name": "id", "type": "string" },
+			{ "name": "name", "type": "string" },
+			{ "name": "domain", "type": "string" },
+			{ "name": "email_domain", "type": "string" },
+			{ "name": "enterprise_id", "type": "string" },
+			{ "name": "enterprise_name", "type": "string" },
+			{ "name": "icon", "type": "map[string]interface{}" },
+			{ "name": "msg_edit_window_mins", "type": "int" },
+			{ "name": "over_storage_limit", "type": "bool" },
+			{ "name": "prefs", "type": "interface{}" },
+			{ "name": "plan", "type": "string" }
+		]
+	},
+ 	{
+		"name": "OAuthAccessResponse",
+		"fields": [
+			{ "name": "access_token", "type": "string" },
+			{ "name": "scope", "type": "string" }
+		]
+	},
+	{
+		"name": "ReactionsGetResponse",
+		"description": "ReactionsGetResponse represents the response obtained from reactions.get API (https://api.slack.com/methods/reactions.get)",
+		"fields": [
+			{ "name": "channel", "type": "string" },
+			{ "name": "comment", "type": "string" },
+			{ "name": "file", "type": "*File" },
+			{ "name": "message", "type": "*Message" },
+			{ "name": "typ", "type": "string", "accessor_name": "Type" }
+		]
+	},
+	{
+		"name": "File",
+		"group": "Object",
+		"description": "File represents a file object (https://api.slack.com/types/file)",
+		"fields": [
+			{ "name": "id", "type": "string" },
+			{ "name": "name", "type": "string" },
+			{ "name": "user", "type": "string" },
+			{ "name": "created", "type": "int", "comment": "The created property is a unix timestamp representing when the file was created." },
+			{ "name": "timestamp", "type": "int", "comment": "Deprecated" },
+			{ "name": "updated", "type": "int", "comment": "The updated property (for Post filetypes only) is a unix timestamp of when the Post was last edited." },
+			{ "name": "mimetype", "type" :"string", "accessor_name": "MimeType", "comment": "The mimetype and filetype props do not have a 1-to-1 mapping, as multiple different files types ('html', 'js', etc.) share the same mime type." },
+			{ "name": "filetype", "type": "string", "accessor_name": "FileType" },
+			{ "name": "pretty_type", "type": "string", "comment": "The pretty_type property contains a human-readable version of the type." },
+			{ "name": "mode", "type": "string", "comment": "The mode property contains one of hosted, external, snippet or post." },
+			{ "name": "editable", "type": "bool", "comment": "The editable property indicates that files are stored in editable mode." },
+			{ "name": "is_external", "type": "bool", "comment": "The is_external property indicates whether the master copy of a file is stored within the system or not. If the file is_external, then the url property will point to the externally-hosted master file. Further, the external_type property will indicate what kind of external file it is, e.g. dropbox or gdoc." },
+			{ "name": "external_type", "type": "string" },
+			{ "name": "size", "type": "int", "comment": "The size parameter is the filesize in bytes. Snippets are limited to a maximum file size of 1 megabyte." },
+			{ "name": "url", "type": "string", "comment": "Deprecated - never set" },
+			{ "name": "url_download", "type": "string", "comment": "Deprecated - never set" },
+			{ "name": "url_private", "type": "string" },
+			{ "name": "url_private_download", "type": "string" },
+			{ "name": "image_exif_rotation", "type": "string" },
+			{ "name": "original_w", "type": "int", "accessor_name": "OriginalWidth" },
+			{ "name": "original_h", "type": "int", "accessor_name": "OriginalHeight" },
+			{ "name": "thumb_64", "type": "string" },
+			{ "name": "thumb_80", "type": "string" },
+			{ "name": "thumb_160", "type": "string" },
+			{ "name": "thumb_360", "type": "string" },
+			{ "name": "thumb_360_gif", "type": "string" },
+			{ "name": "thumb_360_w", "type": "int" },
+			{ "name": "thumb_360_h", "type": "int" },
+			{ "name": "thumb_480", "type": "string" },
+			{ "name": "thumb_480_w", "type": "int" },
+			{ "name": "thumb_480_h", "type": "int" },
+			{ "name": "thumb_720", "type": "string" },
+			{ "name": "thumb_720_w", "type": "int" },
+			{ "name": "thumb_720_h", "type": "int" },
+			{ "name": "thumb_960", "type": "string" },
+			{ "name": "thumb_960_w", "type": "int" },
+			{ "name": "thumb_960_h", "type": "int" },
+			{ "name": "thumb_1024", "type": "string" },
+			{ "name": "thumb_1024_w", "type": "int" },
+			{ "name": "thumb_1024_h", "type": "int" },
+			{ "name": "permalink", "type": "string" },
+			{ "name": "permalink_public", "type": "string" },
+			{ "name": "edit_link", "type": "string" },
+			{ "name": "preview", "type": "string" },
+			{ "name": "preview_highlight", "type": "string" },
+			{ "name": "lines", "type": "int" },
+			{ "name": "lines_more", "type": "int" },
+			{ "name": "is_public", "type": "bool" },
+			{ "name": "public_url_shared", "type": "bool" },
+			{ "name": "channels", "type": "[]string" },
+			{ "name": "groups", "type": "[]string" },
+			{ "name": "ims", "type": "[]string", "accessor_name": "IMs" },
+			{ "name": "initial_comment", "type": "Comment" },
+			{ "name": "comment_count", "type": "int" },
+			{ "name": "num_stars", "type": "int" },
+			{ "name": "is_starred", "type": "bool" },
+			{ "name": "title", "type": "string" },
+			{ "name": "reactions", "type": "ReactionList" }
+		]
+	},
+	{
+		"name": "ReactionsListResponse",
+		"fields": [
+			{ "name": "items", "type": "ReactionsGetResponseList" },
+			{ "name": "paging", "type": "*Paging" }
+		]
+	},
+	{
+		"name": "Paging",
+		"fields": [
+			{ "name": "count", "type": "int" },
+			{ "name": "total", "type": "int" },
+			{ "name": "page", "type": "int" },
+			{ "name": "pages", "type": "int" }
+		]
+	},
+	{
+		"name": "Reminder",
+		"group": "Object",
+		"fields": [
+			{ "name": "id", "type": "string" },
+			{ "name": "creator", "type": "string" },
+			{ "name": "user", "type": "string" },
+			{ "name": "text", "type": "string" },
+			{ "name": "recurring", "type": "bool" },
+			{ "name": "time", "type": "EpochTime" },
+			{ "name": "complete_timestamp", "type": "EpochTime" }
+		]
+	},
+	{
+		"name": "GenericResponse",
+		"description": "GenericResponse is the generic response part given by all slack API response.",
+		"fields": [
+			{ "name": "ok", "type": "bool", "accessor_name": "OK" },
+			{ "name": "reply_to", "type": "int" },
+			{ "name": "error", "type": "*ErrorResponse" },
+			{ "name": "ts", "type": "string", "accessor_name": "Timestamp" }
 		]
 	}
 ]

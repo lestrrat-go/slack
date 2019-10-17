@@ -11,4 +11,11 @@ type ErrorResponse struct {
 	Message string `json:"msg"`
 }
 
+type DialogResponse struct {
+	ResponseMetadata struct {
+		Messages []string `json:"messages"`
+	} `json:"response_metadata"`
+}
+
+type EmojiListResponse map[string]string
 

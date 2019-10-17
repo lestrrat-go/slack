@@ -1,5 +1,10 @@
 package objects
 
+func (l *BlockList) Append(v Block) *BlockList {
+	*l = append(*l, v)
+	return l
+}
+
 func (l *ActionList) Append(v *Action) *ActionList {
 	*l = append(*l, v)
 	return l
@@ -30,6 +35,21 @@ func (l *ConversationList) Append(v *Conversation) *ConversationList {
 	return l
 }
 
+func (l *DialogElementList) Append(v *DialogElement) *DialogElementList {
+	*l = append(*l, v)
+	return l
+}
+
+func (l *FileList) Append(v *File) *FileList {
+	*l = append(*l, v)
+	return l
+}
+
+func (l *GroupList) Append(v *Group) *GroupList {
+	*l = append(*l, v)
+	return l
+}
+
 func (l *MessageList) Append(v *Message) *MessageList {
 	*l = append(*l, v)
 	return l
@@ -50,7 +70,27 @@ func (l *ReactionList) Append(v *Reaction) *ReactionList {
 	return l
 }
 
+func (l *ReactionsGetResponseList) Append(v *ReactionsGetResponse) *ReactionsGetResponseList {
+	*l = append(*l, v)
+	return l
+}
+
+func (l *ReminderList) Append(v *Reminder) *ReminderList {
+	*l = append(*l, v)
+	return l
+}
+
+func (l *TeamList) Append(v *Team) *TeamList {
+	*l = append(*l, v)
+	return l
+}
+
 func (l *UserProfileList) Append(v *UserProfile) *UserProfileList {
+	*l = append(*l, v)
+	return l
+}
+
+func (l *UsergroupList) Append(v *Usergroup) *UsergroupList {
 	*l = append(*l, v)
 	return l
 }

@@ -226,7 +226,7 @@ func BuildSectionBlock(text *Text) *SectionBlockBuilder {
 	return &b
 }
 
-func (b *SectionBlockBuilder) Fields(v []*Text) *SectionBlockBuilder {
+func (b *SectionBlockBuilder) Fields(v ...*Text) *SectionBlockBuilder {
 	b.fields = v
 	return b
 }

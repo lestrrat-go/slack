@@ -242,6 +242,30 @@ type ChannelBuilder struct {
 
 type ChannelList []*Channel
 
+type ChannelsHistoryResponse struct {
+	hasMore  bool        `json:"has_more,omitempty"`
+	latest   string      `json:"latest,omitempty"`
+	messages MessageList `json:"messages,omitempty"`
+}
+
+type ChannelsHistoryResponseBuilder struct {
+	hasMore  bool
+	latest   string
+	messages MessageList
+}
+
+type ChatResponse struct {
+	channel string      `json:"channel,omitempty"`
+	ts      string      `json:"ts,omitempty"`
+	message interface{} `json:"message,omitempty"`
+}
+
+type ChatResponseBuilder struct {
+	channel string
+	ts      string
+	message interface{}
+}
+
 type Comment struct {
 	id         string    `json:"id,omitempty"`
 	created    EpochTime `json:"created,omitempty"`
@@ -320,6 +344,48 @@ type ConversationBuilder struct {
 
 type ConversationList []*Conversation
 
+type Dialog struct {
+	callbackId  string            `json:"callback_id,omitempty"`
+	title       string            `json:"title,omitempty"`
+	submitLabel string            `json:"submit_label,omitempty"`
+	elements    DialogElementList `json:"elements,omitempty"`
+}
+
+type DialogBuilder struct {
+	callbackId  string
+	title       string
+	submitLabel string
+	elements    DialogElementList
+}
+
+type DialogElement struct {
+	label       string `json:"label,omitempty"`
+	typ         string `json:"typ,omitempty"`
+	name        string `json:"name,omitempty"`
+	hint        string `json:"hint,omitempty"`
+	maxLength   string `json:"max_length,omitempty"`
+	minLength   string `json:"min_length,omitempty"`
+	optional    bool   `json:"optional,omitempty"`
+	placeholder string `json:"placeholder,omitempty"`
+	subtype     string `json:"subtype,omitempty"`
+	value       string `json:"value,omitempty"`
+}
+
+type DialogElementBuilder struct {
+	label       string
+	typ         string
+	name        string
+	hint        string
+	maxLength   string
+	minLength   string
+	optional    bool
+	placeholder string
+	subtype     string
+	value       string
+}
+
+type DialogElementList []*DialogElement
+
 type DividerBlock struct {
 	blockId string `json:"block_id,omitempty"`
 }
@@ -338,6 +404,138 @@ type EditedBuilder struct {
 	user string
 }
 
+type EphemeralResponse struct {
+	messageTs string `json:"message_ts,omitempty"`
+}
+
+type EphemeralResponseBuilder struct {
+	messageTs string
+}
+
+type File struct {
+	id                 string       `json:"id,omitempty"`
+	name               string       `json:"name,omitempty"`
+	user               string       `json:"user,omitempty"`
+	created            int          `json:"created,omitempty"`
+	timestamp          int          `json:"timestamp,omitempty"`
+	updated            int          `json:"updated,omitempty"`
+	mimetype           string       `json:"mimetype,omitempty"`
+	filetype           string       `json:"filetype,omitempty"`
+	prettyType         string       `json:"pretty_type,omitempty"`
+	mode               string       `json:"mode,omitempty"`
+	editable           bool         `json:"editable,omitempty"`
+	isExternal         bool         `json:"is_external,omitempty"`
+	externalType       string       `json:"external_type,omitempty"`
+	size               int          `json:"size,omitempty"`
+	url                string       `json:"url,omitempty"`
+	urlDownload        string       `json:"url_download,omitempty"`
+	urlPrivate         string       `json:"url_private,omitempty"`
+	urlPrivateDownload string       `json:"url_private_download,omitempty"`
+	imageExifRotation  string       `json:"image_exif_rotation,omitempty"`
+	originalW          int          `json:"original_w,omitempty"`
+	originalH          int          `json:"original_h,omitempty"`
+	thumb64            string       `json:"thumb_64,omitempty"`
+	thumb80            string       `json:"thumb_80,omitempty"`
+	thumb160           string       `json:"thumb_160,omitempty"`
+	thumb360           string       `json:"thumb_360,omitempty"`
+	thumb360Gif        string       `json:"thumb_360_gif,omitempty"`
+	thumb360W          int          `json:"thumb_360_w,omitempty"`
+	thumb360H          int          `json:"thumb_360_h,omitempty"`
+	thumb480           string       `json:"thumb_480,omitempty"`
+	thumb480W          int          `json:"thumb_480_w,omitempty"`
+	thumb480H          int          `json:"thumb_480_h,omitempty"`
+	thumb720           string       `json:"thumb_720,omitempty"`
+	thumb720W          int          `json:"thumb_720_w,omitempty"`
+	thumb720H          int          `json:"thumb_720_h,omitempty"`
+	thumb960           string       `json:"thumb_960,omitempty"`
+	thumb960W          int          `json:"thumb_960_w,omitempty"`
+	thumb960H          int          `json:"thumb_960_h,omitempty"`
+	thumb1024          string       `json:"thumb_1024,omitempty"`
+	thumb1024W         int          `json:"thumb_1024_w,omitempty"`
+	thumb1024H         int          `json:"thumb_1024_h,omitempty"`
+	permalink          string       `json:"permalink,omitempty"`
+	permalinkPublic    string       `json:"permalink_public,omitempty"`
+	editLink           string       `json:"edit_link,omitempty"`
+	preview            string       `json:"preview,omitempty"`
+	previewHighlight   string       `json:"preview_highlight,omitempty"`
+	lines              int          `json:"lines,omitempty"`
+	linesMore          int          `json:"lines_more,omitempty"`
+	isPublic           bool         `json:"is_public,omitempty"`
+	publicUrlShared    bool         `json:"public_url_shared,omitempty"`
+	channels           []string     `json:"channels,omitempty"`
+	groups             []string     `json:"groups,omitempty"`
+	ims                []string     `json:"ims,omitempty"`
+	initialComment     Comment      `json:"initial_comment,omitempty"`
+	commentCount       int          `json:"comment_count,omitempty"`
+	numStars           int          `json:"num_stars,omitempty"`
+	isStarred          bool         `json:"is_starred,omitempty"`
+	title              string       `json:"title,omitempty"`
+	reactions          ReactionList `json:"reactions,omitempty"`
+}
+
+type FileBuilder struct {
+	id                 string
+	name               string
+	user               string
+	created            int
+	timestamp          int
+	updated            int
+	mimetype           string
+	filetype           string
+	prettyType         string
+	mode               string
+	editable           bool
+	isExternal         bool
+	externalType       string
+	size               int
+	url                string
+	urlDownload        string
+	urlPrivate         string
+	urlPrivateDownload string
+	imageExifRotation  string
+	originalW          int
+	originalH          int
+	thumb64            string
+	thumb80            string
+	thumb160           string
+	thumb360           string
+	thumb360Gif        string
+	thumb360W          int
+	thumb360H          int
+	thumb480           string
+	thumb480W          int
+	thumb480H          int
+	thumb720           string
+	thumb720W          int
+	thumb720H          int
+	thumb960           string
+	thumb960W          int
+	thumb960H          int
+	thumb1024          string
+	thumb1024W         int
+	thumb1024H         int
+	permalink          string
+	permalinkPublic    string
+	editLink           string
+	preview            string
+	previewHighlight   string
+	lines              int
+	linesMore          int
+	isPublic           bool
+	publicUrlShared    bool
+	channels           []string
+	groups             []string
+	ims                []string
+	initialComment     Comment
+	commentCount       int
+	numStars           int
+	isStarred          bool
+	title              string
+	reactions          ReactionList
+}
+
+type FileList []*File
+
 type FileBlock struct {
 	externalId string `json:"external_id"`
 	source     string `json:"source,omitempty"`
@@ -348,6 +546,20 @@ type FileBlockBuilder struct {
 	externalId string
 	source     string
 	blockId    string
+}
+
+type GenericResponse struct {
+	ok      bool           `json:"ok,omitempty"`
+	replyTo int            `json:"reply_to,omitempty"`
+	error   *ErrorResponse `json:"error,omitempty"`
+	ts      string         `json:"ts,omitempty"`
+}
+
+type GenericResponseBuilder struct {
+	ok      bool
+	replyTo int
+	error   *ErrorResponse
+	ts      string
 }
 
 type Group struct {
@@ -391,6 +603,8 @@ type GroupBuilder struct {
 	purpose            Purpose
 	topic              Topic
 }
+
+type GroupList []*Group
 
 type Icons struct {
 	image36 string `json:"image_36,omitempty"`
@@ -508,6 +722,16 @@ type MessageBuilder struct {
 
 type MessageList []*Message
 
+type OAuthAccessResponse struct {
+	accessToken string `json:"access_token,omitempty"`
+	scope       string `json:"scope,omitempty"`
+}
+
+type OAuthAccessResponseBuilder struct {
+	accessToken string
+	scope       string
+}
+
 type Option struct {
 	text        string `json:"text,omitempty"`
 	value       string `json:"value,omitempty"`
@@ -556,6 +780,30 @@ type OptionObjectBuilder struct {
 	url   string
 }
 
+type Paging struct {
+	count int `json:"count,omitempty"`
+	total int `json:"total,omitempty"`
+	page  int `json:"page,omitempty"`
+	pages int `json:"pages,omitempty"`
+}
+
+type PagingBuilder struct {
+	count int
+	total int
+	page  int
+	pages int
+}
+
+type PermalinkResponse struct {
+	channel   string `json:"channel,omitempty"`
+	permalink string `json:"permalink,omitempty"`
+}
+
+type PermalinkResponseBuilder struct {
+	channel   string
+	permalink string
+}
+
 type Purpose struct {
 	value   string    `json:"value,omitempty"`
 	creator string    `json:"creator,omitempty"`
@@ -581,6 +829,56 @@ type ReactionBuilder struct {
 }
 
 type ReactionList []*Reaction
+
+type ReactionsGetResponse struct {
+	channel string   `json:"channel,omitempty"`
+	comment string   `json:"comment,omitempty"`
+	file    *File    `json:"file,omitempty"`
+	message *Message `json:"message,omitempty"`
+	typ     string   `json:"typ,omitempty"`
+}
+
+type ReactionsGetResponseBuilder struct {
+	channel string
+	comment string
+	file    *File
+	message *Message
+	typ     string
+}
+
+type ReactionsGetResponseList []*ReactionsGetResponse
+
+type ReactionsListResponse struct {
+	items  ReactionsGetResponseList `json:"items,omitempty"`
+	paging *Paging                  `json:"paging,omitempty"`
+}
+
+type ReactionsListResponseBuilder struct {
+	items  ReactionsGetResponseList
+	paging *Paging
+}
+
+type Reminder struct {
+	id                string    `json:"id,omitempty"`
+	creator           string    `json:"creator,omitempty"`
+	user              string    `json:"user,omitempty"`
+	text              string    `json:"text,omitempty"`
+	recurring         bool      `json:"recurring,omitempty"`
+	time              EpochTime `json:"time,omitempty"`
+	completeTimestamp EpochTime `json:"complete_timestamp,omitempty"`
+}
+
+type ReminderBuilder struct {
+	id                string
+	creator           string
+	user              string
+	text              string
+	recurring         bool
+	time              EpochTime
+	completeTimestamp EpochTime
+}
+
+type ReminderList []*Reminder
 
 type SectionBlock struct {
 	text      *Text        `json:"text"`
@@ -614,6 +912,36 @@ type SelectElementBuilder struct {
 	confirm       ConfirmObject
 }
 
+type Team struct {
+	id                string                 `json:"id,omitempty"`
+	name              string                 `json:"name,omitempty"`
+	domain            string                 `json:"domain,omitempty"`
+	emailDomain       string                 `json:"email_domain,omitempty"`
+	enterpriseId      string                 `json:"enterprise_id,omitempty"`
+	enterpriseName    string                 `json:"enterprise_name,omitempty"`
+	icon              map[string]interface{} `json:"icon,omitempty"`
+	msgEditWindowMins int                    `json:"msg_edit_window_mins,omitempty"`
+	overStorageLimit  bool                   `json:"over_storage_limit,omitempty"`
+	prefs             interface{}            `json:"prefs,omitempty"`
+	plan              string                 `json:"plan,omitempty"`
+}
+
+type TeamBuilder struct {
+	id                string
+	name              string
+	domain            string
+	emailDomain       string
+	enterpriseId      string
+	enterpriseName    string
+	icon              map[string]interface{}
+	msgEditWindowMins int
+	overStorageLimit  bool
+	prefs             interface{}
+	plan              string
+}
+
+type TeamList []*Team
+
 type Text struct {
 	typ      string `json:"typ"`
 	text     string `json:"text"`
@@ -626,6 +954,16 @@ type TextBuilder struct {
 	text     string
 	emoji    bool
 	verbatim bool
+}
+
+type ThreadInfo struct {
+	complete bool `json:"complete,omitempty"`
+	count    int  `json:"count,omitempty"`
+}
+
+type ThreadInfoBuilder struct {
+	complete bool
+	count    int
 }
 
 type Topic struct {
@@ -677,3 +1015,61 @@ type UserProfileBuilder struct {
 }
 
 type UserProfileList []*UserProfile
+
+type Usergroup struct {
+	autoProvision       bool            `json:"auto_provision,omitempty"`
+	autoType            string          `json:"auto_type,omitempty"`
+	createdBy           string          `json:"created_by,omitempty"`
+	dateCreate          EpochTime       `json:"date_create,omitempty"`
+	dateDelete          EpochTime       `json:"date_delete,omitempty"`
+	dateUpdate          EpochTime       `json:"date_update,omitempty"`
+	deletedBy           string          `json:"deleted_by,omitempty"`
+	description         string          `json:"description,omitempty"`
+	enterpriseSubteamId string          `json:"enterprise_subteam_id,omitempty"`
+	handle              string          `json:"handle,omitempty"`
+	id                  string          `json:"id,omitempty"`
+	isExternal          bool            `json:"is_external,omitempty"`
+	isSubteam           bool            `json:"is_subteam,omitempty"`
+	isUsergroup         bool            `json:"is_usergroup,omitempty"`
+	name                string          `json:"name,omitempty"`
+	prefs               *UsergroupPrefs `json:"prefs,omitempty"`
+	teamId              string          `json:"team_id,omitempty"`
+	updatedBy           string          `json:"updated_by,omitempty"`
+	users               []string        `json:"users,omitempty"`
+	userCount           int             `json:"user_count,omitempty"`
+}
+
+type UsergroupBuilder struct {
+	autoProvision       bool
+	autoType            string
+	createdBy           string
+	dateCreate          EpochTime
+	dateDelete          EpochTime
+	dateUpdate          EpochTime
+	deletedBy           string
+	description         string
+	enterpriseSubteamId string
+	handle              string
+	id                  string
+	isExternal          bool
+	isSubteam           bool
+	isUsergroup         bool
+	name                string
+	prefs               *UsergroupPrefs
+	teamId              string
+	updatedBy           string
+	users               []string
+	userCount           int
+}
+
+type UsergroupList []*Usergroup
+
+type UsergroupPrefs struct {
+	channels []string `json:"channels,omitempty"`
+	groups   []string `json:"groups,omitempty"`
+}
+
+type UsergroupPrefsBuilder struct {
+	channels []string
+	groups   []string
+}

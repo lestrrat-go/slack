@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"sort"
 	"strconv"
@@ -108,6 +109,9 @@ func _main() error {
 	if err := writeObjects(list); err != nil {
 		return errors.Wrap(err, `failed to write objects file`)
 	}
+	if err := writeResponses(list); err != nil {
+		return errors.Wrap(err, `failed to write responses file`)
+	}
 	if err := writeLists(list); err != nil {
 		return errors.Wrap(err, `failed to write lists file`)
 	}
@@ -164,12 +168,76 @@ func writeInterface(list []definition) error {
 		}
 		fmt.Fprintf(&buf, "\n}")
 
-		if def.Group == "Object" && !def.SkipList {
+		if def.Name == "ReactionsGetResponse" || (def.Group == "Object" && !def.SkipList) {
 			fmt.Fprintf(&buf, "\n\ntype %[1]sList []*%[1]s", def.Name)
 		}
 	}
 
 	return codegen.WriteGoCodeToFile("objects/interface_gen.go", buf.Bytes())
+	return nil
+}
+
+func writeBuilder(dst io.Writer, def definition) error {
+	var buf bytes.Buffer
+
+	fmt.Fprintf(&buf, "\n\nfunc Build%s(", stringutil.Camel(def.Name))
+	var requireds []field
+	var optionals []field
+	for _, field := range def.Fields {
+		if !field.Required {
+			optionals = append(optionals, field)
+			continue
+		}
+		requireds = append(requireds, field)
+		if field.IsSliceType() {
+			fmt.Fprintf(&buf, "%s ...%s, ", field.GoName(), field.SliceElementType())
+		} else {
+			fmt.Fprintf(&buf, "%s %s, ", field.GoName(), field.Type)
+		}
+	}
+	if len(requireds) > 0 {
+		buf.Truncate(buf.Len() - 2)
+	}
+	fmt.Fprintf(&buf, ") *%sBuilder {", stringutil.Camel(def.Name))
+	fmt.Fprintf(&buf, "\nvar b %sBuilder", stringutil.Camel(def.Name))
+	for _, field := range requireds {
+		fmt.Fprintf(&buf, "\nb.%s = %s", field.GoName(), field.GoName())
+	}
+	fmt.Fprintf(&buf, "\nreturn &b")
+	fmt.Fprintf(&buf, "\n}")
+
+	for _, field := range optionals {
+		fmt.Fprintf(&buf, "\n\nfunc (b *%sBuilder) %s(v ", def.GoName(), field.GoAccessorName())
+		if field.IsSliceType() {
+			fmt.Fprintf(&buf, "...%s", field.SliceElementType())
+		} else {
+			fmt.Fprintf(&buf, "%s", field.Type)
+		}
+		fmt.Fprintf(&buf, ") *%sBuilder {", def.GoName())
+		//			if field.IsSliceType() {
+		//				fmt.Fprintf(&buf, "\nb.%s = %s(v)", field.GoName(), field.Type)
+		//			} else {
+		fmt.Fprintf(&buf, "\nb.%s = v", field.GoName())
+		//			}
+		fmt.Fprintf(&buf, "\nreturn b")
+		fmt.Fprintf(&buf, "\n}")
+	}
+
+	fmt.Fprintf(&buf, "\n\nfunc (b *%[1]sBuilder) Do() (*%[1]s, error) {", def.GoName())
+	if def.Validate {
+		fmt.Fprintf(&buf, "\nif err := b.Validate(); err != nil {")
+		fmt.Fprintf(&buf, "\nreturn nil, errors.Wrap(err, `validation for %s failed`)", def.GoName())
+		fmt.Fprintf(&buf, "\n}")
+	}
+
+	fmt.Fprintf(&buf, "\nvar v %s", def.GoName())
+	for _, field := range def.Fields {
+		fmt.Fprintf(&buf, "\nv.%s = b.%s", field.GoName(), field.GoName())
+	}
+	fmt.Fprintf(&buf, "\nreturn &v, nil")
+	fmt.Fprintf(&buf, "\n}")
+
+	buf.WriteTo(dst)
 	return nil
 }
 
@@ -181,51 +249,10 @@ func writeBlock(list []definition) error {
 			continue
 		}
 
-		fmt.Fprintf(&buf, "\n\nfunc Build%s(", stringutil.Camel(def.Name))
-		var requireds []field
-		var optionals []field
-		for _, field := range def.Fields {
-			if !field.Required {
-				optionals = append(optionals, field)
-				continue
-			}
-			requireds = append(requireds, field)
-			if field.IsSliceType() {
-				fmt.Fprintf(&buf, "%s ...%s, ", field.GoName(), field.SliceElementType())
-			} else {
-				fmt.Fprintf(&buf, "%s %s, ", field.GoName(), field.Type)
-			}
-		}
-		if len(requireds) > 0 {
-			buf.Truncate(buf.Len() - 2)
-		}
-		fmt.Fprintf(&buf, ") *%sBuilder {", stringutil.Camel(def.Name))
-		fmt.Fprintf(&buf, "\nvar b %sBuilder", stringutil.Camel(def.Name))
-		for _, field := range requireds {
-			fmt.Fprintf(&buf, "\nb.%s = %s", field.GoName(), field.GoName())
-		}
-		fmt.Fprintf(&buf, "\nreturn &b")
-		fmt.Fprintf(&buf, "\n}")
-
-		for _, field := range optionals {
-			fmt.Fprintf(&buf, "\n\nfunc (b *%sBuilder) %s(v %s) *%sBuilder {", def.GoName(), field.GoAccessorName(), field.Type, def.GoName())
-			fmt.Fprintf(&buf, "\nb.%s = v", field.GoName())
-			fmt.Fprintf(&buf, "\nreturn b")
-			fmt.Fprintf(&buf, "\n}")
-		}
-
-		fmt.Fprintf(&buf, "\n\nfunc (b *%sBuilder) Do() (*%s, error) {", def.GoName(), def.GoName())
-		fmt.Fprintf(&buf, "\nvar v %s", def.GoName())
-		for _, field := range def.Fields {
-			fmt.Fprintf(&buf, "\nv.%s = b.%s", field.GoName(), field.GoName())
-		}
-		fmt.Fprintf(&buf, "\nreturn &v, nil")
-		fmt.Fprintf(&buf, "\n}")
+		writeBuilder(&buf, def)
 
 		for _, field := range def.Fields {
-			fmt.Fprintf(&buf, "\n\nfunc(b *%s) %s() %s {", def.GoName(), field.GoAccessorName(), field.Type)
-			fmt.Fprintf(&buf, "\nreturn b.%s", field.GoName())
-			fmt.Fprintf(&buf, "\n}")
+			writeAccessor(&buf, def, field)
 		}
 
 		fmt.Fprintf(&buf, "\n\nfunc (b %s) Type() BlockType {", def.GoName())
@@ -249,67 +276,9 @@ func writeObjects(list []definition) error {
 			continue
 		}
 
-		fmt.Fprintf(&buf, "\n\nfunc Build%s(", stringutil.Camel(def.Name))
-		var requireds []field
-		var optionals []field
+		writeBuilder(&buf, def)
 		for _, field := range def.Fields {
-			if !field.Required {
-				optionals = append(optionals, field)
-				continue
-			}
-			requireds = append(requireds, field)
-			if field.IsSliceType() {
-				fmt.Fprintf(&buf, "%s ...%s, ", field.GoName(), field.SliceElementType())
-			} else {
-				fmt.Fprintf(&buf, "%s %s, ", field.GoName(), field.Type)
-			}
-		}
-		if len(requireds) > 0 {
-			buf.Truncate(buf.Len() - 2)
-		}
-		fmt.Fprintf(&buf, ") *%sBuilder {", stringutil.Camel(def.Name))
-		fmt.Fprintf(&buf, "\nvar b %sBuilder", stringutil.Camel(def.Name))
-		for _, field := range requireds {
-			fmt.Fprintf(&buf, "\nb.%s = %s", field.GoName(), field.GoName())
-		}
-		fmt.Fprintf(&buf, "\nreturn &b")
-		fmt.Fprintf(&buf, "\n}")
-
-		for _, field := range optionals {
-			fmt.Fprintf(&buf, "\n\nfunc (b *%sBuilder) %s(v ", def.GoName(), field.GoAccessorName())
-			if field.IsSliceType() {
-				fmt.Fprintf(&buf, "...%s", field.SliceElementType())
-			} else {
-				fmt.Fprintf(&buf, "%s", field.Type)
-			}
- 			fmt.Fprintf(&buf, ") *%sBuilder {", def.GoName())
-//			if field.IsSliceType() {
-//				fmt.Fprintf(&buf, "\nb.%s = %s(v)", field.GoName(), field.Type)
-//			} else {
-				fmt.Fprintf(&buf, "\nb.%s = v", field.GoName())
-//			}
-			fmt.Fprintf(&buf, "\nreturn b")
-			fmt.Fprintf(&buf, "\n}")
-		}
-
-		fmt.Fprintf(&buf, "\n\nfunc (b *%sBuilder) Do() (*%s, error) {", def.GoName(), def.GoName())
-		if def.Validate {
-			fmt.Fprintf(&buf, "\nif err := b.Validate(); err != nil {")
-			fmt.Fprintf(&buf, "\nreturn nil, errors.Wrap(err, `validation for %s failed`)", def.GoName())
-			fmt.Fprintf(&buf, "\n}")
-		}
-
-		fmt.Fprintf(&buf, "\nvar v %s", def.GoName())
-		for _, field := range def.Fields {
-			fmt.Fprintf(&buf, "\nv.%s = b.%s", field.GoName(), field.GoName())
-		}
-		fmt.Fprintf(&buf, "\nreturn &v, nil")
-		fmt.Fprintf(&buf, "\n}")
-
-		for _, field := range def.Fields {
-			fmt.Fprintf(&buf, "\n\nfunc(b *%s) %s() %s {", def.GoName(), field.GoAccessorName(), field.Type)
-			fmt.Fprintf(&buf, "\nreturn b.%s", field.GoName())
-			fmt.Fprintf(&buf, "\n}")
+			writeAccessor(&buf, def, field)
 		}
 
 	}
@@ -317,20 +286,54 @@ func writeObjects(list []definition) error {
 	return codegen.WriteGoCodeToFile("objects/objects_gen.go", buf.Bytes())
 }
 
+func writeAccessor(dst io.Writer, def definition, field field) error {
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, "\n\nfunc(b *%s) %s() %s {", def.GoName(), field.GoAccessorName(), field.Type)
+	fmt.Fprintf(&buf, "\nreturn b.%s", field.GoName())
+	fmt.Fprintf(&buf, "\n}")
+
+	buf.WriteTo(dst)
+	return nil
+}
+
 func writeLists(list []definition) error {
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, "\npackage objects")
 
-	for _, def := range list {
-		if def.Group != "Object" || def.SkipList {
-			continue
-		}
-
-		fmt.Fprintf(&buf, "\n\nfunc (l *%[1]sList) Append(v *%[1]s) *%[1]sList {", def.Name)
+	writeAppend := func(dst io.Writer, sliceTyp, typ string) {
+		fmt.Fprintf(&buf, "\n\nfunc (l %[1]s) Append(v %[2]s) %[1]s {", sliceTyp, typ)
 		fmt.Fprintf(&buf, "\n*l = append(*l, v)")
 		fmt.Fprintf(&buf, "\nreturn l")
 		fmt.Fprintf(&buf, "\n}")
 	}
 
+	writeAppend(&buf, "*BlockList", "Block")
+	for _, def := range list {
+		if def.Name != "ReactionsGetResponse" && (def.Group != "Object" || def.SkipList) {
+			continue
+		}
+
+		writeAppend(&buf, "*" + def.Name + "List", "*" + def.Name)
+	}
+
 	return codegen.WriteGoCodeToFile("objects/lists_gen.go", buf.Bytes())
+}
+
+func writeResponses(list []definition) error {
+	var buf bytes.Buffer
+	fmt.Fprintf(&buf, "\npackage objects")
+
+	for _, def := range list {
+		if !strings.HasSuffix(def.Name, "Response") {
+			continue
+		}
+
+		writeBuilder(&buf, def)
+		for _, field := range def.Fields {
+			writeAccessor(&buf, def, field)
+		}
+
+	}
+
+	return codegen.WriteGoCodeToFile("objects/responses_gen.go", buf.Bytes())
 }
