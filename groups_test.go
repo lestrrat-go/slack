@@ -35,7 +35,7 @@ func TestGroups_Integration(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 
-		_, hist, err := client.Groups().History(group.ID).Do(ctx)
+		_, hist, err := client.Groups().History(group.ID()).Do(ctx)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -50,11 +50,11 @@ func TestGroups_Integration(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 
-		info, err := client.Groups().Info(group.ID).Do(ctx)
+		info, err := client.Groups().Info(group.ID()).Do(ctx)
 		if err != nil {
 			t.Fatal(err)
 		}
-		if !info.IsGroup {
+		if !info.IsGroup() {
 			t.Errorf("expected to be group")
 		}
 	})

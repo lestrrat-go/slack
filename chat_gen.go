@@ -465,12 +465,12 @@ func (c *ChatPostEphemeralCall) FromValues(v url.Values) error {
 		tmp.asUser = parsed
 	}
 	if raw := strings.TrimSpace(v.Get("attachments")); len(raw) > 0 {
-		if err := tmp.attachments.Decode(raw); err != nil {
+		if err := json.Unmarshal([]byte(raw), &tmp.attachments); err != nil {
 			return errors.Wrap(err, `failed to decode value "attachments"`)
 		}
 	}
 	if raw := strings.TrimSpace(v.Get("blocks")); len(raw) > 0 {
-		if err := tmp.blocks.Decode(raw); err != nil {
+		if err := json.Unmarshal([]byte(raw), &tmp.blocks); err != nil {
 			return errors.Wrap(err, `failed to decode value "blocks"`)
 		}
 	}
@@ -707,12 +707,12 @@ func (c *ChatPostMessageCall) FromValues(v url.Values) error {
 		tmp.asUser = parsed
 	}
 	if raw := strings.TrimSpace(v.Get("attachments")); len(raw) > 0 {
-		if err := tmp.attachments.Decode(raw); err != nil {
+		if err := json.Unmarshal([]byte(raw), &tmp.attachments); err != nil {
 			return errors.Wrap(err, `failed to decode value "attachments"`)
 		}
 	}
 	if raw := strings.TrimSpace(v.Get("blocks")); len(raw) > 0 {
-		if err := tmp.blocks.Decode(raw); err != nil {
+		if err := json.Unmarshal([]byte(raw), &tmp.blocks); err != nil {
 			return errors.Wrap(err, `failed to decode value "blocks"`)
 		}
 	}
@@ -1016,12 +1016,12 @@ func (c *ChatUpdateCall) FromValues(v url.Values) error {
 		tmp.asUser = parsed
 	}
 	if raw := strings.TrimSpace(v.Get("attachments")); len(raw) > 0 {
-		if err := tmp.attachments.Decode(raw); err != nil {
+		if err := json.Unmarshal([]byte(raw), &tmp.attachments); err != nil {
 			return errors.Wrap(err, `failed to decode value "attachments"`)
 		}
 	}
 	if raw := strings.TrimSpace(v.Get("blocks")); len(raw) > 0 {
-		if err := tmp.blocks.Decode(raw); err != nil {
+		if err := json.Unmarshal([]byte(raw), &tmp.blocks); err != nil {
 			return errors.Wrap(err, `failed to decode value "blocks"`)
 		}
 	}

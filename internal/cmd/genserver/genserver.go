@@ -357,10 +357,10 @@ func generateMockServerFile(endpoints []*Endpoint) error {
 		fmt.Fprintf(&buf, "\nreturn stock%s()", camelit(typ))
 	}
 	fmt.Fprintf(&buf, "\ndefault:")
-	fmt.Fprintf(&buf, "\nreturn objects.GenericResponse{")
-	fmt.Fprintf(&buf, "\nOK: true,")
-	fmt.Fprintf(&buf, "\nTimestamp: strconv.FormatInt(time.Now().Unix(), 10),")
-	fmt.Fprintf(&buf, "\n}")
+	fmt.Fprintf(&buf, "\nreturn objects.BuildGenericResponse().")
+	fmt.Fprintf(&buf, "\nOK(true).")
+	fmt.Fprintf(&buf, "\nTimestamp(strconv.FormatInt(time.Now().Unix(), 10)).")
+	fmt.Fprintf(&buf, "\nMustBuild()")
 	fmt.Fprintf(&buf, "\n}") // end switch
 	fmt.Fprintf(&buf, "\n}") // end func StockResponse
 

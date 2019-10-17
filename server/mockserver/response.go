@@ -14,89 +14,89 @@ import (
 // https://github.com/golang/go/commit/6983b9a57955fa12ecd81ab8394ee09e64ef21b9
 const aLongLongTimeAgo = objects.EpochTime(233431200)
 
-var ReminderMeetMaceWindu = objects.Reminder{
-	ID:                "Rm72119BBY",
-	Creator:           UserObiwanKenobi.ID,
-	User:              UserObiwanKenobi.ID,
-	Text:              "Meet Mace Windu over lunch",
-	Recurring:         false,
-	Time:              aLongLongTimeAgo.Add(86400 * 25 * 365),
-	CompleteTimestamp: objects.EpochTime(0),
-}
+var ReminderMeetMaceWindu = objects.BuildReminder().
+	ID("Rm72119BBY").
+	Creator(UserObiwanKenobi.ID()).
+	User(UserObiwanKenobi.ID()).
+	Text("Meet Mace Windu over lunch").
+	Recurring(false).
+	Time(aLongLongTimeAgo.Add(86400 * 25 * 365)).
+	CompleteTimestamp(objects.EpochTime(0)).
+	MustBuild()
 
-var FileComputer = objects.File{
-	Channels:      []string{ChannelJedis.ID},
-	CommentsCount: 1,
-	Created:       aLongLongTimeAgo.Add(86400).Int(),
-	ID:            "F00000001",
-	Name:          "computer.gif",
-	Timestamp:     aLongLongTimeAgo.Add(86400).Int(),
-	Title:         "computer.gif",
-	User:          UserLukeSkywalker.ID,
-}
+var FileComputer = objects.BuildFile().
+	Channels(ChannelJedis.ID()).
+	CommentsCount(1).
+	Created(aLongLongTimeAgo.Add(86400).Int()).
+	ID("F00000001").
+	Name("computer.gif").
+	Timestamp(aLongLongTimeAgo.Add(86400).Int()).
+	Title("computer.gif").
+	User(UserLukeSkywalker.ID()).
+	MustBuild()
 
-var ChannelJedis = objects.Channel{
-	Group: objects.Group{
-		Conversation: objects.Conversation{
-			ID:      "C1J3D1ZRUL3",
-			Created: aLongLongTimeAgo,
-		},
-		Creator: UserYoda.ID,
-		Members: []string{
-			UserLukeSkywalker.ID,
-			UserObiwanKenobi.ID,
-			UserYoda.ID,
-		},
-		Name:           "jedis",
-		NameNormalized: "jedis",
-		NumMembers:     3,
-		Purpose: objects.Purpose{
-			Creator: "yoda",
-			LastSet: aLongLongTimeAgo,
-			Value:   "There is no emotion, there is peace.\nThere is no ignorance, there is knowledge.\nThere is no passion, there is serenity.\nThere is no chaos, there is harmony.\nThere is no death, there is the Force.",
-		},
-		Topic: objects.Topic{
-			Creator: "yoda",
-			Value:   "Jedi meetup and drinks next Tuesday",
-			LastSet: aLongLongTimeAgo,
-		},
-	},
-	IsChannel: true,
-	IsMember:  true,
-}
+var ChannelJedis = objects.BuildChannel().
+	ID("C1J3D1ZRUL3").
+	Created(aLongLongTimeAgo).
+	Creator(UserYoda.ID()).
+	Members(
+		UserLukeSkywalker.ID(),
+		UserObiwanKenobi.ID(),
+		UserYoda.ID(),
+	).
+	Name("jedis").
+	NameNormalized("jedis").
+	NumMembers(3).
+	Purpose(objects.BuildPurpose().
+		Creator("yoda").
+		LastSet(aLongLongTimeAgo).
+		Value("There is no emotion, there is peace.\nThere is no ignorance, there is knowledge.\nThere is no passion, there is serenity.\nThere is no chaos, there is harmony.\nThere is no death, there is the Force.").
+		MustBuild(),
+	).
+	Topic(objects.BuildTopic().
+		Creator("yoda").
+		Value("Jedi meetup and drinks next Tuesday").
+		LastSet(aLongLongTimeAgo).
+		MustBuild(),
+	).
+	IsChannel(true).
+	IsMember(true).
+	MustBuild()
 
-var TeamJedi = objects.Team{
-	ID:     "T0123456",
-	Name:   "Jedis",
-	Domain: "jedi.mock-slack-library.com",
-}
-var UserLukeSkywalker = objects.User{
-	ID:   "U0123456",
-	Name: "luke.skywalker",
-}
-var UserObiwanKenobi = objects.User{
-	ID:   "U0012345",
-	Name: "obiwan.kenobi",
-}
+var TeamJedi = objects.BuildTeam().
+	ID("T0123456").
+	Name("Jedis").
+	Domain("jedi.mock-slack-library.com").
+	MustBuild()
 
-var UserYoda = objects.User{
-	ID:   "U0000001",
-	Name: "yoda",
-}
+var UserLukeSkywalker = objects.BuildUser().
+	ID("U0123456").
+	Name("luke.skywalker").
+	MustBuild()
+
+var UserObiwanKenobi = objects.BuildUser().
+	ID("U0012345").
+	Name("obiwan.kenobi").
+	MustBuild()
+
+var UserYoda = objects.BuildUser().
+	ID("U0000001").
+	Name("yoda").
+	MustBuild()
 
 func stockObjectsAuthTestResponse() interface{} {
 	var r = struct {
 		objects.GenericResponse
-		objects.AuthTestResponse
+		*objects.AuthTestResponse
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
-		AuthTestResponse: objects.AuthTestResponse{
-			URL:    "https://jedi.dummy.mock-slack.com",
-			Team:   TeamJedi.Name,
-			TeamID: TeamJedi.ID,
-			User:   UserLukeSkywalker.Name,
-			UserID: UserLukeSkywalker.ID,
-		},
+		AuthTestResponse: objects.BuildAuthTestResponse().
+			URL("https://jedi.dummy.mock-slack.com").
+			Team(TeamJedi.Name()).
+			TeamID(TeamJedi.ID()).
+			User(UserLukeSkywalker.Name()).
+			UserID(UserLukeSkywalker.ID()).
+			MustBuild(),
 	}
 	return r
 }
@@ -104,7 +104,7 @@ func stockObjectsAuthTestResponse() interface{} {
 func stockObjectsChannel() interface{} {
 	var r = struct {
 		objects.GenericResponse
-		objects.Channel `json:"channel"`
+		*objects.Channel `json:"channel"`
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
 		Channel:         ChannelJedis,
@@ -113,22 +113,32 @@ func stockObjectsChannel() interface{} {
 }
 
 func stockObjectsReactionsGetResponse() interface{} {
-	f := FileComputer
-	f.Reactions = append(f.Reactions, &objects.Reaction{
-		Count: 1,
-		Name:  "stuck_out_tongue_winking_eye",
-		Users: []string{UserLukeSkywalker.ID},
-	})
+	reaction := objects.BuildReaction().
+		Count(1).
+		Name("stuck_out_tongue_winking_eye").
+		Users(UserLukeSkywalker.ID()).
+		MustBuild()
+	f := objects.BuildFile().
+		Channels(FileComputer.Channels()...).
+		CommentsCount(FileComputer.CommentsCount()).
+		Created(FileComputer.Created()).
+		ID(FileComputer.ID()).
+		Name(FileComputer.Name()).
+		Reactions(reaction).
+		Timestamp(FileComputer.Timestamp()).
+		Title(FileComputer.Title()).
+		User(FileComputer.User()).
+		MustBuild()
 
 	var r = struct {
 		objects.GenericResponse
 		*objects.ReactionsGetResponse
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
-		ReactionsGetResponse: &objects.ReactionsGetResponse{
-			File: &f,
-			Type: "file",
-		},
+		ReactionsGetResponse: objects.BuildReactionsGetResponse().
+			File(f).
+			Type("file").
+			MustBuild(),
 	}
 	return r
 }
@@ -140,9 +150,9 @@ func stockObjectsUserList() interface{} {
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
 		UserList: &objects.UserList{
-			&UserLukeSkywalker,
-			&UserObiwanKenobi,
-			&UserYoda,
+			UserLukeSkywalker,
+			UserObiwanKenobi,
+			UserYoda,
 		},
 	}
 	return r
@@ -150,20 +160,21 @@ func stockObjectsUserList() interface{} {
 func stockObjectsBot() interface{} {
 	var r = struct {
 		objects.GenericResponse
-		objects.Bot
+		*objects.Bot
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
-		Bot: objects.Bot{
-			ID:      "B0123456",
-			AppID:   "A0123456",
-			Deleted: false,
-			Name:    "jabbathehutt-bot",
-			Icons: objects.Icons{
-				Image36: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Jabba_the_Hutt_%288175228157%29.jpg",
-				Image48: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Jabba_the_Hutt_%288175228157%29.jpg",
-				Image72: "https://upload.wikimedia.org/wikipedia/commons/f/f0/Jabba_the_Hutt_%288175228157%29.jpg",
-			},
-		},
+		Bot: objects.BuildBot().
+			ID("B0123456").
+			AppID("A0123456").
+			Deleted(false).
+			Name("jabbathehutt-bot").
+			Icons(objects.BuildIcons().
+				Image36("https://upload.wikimedia.org/wikipedia/commons/f/f0/Jabba_the_Hutt_%288175228157%29.jpg").
+				Image48("https://upload.wikimedia.org/wikipedia/commons/f/f0/Jabba_the_Hutt_%288175228157%29.jpg").
+				Image72("https://upload.wikimedia.org/wikipedia/commons/f/f0/Jabba_the_Hutt_%288175228157%29.jpg").
+				MustBuild(),
+			).
+			MustBuild(),
 	}
 	return r
 }
@@ -171,12 +182,12 @@ func stockString() interface{} { return StockResponse("dummy") }
 func stockObjectsChatResponse() interface{} {
 	var r = struct {
 		objects.GenericResponse
-		objects.Message
+		*objects.Message
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
-		Message: objects.Message{
-			Channel: ChannelJedis.ID,
-		},
+		Message: objects.BuildMessage().
+			Channel(ChannelJedis.ID()).
+			MustBuild(),
 	}
 	return r
 }
@@ -186,7 +197,7 @@ func stockObjectsUsergroupUsersList() interface{}  { return StockResponse("dummy
 func stockObjectsUser() interface{} {
 	var r = struct {
 		objects.GenericResponse
-		objects.User `json:"user"`
+		*objects.User `json:"user"`
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
 		User:            UserLukeSkywalker,
@@ -205,19 +216,18 @@ func stockObjectsUserPresence() interface{}                 { return StockRespon
 func stockObjectsChannelsHistoryResponse() interface{} {
 	var r = struct {
 		objects.GenericResponse
-		objects.ChannelsHistoryResponse
+		*objects.ChannelsHistoryResponse
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
-		ChannelsHistoryResponse: objects.ChannelsHistoryResponse{
-			HasMore: true,
-			Latest:  "dummy",
-			Messages: objects.MessageList{
-				&objects.Message{
-					Channel:   ChannelJedis.ID,
-					Timestamp: strconv.FormatInt(time.Now().Unix()-7*86400, 10),
-				},
-			},
-		},
+		ChannelsHistoryResponse: objects.BuildChannelsHistoryResponse().
+			HasMore(true).
+			Latest("dummy").
+			Messages(objects.BuildMessage().
+				Channel(ChannelJedis.ID()).
+				Timestamp(strconv.FormatInt(time.Now().Unix()-7*86400, 10)).
+				MustBuild(),
+			).
+			MustBuild(),
 	}
 	return r
 }
@@ -230,7 +240,7 @@ func stockObjectsReminder() interface{} {
 		*objects.Reminder
 	}{
 		GenericResponse: StockResponse("dummy").(objects.GenericResponse),
-		Reminder:        &ReminderMeetMaceWindu,
+		Reminder:        ReminderMeetMaceWindu,
 	}
 	return r
 }

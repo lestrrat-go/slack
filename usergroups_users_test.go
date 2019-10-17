@@ -29,7 +29,7 @@ func TestUsergroupsUsers_Integration(t *testing.T) {
 
 	usergroup := usergroups[0]
 
-	list, err := client.UsergroupsUsers().List(usergroup.ID).Do(ctx)
+	list, err := client.UsergroupsUsers().List(usergroup.ID()).Do(ctx)
 	if err != nil {
 		t.Fatal(err)
 	}

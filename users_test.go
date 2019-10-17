@@ -40,7 +40,7 @@ func TestUsersList_Info_Presence(t *testing.T) {
 		default:
 		}
 
-		fromInfo, err := c.Users().Info(user.ID).Do(ctx)
+		fromInfo, err := c.Users().Info(user.ID()).Do(ctx)
 		if !assert.NoError(t, err, "Users.Info failed") {
 			return
 		}
@@ -49,7 +49,7 @@ func TestUsersList_Info_Presence(t *testing.T) {
 			return
 		}
 
-		presence, err := c.Users().GetPresence(user.ID).Do(ctx)
+		presence, err := c.Users().GetPresence(user.ID()).Do(ctx)
 		if !assert.NoError(t, err, "Users.GetPresence failed") {
 			return
 		}

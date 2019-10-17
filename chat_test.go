@@ -42,41 +42,44 @@ func TestChatMessage(t *testing.T) {
 	})
 
 	t.Run("buttons", func(t *testing.T) {
-		var attachment objects.Attachment
-		attachment.CallbackID = "wopr_game"
-		attachment.Color = "#3AA3E3"
-		attachment.Fallback = "You are unable to choose a game"
-		attachment.Text = "Choose a game to play"
-		attachment.Actions.
-			Append(&objects.Action{
-				Name:  "game",
-				Text:  "Chess",
-				Type:  objects.ButtonActionType,
-				Value: "chess",
-			}).
-			Append(&objects.Action{
-				Name:  "game",
-				Text:  "Falken's Maze",
-				Type:  objects.ButtonActionType,
-				Value: "maze",
-			}).
-			Append(&objects.Action{
-				Name:  "game",
-				Text:  "Thermonuclear War",
-				Style: "danger",
-				Type:  objects.ButtonActionType,
-				Value: "war",
-				Confirm: &objects.Confirmation{
-					Title:       "Are you sure?",
-					Text:        "Wouldn't you prefer a good game of chess?",
-					OkText:      "Yes",
-					DismissText: "No",
-				},
-			})
+		var attachment = objects.BuildAttachment().
+			CallbackID("wopr_game").
+			Color("#3AA3E3").
+			Fallback("You are unable to choose a game").
+			Text("Choose a game to play").
+			Actions(
+				objects.BuildAction().
+					Name("game").
+					Text("Chess").
+					Type(objects.ButtonActionType).
+					Value("chess").
+					MustBuild(),
+				objects.BuildAction().
+					Name("game").
+					Text("Falken's Maze").
+					Type(objects.ButtonActionType).
+					Value("maze").
+					MustBuild(),
+				objects.BuildAction().
+					Name("game").
+					Text("Thermonuclear War").
+					Style("danger").
+					Type(objects.ButtonActionType).
+					Value("war").
+					Confirm(objects.BuildConfirmation().
+						Title("Are you sure?").
+						Text("Wouldn't you prefer a good game of chess?").
+						OkText("Yes").
+						DismissText("No").
+						MustBuild(),
+					).
+					MustBuild(),
+			).
+			MustBuild()
 
 		res, err := c.Chat().PostMessage(testDmUser).
 			AsUser(true).
-			Attachment(&attachment).
+			Attachment(attachment).
 			Text("Would you like to play a game?").
 			Do(ctx)
 		if !assert.NoError(t, err, "Chat.PostMessage failed") {

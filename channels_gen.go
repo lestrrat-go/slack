@@ -5,6 +5,7 @@ package slack
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -820,6 +821,8 @@ func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) 
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.list`)
 	}
+
+	fmt.Printf("%#v", res)
 	if !res.OK() {
 		return nil, errors.New(res.Error().String())
 	}

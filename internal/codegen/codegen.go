@@ -1,16 +1,30 @@
 package codegen
 
 import (
+	"bufio"
+	"bytes"
+	"fmt"
 	"go/format"
+	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/pkg/errors"
 )
 
+func DumpCode(dst io.Writer, src io.Reader) {
+	scanner := bufio.NewScanner(src)
+	lineno := 1
+	for scanner.Scan() {
+		fmt.Fprintf(dst, "%5d: %s\n", lineno, scanner.Text())
+		lineno++
+	}
+}
+
 func WriteGoCodeToFile(fn string, data []byte) error {
 	formatted, err := format.Source(data)
 	if err != nil {
+		DumpCode(os.Stderr, bytes.NewReader(data))
 		return errors.Wrap(err, `failed to format source code`)
 	}
 	return WriteToFile(fn, formatted)

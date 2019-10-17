@@ -64,7 +64,7 @@ func (b *ActionBuilder) Value(v string) *ActionBuilder {
 	return b
 }
 
-func (b *ActionBuilder) Do() (*Action, error) {
+func (b *ActionBuilder) Build() (*Action, error) {
 	var v Action
 	v.confirm = b.confirm
 	v.dataSource = b.dataSource
@@ -78,6 +78,14 @@ func (b *ActionBuilder) Do() (*Action, error) {
 	v.typ = b.typ
 	v.value = b.value
 	return &v, nil
+}
+
+func (b *ActionBuilder) MustBuild() *Action {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Action.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Action) Confirm() *Confirmation {
@@ -154,7 +162,7 @@ func (b *AttachmentBuilder) AuthorIcon(v string) *AttachmentBuilder {
 	return b
 }
 
-func (b *AttachmentBuilder) CallbackId(v string) *AttachmentBuilder {
+func (b *AttachmentBuilder) CallbackID(v string) *AttachmentBuilder {
 	b.callbackId = v
 	return b
 }
@@ -219,7 +227,7 @@ func (b *AttachmentBuilder) TitleLink(v string) *AttachmentBuilder {
 	return b
 }
 
-func (b *AttachmentBuilder) Do() (*Attachment, error) {
+func (b *AttachmentBuilder) Build() (*Attachment, error) {
 	var v Attachment
 	v.actions = b.actions
 	v.attachmentType = b.attachmentType
@@ -242,6 +250,14 @@ func (b *AttachmentBuilder) Do() (*Attachment, error) {
 	return &v, nil
 }
 
+func (b *AttachmentBuilder) MustBuild() *Attachment {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Attachment.MustBuild: " + err.Error())
+	}
+	return v
+}
+
 func (b *Attachment) Actions() ActionList {
 	return b.actions
 }
@@ -262,7 +278,7 @@ func (b *Attachment) AuthorIcon() string {
 	return b.authorIcon
 }
 
-func (b *Attachment) CallbackId() string {
+func (b *Attachment) CallbackID() string {
 	return b.callbackId
 }
 
@@ -334,12 +350,20 @@ func (b *AttachmentFieldBuilder) Short(v string) *AttachmentFieldBuilder {
 	return b
 }
 
-func (b *AttachmentFieldBuilder) Do() (*AttachmentField, error) {
+func (b *AttachmentFieldBuilder) Build() (*AttachmentField, error) {
 	var v AttachmentField
 	v.title = b.title
 	v.value = b.value
 	v.short = b.short
 	return &v, nil
+}
+
+func (b *AttachmentFieldBuilder) MustBuild() *AttachmentField {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during AttachmentField.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *AttachmentField) Title() string {
@@ -359,12 +383,12 @@ func BuildBot() *BotBuilder {
 	return &b
 }
 
-func (b *BotBuilder) Id(v string) *BotBuilder {
+func (b *BotBuilder) ID(v string) *BotBuilder {
 	b.id = v
 	return b
 }
 
-func (b *BotBuilder) AppId(v string) *BotBuilder {
+func (b *BotBuilder) AppID(v string) *BotBuilder {
 	b.appId = v
 	return b
 }
@@ -379,12 +403,12 @@ func (b *BotBuilder) Name(v string) *BotBuilder {
 	return b
 }
 
-func (b *BotBuilder) Icons(v Icons) *BotBuilder {
+func (b *BotBuilder) Icons(v *Icons) *BotBuilder {
 	b.icons = v
 	return b
 }
 
-func (b *BotBuilder) Do() (*Bot, error) {
+func (b *BotBuilder) Build() (*Bot, error) {
 	var v Bot
 	v.id = b.id
 	v.appId = b.appId
@@ -394,11 +418,19 @@ func (b *BotBuilder) Do() (*Bot, error) {
 	return &v, nil
 }
 
-func (b *Bot) Id() string {
+func (b *BotBuilder) MustBuild() *Bot {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Bot.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *Bot) ID() string {
 	return b.id
 }
 
-func (b *Bot) AppId() string {
+func (b *Bot) AppID() string {
 	return b.appId
 }
 
@@ -410,7 +442,7 @@ func (b *Bot) Name() string {
 	return b.name
 }
 
-func (b *Bot) Icons() Icons {
+func (b *Bot) Icons() *Icons {
 	return b.icons
 }
 
@@ -419,7 +451,7 @@ func BuildChannel() *ChannelBuilder {
 	return &b
 }
 
-func (b *ChannelBuilder) Id(v string) *ChannelBuilder {
+func (b *ChannelBuilder) ID(v string) *ChannelBuilder {
 	b.id = v
 	return b
 }
@@ -499,12 +531,12 @@ func (b *ChannelBuilder) PreviousNames(v ...string) *ChannelBuilder {
 	return b
 }
 
-func (b *ChannelBuilder) Purpose(v Purpose) *ChannelBuilder {
+func (b *ChannelBuilder) Purpose(v *Purpose) *ChannelBuilder {
 	b.purpose = v
 	return b
 }
 
-func (b *ChannelBuilder) Topic(v Topic) *ChannelBuilder {
+func (b *ChannelBuilder) Topic(v *Topic) *ChannelBuilder {
 	b.topic = v
 	return b
 }
@@ -534,7 +566,7 @@ func (b *ChannelBuilder) IsShared(v bool) *ChannelBuilder {
 	return b
 }
 
-func (b *ChannelBuilder) Do() (*Channel, error) {
+func (b *ChannelBuilder) Build() (*Channel, error) {
 	var v Channel
 	v.id = b.id
 	v.created = b.created
@@ -562,7 +594,15 @@ func (b *ChannelBuilder) Do() (*Channel, error) {
 	return &v, nil
 }
 
-func (b *Channel) Id() string {
+func (b *ChannelBuilder) MustBuild() *Channel {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Channel.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *Channel) ID() string {
 	return b.id
 }
 
@@ -626,11 +666,11 @@ func (b *Channel) PreviousNames() []string {
 	return b.previousNames
 }
 
-func (b *Channel) Purpose() Purpose {
+func (b *Channel) Purpose() *Purpose {
 	return b.purpose
 }
 
-func (b *Channel) Topic() Topic {
+func (b *Channel) Topic() *Topic {
 	return b.topic
 }
 
@@ -679,13 +719,21 @@ func (b *ConfirmationBuilder) DismissText(v string) *ConfirmationBuilder {
 	return b
 }
 
-func (b *ConfirmationBuilder) Do() (*Confirmation, error) {
+func (b *ConfirmationBuilder) Build() (*Confirmation, error) {
 	var v Confirmation
 	v.title = b.title
 	v.text = b.text
 	v.okText = b.okText
 	v.dismissText = b.dismissText
 	return &v, nil
+}
+
+func (b *ConfirmationBuilder) MustBuild() *Confirmation {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Confirmation.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Confirmation) Title() string {
@@ -709,7 +757,7 @@ func BuildConversation() *ConversationBuilder {
 	return &b
 }
 
-func (b *ConversationBuilder) Id(v string) *ConversationBuilder {
+func (b *ConversationBuilder) ID(v string) *ConversationBuilder {
 	b.id = v
 	return b
 }
@@ -744,7 +792,7 @@ func (b *ConversationBuilder) UnreadCountDisplay(v int) *ConversationBuilder {
 	return b
 }
 
-func (b *ConversationBuilder) Do() (*Conversation, error) {
+func (b *ConversationBuilder) Build() (*Conversation, error) {
 	var v Conversation
 	v.id = b.id
 	v.created = b.created
@@ -756,7 +804,15 @@ func (b *ConversationBuilder) Do() (*Conversation, error) {
 	return &v, nil
 }
 
-func (b *Conversation) Id() string {
+func (b *ConversationBuilder) MustBuild() *Conversation {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Conversation.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *Conversation) ID() string {
 	return b.id
 }
 
@@ -809,13 +865,21 @@ func (b *DialogBuilder) Elements(v ...*DialogElement) *DialogBuilder {
 	return b
 }
 
-func (b *DialogBuilder) Do() (*Dialog, error) {
+func (b *DialogBuilder) Build() (*Dialog, error) {
 	var v Dialog
 	v.callbackId = b.callbackId
 	v.title = b.title
 	v.submitLabel = b.submitLabel
 	v.elements = b.elements
 	return &v, nil
+}
+
+func (b *DialogBuilder) MustBuild() *Dialog {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Dialog.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Dialog) CallbackId() string {
@@ -889,7 +953,7 @@ func (b *DialogElementBuilder) Value(v string) *DialogElementBuilder {
 	return b
 }
 
-func (b *DialogElementBuilder) Do() (*DialogElement, error) {
+func (b *DialogElementBuilder) Build() (*DialogElement, error) {
 	var v DialogElement
 	v.label = b.label
 	v.typ = b.typ
@@ -902,6 +966,14 @@ func (b *DialogElementBuilder) Do() (*DialogElement, error) {
 	v.subtype = b.subtype
 	v.value = b.value
 	return &v, nil
+}
+
+func (b *DialogElementBuilder) MustBuild() *DialogElement {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during DialogElement.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *DialogElement) Label() string {
@@ -959,11 +1031,19 @@ func (b *EditedBuilder) User(v string) *EditedBuilder {
 	return b
 }
 
-func (b *EditedBuilder) Do() (*Edited, error) {
+func (b *EditedBuilder) Build() (*Edited, error) {
 	var v Edited
 	v.ts = b.ts
 	v.user = b.user
 	return &v, nil
+}
+
+func (b *EditedBuilder) MustBuild() *Edited {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Edited.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Edited) Ts() string {
@@ -979,7 +1059,7 @@ func BuildFile() *FileBuilder {
 	return &b
 }
 
-func (b *FileBuilder) Id(v string) *FileBuilder {
+func (b *FileBuilder) ID(v string) *FileBuilder {
 	b.id = v
 	return b
 }
@@ -1049,7 +1129,7 @@ func (b *FileBuilder) Size(v int) *FileBuilder {
 	return b
 }
 
-func (b *FileBuilder) Url(v string) *FileBuilder {
+func (b *FileBuilder) URL(v string) *FileBuilder {
 	b.url = v
 	return b
 }
@@ -1244,8 +1324,8 @@ func (b *FileBuilder) InitialComment(v Comment) *FileBuilder {
 	return b
 }
 
-func (b *FileBuilder) CommentCount(v int) *FileBuilder {
-	b.commentCount = v
+func (b *FileBuilder) CommentsCount(v int) *FileBuilder {
+	b.commentsCount = v
 	return b
 }
 
@@ -1269,7 +1349,7 @@ func (b *FileBuilder) Reactions(v ...*Reaction) *FileBuilder {
 	return b
 }
 
-func (b *FileBuilder) Do() (*File, error) {
+func (b *FileBuilder) Build() (*File, error) {
 	var v File
 	v.id = b.id
 	v.name = b.name
@@ -1324,7 +1404,7 @@ func (b *FileBuilder) Do() (*File, error) {
 	v.groups = b.groups
 	v.ims = b.ims
 	v.initialComment = b.initialComment
-	v.commentCount = b.commentCount
+	v.commentsCount = b.commentsCount
 	v.numStars = b.numStars
 	v.isStarred = b.isStarred
 	v.title = b.title
@@ -1332,7 +1412,15 @@ func (b *FileBuilder) Do() (*File, error) {
 	return &v, nil
 }
 
-func (b *File) Id() string {
+func (b *FileBuilder) MustBuild() *File {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during File.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *File) ID() string {
 	return b.id
 }
 
@@ -1388,7 +1476,7 @@ func (b *File) Size() int {
 	return b.size
 }
 
-func (b *File) Url() string {
+func (b *File) URL() string {
 	return b.url
 }
 
@@ -1544,8 +1632,8 @@ func (b *File) InitialComment() Comment {
 	return b.initialComment
 }
 
-func (b *File) CommentCount() int {
-	return b.commentCount
+func (b *File) CommentsCount() int {
+	return b.commentsCount
 }
 
 func (b *File) NumStars() int {
@@ -1569,7 +1657,7 @@ func BuildGroup() *GroupBuilder {
 	return &b
 }
 
-func (b *GroupBuilder) Id(v string) *GroupBuilder {
+func (b *GroupBuilder) ID(v string) *GroupBuilder {
 	b.id = v
 	return b
 }
@@ -1659,7 +1747,7 @@ func (b *GroupBuilder) Topic(v Topic) *GroupBuilder {
 	return b
 }
 
-func (b *GroupBuilder) Do() (*Group, error) {
+func (b *GroupBuilder) Build() (*Group, error) {
 	var v Group
 	v.id = b.id
 	v.created = b.created
@@ -1682,7 +1770,15 @@ func (b *GroupBuilder) Do() (*Group, error) {
 	return &v, nil
 }
 
-func (b *Group) Id() string {
+func (b *GroupBuilder) MustBuild() *Group {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Group.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *Group) ID() string {
 	return b.id
 }
 
@@ -1754,6 +1850,124 @@ func (b *Group) Topic() Topic {
 	return b.topic
 }
 
+func BuildIM() *IMBuilder {
+	var b IMBuilder
+	return &b
+}
+
+func (b *IMBuilder) ID(v string) *IMBuilder {
+	b.id = v
+	return b
+}
+
+func (b *IMBuilder) Created(v EpochTime) *IMBuilder {
+	b.created = v
+	return b
+}
+
+func (b *IMBuilder) IsOpen(v bool) *IMBuilder {
+	b.isOpen = v
+	return b
+}
+
+func (b *IMBuilder) LastRead(v string) *IMBuilder {
+	b.lastRead = v
+	return b
+}
+
+func (b *IMBuilder) Latest(v *Message) *IMBuilder {
+	b.latest = v
+	return b
+}
+
+func (b *IMBuilder) UnreadCount(v int) *IMBuilder {
+	b.unreadCount = v
+	return b
+}
+
+func (b *IMBuilder) UnreadCountDisplay(v int) *IMBuilder {
+	b.unreadCountDisplay = v
+	return b
+}
+
+func (b *IMBuilder) IsIm(v bool) *IMBuilder {
+	b.isIm = v
+	return b
+}
+
+func (b *IMBuilder) User(v string) *IMBuilder {
+	b.user = v
+	return b
+}
+
+func (b *IMBuilder) IsUserDeleted(v bool) *IMBuilder {
+	b.isUserDeleted = v
+	return b
+}
+
+func (b *IMBuilder) Build() (*IM, error) {
+	var v IM
+	v.id = b.id
+	v.created = b.created
+	v.isOpen = b.isOpen
+	v.lastRead = b.lastRead
+	v.latest = b.latest
+	v.unreadCount = b.unreadCount
+	v.unreadCountDisplay = b.unreadCountDisplay
+	v.isIm = b.isIm
+	v.user = b.user
+	v.isUserDeleted = b.isUserDeleted
+	return &v, nil
+}
+
+func (b *IMBuilder) MustBuild() *IM {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during IM.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *IM) ID() string {
+	return b.id
+}
+
+func (b *IM) Created() EpochTime {
+	return b.created
+}
+
+func (b *IM) IsOpen() bool {
+	return b.isOpen
+}
+
+func (b *IM) LastRead() string {
+	return b.lastRead
+}
+
+func (b *IM) Latest() *Message {
+	return b.latest
+}
+
+func (b *IM) UnreadCount() int {
+	return b.unreadCount
+}
+
+func (b *IM) UnreadCountDisplay() int {
+	return b.unreadCountDisplay
+}
+
+func (b *IM) IsIm() bool {
+	return b.isIm
+}
+
+func (b *IM) User() string {
+	return b.user
+}
+
+func (b *IM) IsUserDeleted() bool {
+	return b.isUserDeleted
+}
+
 func BuildIcons() *IconsBuilder {
 	var b IconsBuilder
 	return &b
@@ -1774,12 +1988,20 @@ func (b *IconsBuilder) Image72(v string) *IconsBuilder {
 	return b
 }
 
-func (b *IconsBuilder) Do() (*Icons, error) {
+func (b *IconsBuilder) Build() (*Icons, error) {
 	var v Icons
 	v.image36 = b.image36
 	v.image48 = b.image48
 	v.image72 = b.image72
 	return &v, nil
+}
+
+func (b *IconsBuilder) MustBuild() *Icons {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Icons.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Icons) Image36() string {
@@ -1944,7 +2166,7 @@ func (b *MessageBuilder) Blocks(v ...Block) *MessageBuilder {
 	return b
 }
 
-func (b *MessageBuilder) Do() (*Message, error) {
+func (b *MessageBuilder) Build() (*Message, error) {
 	var v Message
 	v.attachments = b.attachments
 	v.channel = b.channel
@@ -1976,6 +2198,14 @@ func (b *MessageBuilder) Do() (*Message, error) {
 	v.reactions = b.reactions
 	v.blocks = b.blocks
 	return &v, nil
+}
+
+func (b *MessageBuilder) MustBuild() *Message {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Message.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Message) Attachments() AttachmentList {
@@ -2114,12 +2344,20 @@ func (b *OptionBuilder) Description(v string) *OptionBuilder {
 	return b
 }
 
-func (b *OptionBuilder) Do() (*Option, error) {
+func (b *OptionBuilder) Build() (*Option, error) {
 	var v Option
 	v.text = b.text
 	v.value = b.value
 	v.description = b.description
 	return &v, nil
+}
+
+func (b *OptionBuilder) MustBuild() *Option {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Option.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Option) Text() string {
@@ -2149,11 +2387,19 @@ func (b *OptionGroupBuilder) Options(v ...*Option) *OptionGroupBuilder {
 	return b
 }
 
-func (b *OptionGroupBuilder) Do() (*OptionGroup, error) {
+func (b *OptionGroupBuilder) Build() (*OptionGroup, error) {
 	var v OptionGroup
 	v.text = b.text
 	v.options = b.options
 	return &v, nil
+}
+
+func (b *OptionGroupBuilder) MustBuild() *OptionGroup {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during OptionGroup.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *OptionGroup) Text() string {
@@ -2184,12 +2430,20 @@ func (b *PurposeBuilder) LastSet(v EpochTime) *PurposeBuilder {
 	return b
 }
 
-func (b *PurposeBuilder) Do() (*Purpose, error) {
+func (b *PurposeBuilder) Build() (*Purpose, error) {
 	var v Purpose
 	v.value = b.value
 	v.creator = b.creator
 	v.lastSet = b.lastSet
 	return &v, nil
+}
+
+func (b *PurposeBuilder) MustBuild() *Purpose {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Purpose.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Purpose) Value() string {
@@ -2224,12 +2478,20 @@ func (b *ReactionBuilder) Users(v ...string) *ReactionBuilder {
 	return b
 }
 
-func (b *ReactionBuilder) Do() (*Reaction, error) {
+func (b *ReactionBuilder) Build() (*Reaction, error) {
 	var v Reaction
 	v.count = b.count
 	v.name = b.name
 	v.users = b.users
 	return &v, nil
+}
+
+func (b *ReactionBuilder) MustBuild() *Reaction {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Reaction.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Reaction) Count() int {
@@ -2249,7 +2511,7 @@ func BuildReminder() *ReminderBuilder {
 	return &b
 }
 
-func (b *ReminderBuilder) Id(v string) *ReminderBuilder {
+func (b *ReminderBuilder) ID(v string) *ReminderBuilder {
 	b.id = v
 	return b
 }
@@ -2284,7 +2546,7 @@ func (b *ReminderBuilder) CompleteTimestamp(v EpochTime) *ReminderBuilder {
 	return b
 }
 
-func (b *ReminderBuilder) Do() (*Reminder, error) {
+func (b *ReminderBuilder) Build() (*Reminder, error) {
 	var v Reminder
 	v.id = b.id
 	v.creator = b.creator
@@ -2296,7 +2558,15 @@ func (b *ReminderBuilder) Do() (*Reminder, error) {
 	return &v, nil
 }
 
-func (b *Reminder) Id() string {
+func (b *ReminderBuilder) MustBuild() *Reminder {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Reminder.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *Reminder) ID() string {
 	return b.id
 }
 
@@ -2329,7 +2599,7 @@ func BuildTeam() *TeamBuilder {
 	return &b
 }
 
-func (b *TeamBuilder) Id(v string) *TeamBuilder {
+func (b *TeamBuilder) ID(v string) *TeamBuilder {
 	b.id = v
 	return b
 }
@@ -2384,7 +2654,7 @@ func (b *TeamBuilder) Plan(v string) *TeamBuilder {
 	return b
 }
 
-func (b *TeamBuilder) Do() (*Team, error) {
+func (b *TeamBuilder) Build() (*Team, error) {
 	var v Team
 	v.id = b.id
 	v.name = b.name
@@ -2400,7 +2670,15 @@ func (b *TeamBuilder) Do() (*Team, error) {
 	return &v, nil
 }
 
-func (b *Team) Id() string {
+func (b *TeamBuilder) MustBuild() *Team {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Team.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *Team) ID() string {
 	return b.id
 }
 
@@ -2461,7 +2739,7 @@ func (b *TextBuilder) Verbatim(v bool) *TextBuilder {
 	return b
 }
 
-func (b *TextBuilder) Do() (*Text, error) {
+func (b *TextBuilder) Build() (*Text, error) {
 	if err := b.Validate(); err != nil {
 		return nil, errors.Wrap(err, `validation for Text failed`)
 	}
@@ -2471,6 +2749,14 @@ func (b *TextBuilder) Do() (*Text, error) {
 	v.emoji = b.emoji
 	v.verbatim = b.verbatim
 	return &v, nil
+}
+
+func (b *TextBuilder) MustBuild() *Text {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Text.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Text) Type() string {
@@ -2504,11 +2790,19 @@ func (b *ThreadInfoBuilder) Count(v int) *ThreadInfoBuilder {
 	return b
 }
 
-func (b *ThreadInfoBuilder) Do() (*ThreadInfo, error) {
+func (b *ThreadInfoBuilder) Build() (*ThreadInfo, error) {
 	var v ThreadInfo
 	v.complete = b.complete
 	v.count = b.count
 	return &v, nil
+}
+
+func (b *ThreadInfoBuilder) MustBuild() *ThreadInfo {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during ThreadInfo.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *ThreadInfo) Complete() bool {
@@ -2539,12 +2833,20 @@ func (b *TopicBuilder) LastSet(v EpochTime) *TopicBuilder {
 	return b
 }
 
-func (b *TopicBuilder) Do() (*Topic, error) {
+func (b *TopicBuilder) Build() (*Topic, error) {
 	var v Topic
 	v.value = b.value
 	v.creator = b.creator
 	v.lastSet = b.lastSet
 	return &v, nil
+}
+
+func (b *TopicBuilder) MustBuild() *Topic {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Topic.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Topic) Value() string {
@@ -2557,6 +2859,340 @@ func (b *Topic) Creator() string {
 
 func (b *Topic) LastSet() EpochTime {
 	return b.lastSet
+}
+
+func BuildUser() *UserBuilder {
+	var b UserBuilder
+	return &b
+}
+
+func (b *UserBuilder) Color(v string) *UserBuilder {
+	b.color = v
+	return b
+}
+
+func (b *UserBuilder) Deleted(v bool) *UserBuilder {
+	b.deleted = v
+	return b
+}
+
+func (b *UserBuilder) ID(v string) *UserBuilder {
+	b.id = v
+	return b
+}
+
+func (b *UserBuilder) IsAdmin(v bool) *UserBuilder {
+	b.isAdmin = v
+	return b
+}
+
+func (b *UserBuilder) IsBot(v bool) *UserBuilder {
+	b.isBot = v
+	return b
+}
+
+func (b *UserBuilder) IsOwner(v bool) *UserBuilder {
+	b.isOwner = v
+	return b
+}
+
+func (b *UserBuilder) IsRestricted(v bool) *UserBuilder {
+	b.isRestricted = v
+	return b
+}
+
+func (b *UserBuilder) IsUltraRestricted(v bool) *UserBuilder {
+	b.isUltraRestricted = v
+	return b
+}
+
+func (b *UserBuilder) Name(v string) *UserBuilder {
+	b.name = v
+	return b
+}
+
+func (b *UserBuilder) Profile(v *UserProfile) *UserBuilder {
+	b.profile = v
+	return b
+}
+
+func (b *UserBuilder) RealName(v string) *UserBuilder {
+	b.realName = v
+	return b
+}
+
+func (b *UserBuilder) Status(v string) *UserBuilder {
+	b.status = v
+	return b
+}
+
+func (b *UserBuilder) TeamId(v string) *UserBuilder {
+	b.teamId = v
+	return b
+}
+
+func (b *UserBuilder) Tz(v string) *UserBuilder {
+	b.tz = v
+	return b
+}
+
+func (b *UserBuilder) TzLabel(v string) *UserBuilder {
+	b.tzLabel = v
+	return b
+}
+
+func (b *UserBuilder) TzOffset(v int) *UserBuilder {
+	b.tzOffset = v
+	return b
+}
+
+func (b *UserBuilder) Updated(v int) *UserBuilder {
+	b.updated = v
+	return b
+}
+
+func (b *UserBuilder) Build() (*User, error) {
+	var v User
+	v.color = b.color
+	v.deleted = b.deleted
+	v.id = b.id
+	v.isAdmin = b.isAdmin
+	v.isBot = b.isBot
+	v.isOwner = b.isOwner
+	v.isRestricted = b.isRestricted
+	v.isUltraRestricted = b.isUltraRestricted
+	v.name = b.name
+	v.profile = b.profile
+	v.realName = b.realName
+	v.status = b.status
+	v.teamId = b.teamId
+	v.tz = b.tz
+	v.tzLabel = b.tzLabel
+	v.tzOffset = b.tzOffset
+	v.updated = b.updated
+	return &v, nil
+}
+
+func (b *UserBuilder) MustBuild() *User {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during User.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *User) Color() string {
+	return b.color
+}
+
+func (b *User) Deleted() bool {
+	return b.deleted
+}
+
+func (b *User) ID() string {
+	return b.id
+}
+
+func (b *User) IsAdmin() bool {
+	return b.isAdmin
+}
+
+func (b *User) IsBot() bool {
+	return b.isBot
+}
+
+func (b *User) IsOwner() bool {
+	return b.isOwner
+}
+
+func (b *User) IsRestricted() bool {
+	return b.isRestricted
+}
+
+func (b *User) IsUltraRestricted() bool {
+	return b.isUltraRestricted
+}
+
+func (b *User) Name() string {
+	return b.name
+}
+
+func (b *User) Profile() *UserProfile {
+	return b.profile
+}
+
+func (b *User) RealName() string {
+	return b.realName
+}
+
+func (b *User) Status() string {
+	return b.status
+}
+
+func (b *User) TeamId() string {
+	return b.teamId
+}
+
+func (b *User) Tz() string {
+	return b.tz
+}
+
+func (b *User) TzLabel() string {
+	return b.tzLabel
+}
+
+func (b *User) TzOffset() int {
+	return b.tzOffset
+}
+
+func (b *User) Updated() int {
+	return b.updated
+}
+
+func BuildUserDetails() *UserDetailsBuilder {
+	var b UserDetailsBuilder
+	return &b
+}
+
+func (b *UserDetailsBuilder) ID(v string) *UserDetailsBuilder {
+	b.id = v
+	return b
+}
+
+func (b *UserDetailsBuilder) Name(v string) *UserDetailsBuilder {
+	b.name = v
+	return b
+}
+
+func (b *UserDetailsBuilder) Created(v EpochTime) *UserDetailsBuilder {
+	b.created = v
+	return b
+}
+
+func (b *UserDetailsBuilder) ManualPresence(v string) *UserDetailsBuilder {
+	b.manualPresence = v
+	return b
+}
+
+func (b *UserDetailsBuilder) Prefs(v *UserPrefs) *UserDetailsBuilder {
+	b.prefs = v
+	return b
+}
+
+func (b *UserDetailsBuilder) Build() (*UserDetails, error) {
+	var v UserDetails
+	v.id = b.id
+	v.name = b.name
+	v.created = b.created
+	v.manualPresence = b.manualPresence
+	v.prefs = b.prefs
+	return &v, nil
+}
+
+func (b *UserDetailsBuilder) MustBuild() *UserDetails {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during UserDetails.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *UserDetails) ID() string {
+	return b.id
+}
+
+func (b *UserDetails) Name() string {
+	return b.name
+}
+
+func (b *UserDetails) Created() EpochTime {
+	return b.created
+}
+
+func (b *UserDetails) ManualPresence() string {
+	return b.manualPresence
+}
+
+func (b *UserDetails) Prefs() *UserPrefs {
+	return b.prefs
+}
+
+func BuildUserPresence() *UserPresenceBuilder {
+	var b UserPresenceBuilder
+	return &b
+}
+
+func (b *UserPresenceBuilder) AutoAway(v bool) *UserPresenceBuilder {
+	b.autoAway = v
+	return b
+}
+
+func (b *UserPresenceBuilder) ConnectionCount(v int) *UserPresenceBuilder {
+	b.connectionCount = v
+	return b
+}
+
+func (b *UserPresenceBuilder) LastActivity(v int) *UserPresenceBuilder {
+	b.lastActivity = v
+	return b
+}
+
+func (b *UserPresenceBuilder) ManualAway(v bool) *UserPresenceBuilder {
+	b.manualAway = v
+	return b
+}
+
+func (b *UserPresenceBuilder) Online(v bool) *UserPresenceBuilder {
+	b.online = v
+	return b
+}
+
+func (b *UserPresenceBuilder) Presence(v *Presence) *UserPresenceBuilder {
+	b.presence = v
+	return b
+}
+
+func (b *UserPresenceBuilder) Build() (*UserPresence, error) {
+	var v UserPresence
+	v.autoAway = b.autoAway
+	v.connectionCount = b.connectionCount
+	v.lastActivity = b.lastActivity
+	v.manualAway = b.manualAway
+	v.online = b.online
+	v.presence = b.presence
+	return &v, nil
+}
+
+func (b *UserPresenceBuilder) MustBuild() *UserPresence {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during UserPresence.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *UserPresence) AutoAway() bool {
+	return b.autoAway
+}
+
+func (b *UserPresence) ConnectionCount() int {
+	return b.connectionCount
+}
+
+func (b *UserPresence) LastActivity() int {
+	return b.lastActivity
+}
+
+func (b *UserPresence) ManualAway() bool {
+	return b.manualAway
+}
+
+func (b *UserPresence) Online() bool {
+	return b.online
+}
+
+func (b *UserPresence) Presence() *Presence {
+	return b.presence
 }
 
 func BuildUserProfile() *UserProfileBuilder {
@@ -2639,7 +3275,7 @@ func (b *UserProfileBuilder) StatusEmoji(v string) *UserProfileBuilder {
 	return b
 }
 
-func (b *UserProfileBuilder) Do() (*UserProfile, error) {
+func (b *UserProfileBuilder) Build() (*UserProfile, error) {
 	var v UserProfile
 	v.alwaysActive = b.alwaysActive
 	v.avatarHash = b.avatarHash
@@ -2657,6 +3293,14 @@ func (b *UserProfileBuilder) Do() (*UserProfile, error) {
 	v.statusText = b.statusText
 	v.statusEmoji = b.statusEmoji
 	return &v, nil
+}
+
+func (b *UserProfileBuilder) MustBuild() *UserProfile {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during UserProfile.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *UserProfile) AlwaysActive() bool {
@@ -2774,7 +3418,7 @@ func (b *UsergroupBuilder) Handle(v string) *UsergroupBuilder {
 	return b
 }
 
-func (b *UsergroupBuilder) Id(v string) *UsergroupBuilder {
+func (b *UsergroupBuilder) ID(v string) *UsergroupBuilder {
 	b.id = v
 	return b
 }
@@ -2824,7 +3468,7 @@ func (b *UsergroupBuilder) UserCount(v int) *UsergroupBuilder {
 	return b
 }
 
-func (b *UsergroupBuilder) Do() (*Usergroup, error) {
+func (b *UsergroupBuilder) Build() (*Usergroup, error) {
 	var v Usergroup
 	v.autoProvision = b.autoProvision
 	v.autoType = b.autoType
@@ -2847,6 +3491,14 @@ func (b *UsergroupBuilder) Do() (*Usergroup, error) {
 	v.users = b.users
 	v.userCount = b.userCount
 	return &v, nil
+}
+
+func (b *UsergroupBuilder) MustBuild() *Usergroup {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during Usergroup.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *Usergroup) AutoProvision() bool {
@@ -2889,7 +3541,7 @@ func (b *Usergroup) Handle() string {
 	return b.handle
 }
 
-func (b *Usergroup) Id() string {
+func (b *Usergroup) ID() string {
 	return b.id
 }
 
@@ -2944,11 +3596,19 @@ func (b *UsergroupPrefsBuilder) Groups(v ...string) *UsergroupPrefsBuilder {
 	return b
 }
 
-func (b *UsergroupPrefsBuilder) Do() (*UsergroupPrefs, error) {
+func (b *UsergroupPrefsBuilder) Build() (*UsergroupPrefs, error) {
 	var v UsergroupPrefs
 	v.channels = b.channels
 	v.groups = b.groups
 	return &v, nil
+}
+
+func (b *UsergroupPrefsBuilder) MustBuild() *UsergroupPrefs {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during UsergroupPrefs.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *UsergroupPrefs) Channels() []string {

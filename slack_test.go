@@ -35,7 +35,7 @@ func checkChannel(t *testing.T, channel *objects.Channel) bool {
 	if !assert.NotEmpty(t, channel.Name, "channel.Name should be populated") {
 		return false
 	}
-	if !assert.True(t, looksLikeChannelID(channel.ID), "channel.ID looks like an ID") {
+	if !assert.True(t, looksLikeChannelID(channel.ID()), "channel.ID looks like an ID") {
 		return false
 	}
 	return true
@@ -119,16 +119,16 @@ func TestWithMockServer(t *testing.T) {
 			if !assert.NotEmpty(t, res.Name, "res.Name should be populated") {
 				return
 			}
-			if !assert.False(t, res.Deleted, "res.Delete should be false") {
+			if !assert.False(t, res.Deleted(), "res.Delete should be false") {
 				return
 			}
-			if !assert.NotEmpty(t, res.Icons.Image36, "res.Icons.Image36 should be populated") {
+			if !assert.NotEmpty(t, res.Icons().Image36(), "res.Icons.Image36 should be populated") {
 				return
 			}
-			if !assert.NotEmpty(t, res.Icons.Image48, "res.Icons.Image48 should be populated") {
+			if !assert.NotEmpty(t, res.Icons().Image48(), "res.Icons.Image48 should be populated") {
 				return
 			}
-			if !assert.NotEmpty(t, res.Icons.Image72, "res.Icons.Image72 should be populated") {
+			if !assert.NotEmpty(t, res.Icons().Image72(), "res.Icons.Image72 should be populated") {
 				return
 			}
 		})
@@ -147,7 +147,7 @@ func TestWithMockServer(t *testing.T) {
 			}
 		})
 		t.Run("History", func(t *testing.T) {
-			res, err := cl.Channels().History(mockserver.ChannelJedis.ID).
+			res, err := cl.Channels().History(mockserver.ChannelJedis.ID()).
 				Count(1000).
 				Inclusive(true).
 				Latest("dummy").
@@ -158,7 +158,7 @@ func TestWithMockServer(t *testing.T) {
 			if !assert.NoError(t, err, "channels.history should succeed") {
 				return
 			}
-			if !assert.True(t, res.HasMore, "res.HasMore should be true") {
+			if !assert.True(t, res.HasMore(), "res.HasMore should be true") {
 				return
 			}
 			if !assert.NotEmpty(t, res.Latest, "res.Latest should be populated") {
@@ -169,7 +169,7 @@ func TestWithMockServer(t *testing.T) {
 			}
 		})
 		t.Run("Info", func(t *testing.T) {
-			res, err := cl.Channels().Info(mockserver.ChannelJedis.ID).
+			res, err := cl.Channels().Info(mockserver.ChannelJedis.ID()).
 				IncludeLocale(true).
 				Do(ctx)
 			if !assert.NoError(t, err, "channels.info should succeed") {
@@ -193,7 +193,7 @@ func TestWithMockServer(t *testing.T) {
 	t.Run("Reactions", func(t *testing.T) {
 		t.Run("Get", func(t *testing.T) {
 			res, err := cl.Reactions().Get().
-				Channel(mockserver.ChannelJedis.ID).
+				Channel(mockserver.ChannelJedis.ID()).
 				// File, FileComment
 				Full(true).
 				// Timestamp
@@ -208,7 +208,7 @@ func TestWithMockServer(t *testing.T) {
 	})
 	t.Run("Reminder", func(t *testing.T) {
 		t.Run("Add", func(t *testing.T) {
-			res, err := cl.Reminders().Add("Meet Mace Windu over lunch", mockserver.ReminderMeetMaceWindu.Time.Int()).Do(ctx)
+			res, err := cl.Reminders().Add("Meet Mace Windu over lunch", mockserver.ReminderMeetMaceWindu.Time().Int()).Do(ctx)
 			if !assert.NoError(t, err, "reminders.add should succeed") {
 				return
 			}
@@ -228,7 +228,7 @@ func TestWithMockServer(t *testing.T) {
 			}
 
 			for _, u := range res {
-				u2, err := cl.Users().Info(u.ID).Do(ctx)
+				u2, err := cl.Users().Info(u.ID()).Do(ctx)
 				if !assert.NoError(t, err, `users.info should succeed`) {
 					return
 				}
@@ -259,9 +259,9 @@ func init() {
 		cl := slack.New(slackToken)
 		res, err := cl.Auth().Test().Do(ctx)
 		if err == nil {
-			user, err := cl.Users().Info(res.UserID).Do(ctx)
+			user, err := cl.Users().Info(res.UserID()).Do(ctx)
 			if err == nil {
-				isBot = user.IsBot
+				isBot = user.IsBot()
 			}
 		}
 	}

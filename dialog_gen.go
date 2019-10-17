@@ -88,7 +88,7 @@ func (c *DialogOpenCall) Do(ctx context.Context) (*objects.DialogResponse, error
 func (c *DialogOpenCall) FromValues(v url.Values) error {
 	var tmp DialogOpenCall
 	if raw := strings.TrimSpace(v.Get("dialog")); len(raw) > 0 {
-		if err := tmp.dialog.Decode(raw); err != nil {
+		if err := json.Unmarshal([]byte(raw), &tmp.dialog); err != nil {
 			return errors.Wrap(err, `failed to decode value "dialog"`)
 		}
 	}

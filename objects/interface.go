@@ -1,5 +1,8 @@
 package objects
 
+const (
+	ButtonActionType = "button"
+)
 type EpochTime int64
 type Timestamp float64
 
@@ -18,4 +21,15 @@ type DialogResponse struct {
 }
 
 type EmojiListResponse map[string]string
+
+// UsergroupUsersList is the list of users in a given Usergroup.
+type UsergroupUsersList []string
+
+type Presence string
+
+const (
+	Presencective Presence = "away"
+	PresenceAway  Presence = "away"
+)
+
 

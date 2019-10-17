@@ -148,8 +148,8 @@
 			{ "name": "url", "type": "string" },
 			{ "name": "team", "type": "string" },
 			{ "name": "user", "type": "string" },
-			{ "name": "team_id", "type": "string" },
-			{ "name": "user_id", "type": "string" }
+			{ "name": "team_id", "type": "string", "accessor_name": "TeamID" },
+			{ "name": "user_id", "type": "string", "accessor_name": "UserID" }
 		]
 	},
 	{
@@ -158,10 +158,10 @@
 		"skip_list": true,
 		"fields": [
 			{ "name": "id", "type": "string" },
-			{ "name": "app_id", "type": "string" },
+			{ "name": "app_id", "type": "string", "accessor_name": "AppID" },
 			{ "name": "deleted", "type": "bool" },
 			{ "name": "name", "type": "string" },
-			{ "name": "icons", "type": "Icons" }
+			{ "name": "icons", "type": "*Icons" }
 		]
 	},
 	{
@@ -194,8 +194,8 @@
 			{ "name": "name_normalized", "type": "string" },
 			{ "name": "num_members", "type": "int" },
 			{ "name": "previous_names", "type": "[]string" },
-			{ "name": "purpose", "type": "Purpose" },
-			{ "name": "topic", "type": "Topic" },
+			{ "name": "purpose", "type": "*Purpose" },
+			{ "name": "topic", "type": "*Topic" },
 			{ "name": "is_channel", "type": "bool" },
 			{ "name": "is_general", "type": "bool" },
 			{ "name": "is_member", "type": "bool" },
@@ -315,7 +315,7 @@
 			{ "name": "author_name", "type": "string" },
 			{ "name": "author_link", "type": "string" },
 			{ "name": "author_icon", "type": "string" },
-			{ "name": "callback_id", "type": "string", "comment": "for buttons" },
+			{ "name": "callback_id", "type": "string", "accessor_name": "CallbackID", "comment": "for buttons" },
 			{ "name": "color", "type": "string" },
 			{ "name": "fallback", "type": "string" },
 			{ "name": "fields", "type": "AttachmentFieldList" },
@@ -601,7 +601,7 @@
 			{ "name": "groups", "type": "[]string" },
 			{ "name": "ims", "type": "[]string", "accessor_name": "IMs" },
 			{ "name": "initial_comment", "type": "Comment" },
-			{ "name": "comment_count", "type": "int" },
+			{ "name": "comments_count", "type": "int" },
 			{ "name": "num_stars", "type": "int" },
 			{ "name": "is_starred", "type": "bool" },
 			{ "name": "title", "type": "string" },
@@ -628,7 +628,7 @@
 		"name": "Reminder",
 		"group": "Object",
 		"fields": [
-			{ "name": "id", "type": "string" },
+			{ "name": "id", "type": "string", "accessor_name": "ID" },
 			{ "name": "creator", "type": "string" },
 			{ "name": "user", "type": "string" },
 			{ "name": "text", "type": "string" },
@@ -645,6 +645,85 @@
 			{ "name": "reply_to", "type": "int" },
 			{ "name": "error", "type": "*ErrorResponse" },
 			{ "name": "ts", "type": "string", "accessor_name": "Timestamp" }
+		]
+	},
+	{
+		"name": "RTMResponse",
+		"fields": [
+			{ "name": "url", "type": "string" },
+			{ "name": "self", "type": "*UserDetails" },
+			{ "name": "team", "type": "*Team" },
+			{ "name": "users", "type": "[]*User" },
+			{ "name": "channels", "type": "[]*Channel" },
+			{ "name": "groups", "type": "[]*Group" },
+			{ "name": "bots", "type": "[]*Bot" },
+			{ "name": "ims", "type": "[]*IM", "accessor_name": "IMs" }
+		]
+	},
+	{
+		"name": "UserDetails",
+		"group": "Object",
+		"description": "UserDetails is only provided by rtm.start response",
+		"fields": [
+			{ "name": "id", "type": "string" },
+			{ "name": "name", "type": "string" },
+			{ "name": "created", "type": "EpochTime" },
+			{ "name": "manual_presence", "type": "string" },
+			{ "name": "prefs", "type": "*UserPrefs" }
+		]
+	},
+	{
+		"name": "UserPrefs"
+	},
+	{
+		"name": "User",
+		"group": "Object",
+		"fields": [
+			{ "name": "color", "type": "string" },
+			{ "name": "deleted", "type": "bool" },
+			{ "name": "id", "type": "string" },
+			{ "name": "is_admin", "type": "bool" },
+			{ "name": "is_bot", "type": "bool" },
+			{ "name": "is_owner", "type": "bool" },
+			{ "name": "is_restricted", "type": "bool" },
+			{ "name": "is_ultra_restricted", "type": "bool" },
+			{ "name": "name", "type": "string" },
+			{ "name": "profile", "type": "*UserProfile" },
+			{ "name": "real_name", "type": "string" },
+			{ "name": "status", "type": "string" },
+			{ "name": "team_id", "type": "string" },
+			{ "name": "tz", "type": "string" },
+			{ "name": "tz_label", "type": "string" },
+			{ "name": "tz_offset", "type": "int" },
+			{ "name": "updated", "type": "int" }
+		]
+	},
+	{
+		"name": "IM",
+		"group": "Object",
+		"fields": [
+			{ "name": "id", "type": "string" },
+			{ "name": "created", "type": "EpochTime" },
+			{ "name": "is_open", "type": "bool" },
+			{ "name": "last_read", "type": "string" },
+			{ "name": "latest", "type": "*Message" },
+			{ "name": "unread_count", "type": "int" },
+			{ "name": "unread_count_display", "type": "int" },
+			{ "name": "is_im", "type": "bool" },
+			{ "name": "user", "type": "string" },
+			{ "name": "is_user_deleted", "type": "bool" }
+		]
+	},
+	{
+		"name": "UserPresence",
+		"group": "Object",
+		"fields": [
+			{ "name": "auto_away", "type": "bool" },
+			{ "name": "connection_count", "type": "int" },
+			{ "name": "last_activity", "type": "int" },
+			{ "name": "manual_away", "type": "bool" },
+			{ "name": "online", "type": "bool" },
+			{ "name": "presence", "type": "*Presence" }
 		]
 	}
 ]

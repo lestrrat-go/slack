@@ -50,6 +50,11 @@ func (l *GroupList) Append(v *Group) *GroupList {
 	return l
 }
 
+func (l *IMList) Append(v *IM) *IMList {
+	*l = append(*l, v)
+	return l
+}
+
 func (l *MessageList) Append(v *Message) *MessageList {
 	*l = append(*l, v)
 	return l
@@ -81,6 +86,21 @@ func (l *ReminderList) Append(v *Reminder) *ReminderList {
 }
 
 func (l *TeamList) Append(v *Team) *TeamList {
+	*l = append(*l, v)
+	return l
+}
+
+func (l *UserList) Append(v *User) *UserList {
+	*l = append(*l, v)
+	return l
+}
+
+func (l *UserDetailsList) Append(v *UserDetails) *UserDetailsList {
+	*l = append(*l, v)
+	return l
+}
+
+func (l *UserPresenceList) Append(v *UserPresence) *UserPresenceList {
 	*l = append(*l, v)
 	return l
 }

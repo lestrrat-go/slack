@@ -11,11 +11,19 @@ func (b *ActionsBlockBuilder) BlockId(v string) *ActionsBlockBuilder {
 	return b
 }
 
-func (b *ActionsBlockBuilder) Do() (*ActionsBlock, error) {
+func (b *ActionsBlockBuilder) Build() (*ActionsBlock, error) {
 	var v ActionsBlock
 	v.elements = b.elements
 	v.blockId = b.blockId
 	return &v, nil
+}
+
+func (b *ActionsBlockBuilder) MustBuild() *ActionsBlock {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during ActionsBlock.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *ActionsBlock) Elements() []BlockElement {
@@ -41,11 +49,19 @@ func (b *ContextBlockBuilder) BlockId(v string) *ContextBlockBuilder {
 	return b
 }
 
-func (b *ContextBlockBuilder) Do() (*ContextBlock, error) {
+func (b *ContextBlockBuilder) Build() (*ContextBlock, error) {
 	var v ContextBlock
 	v.elements = b.elements
 	v.blockId = b.blockId
 	return &v, nil
+}
+
+func (b *ContextBlockBuilder) MustBuild() *ContextBlock {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during ContextBlock.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *ContextBlock) Elements() []interface{} {
@@ -70,10 +86,18 @@ func (b *DividerBlockBuilder) BlockId(v string) *DividerBlockBuilder {
 	return b
 }
 
-func (b *DividerBlockBuilder) Do() (*DividerBlock, error) {
+func (b *DividerBlockBuilder) Build() (*DividerBlock, error) {
 	var v DividerBlock
 	v.blockId = b.blockId
 	return &v, nil
+}
+
+func (b *DividerBlockBuilder) MustBuild() *DividerBlock {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during DividerBlock.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *DividerBlock) BlockId() string {
@@ -100,12 +124,20 @@ func (b *FileBlockBuilder) BlockId(v string) *FileBlockBuilder {
 	return b
 }
 
-func (b *FileBlockBuilder) Do() (*FileBlock, error) {
+func (b *FileBlockBuilder) Build() (*FileBlock, error) {
 	var v FileBlock
 	v.externalId = b.externalId
 	v.source = b.source
 	v.blockId = b.blockId
 	return &v, nil
+}
+
+func (b *FileBlockBuilder) MustBuild() *FileBlock {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during FileBlock.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *FileBlock) ExternalId() string {
@@ -141,13 +173,21 @@ func (b *ImageBlockBuilder) BlockId(v string) *ImageBlockBuilder {
 	return b
 }
 
-func (b *ImageBlockBuilder) Do() (*ImageBlock, error) {
+func (b *ImageBlockBuilder) Build() (*ImageBlock, error) {
 	var v ImageBlock
 	v.imageUrl = b.imageUrl
 	v.altText = b.altText
 	v.title = b.title
 	v.blockId = b.blockId
 	return &v, nil
+}
+
+func (b *ImageBlockBuilder) MustBuild() *ImageBlock {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during ImageBlock.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *ImageBlock) ImageUrl() string {
@@ -191,13 +231,21 @@ func (b *InputBlockBuilder) Optional(v bool) *InputBlockBuilder {
 	return b
 }
 
-func (b *InputBlockBuilder) Do() (*InputBlock, error) {
+func (b *InputBlockBuilder) Build() (*InputBlock, error) {
 	var v InputBlock
 	v.label = b.label
 	v.element = b.element
 	v.hint = b.hint
 	v.optional = b.optional
 	return &v, nil
+}
+
+func (b *InputBlockBuilder) MustBuild() *InputBlock {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during InputBlock.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *InputBlock) Label() string {
@@ -241,13 +289,21 @@ func (b *SectionBlockBuilder) Accessory(v BlockElement) *SectionBlockBuilder {
 	return b
 }
 
-func (b *SectionBlockBuilder) Do() (*SectionBlock, error) {
+func (b *SectionBlockBuilder) Build() (*SectionBlock, error) {
 	var v SectionBlock
 	v.text = b.text
 	v.fields = b.fields
 	v.blockId = b.blockId
 	v.accessory = b.accessory
 	return &v, nil
+}
+
+func (b *SectionBlockBuilder) MustBuild() *SectionBlock {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during SectionBlock.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *SectionBlock) Text() *Text {

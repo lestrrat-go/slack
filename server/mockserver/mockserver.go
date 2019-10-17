@@ -1992,9 +1992,9 @@ func StockResponse(method string) interface{} {
 	case "groups.history":
 		return stockStringObjectsMessageList()
 	default:
-		return objects.GenericResponse{
-			OK:        true,
-			Timestamp: strconv.FormatInt(time.Now().Unix(), 10),
-		}
+		return objects.BuildGenericResponse().
+			OK(true).
+			Timestamp(strconv.FormatInt(time.Now().Unix(), 10)).
+			MustBuild()
 	}
 }

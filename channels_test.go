@@ -40,7 +40,7 @@ func TestChannelsList_Info(t *testing.T) {
 		default:
 		}
 
-		fromInfo, err := c.Channels().Info(channel.ID).Do(ctx)
+		fromInfo, err := c.Channels().Info(channel.ID()).Do(ctx)
 		if !assert.NoError(t, err, "Channels.Info failed") {
 			return
 		}
@@ -50,7 +50,7 @@ func TestChannelsList_Info(t *testing.T) {
 			return
 		}
 
-		history, err := c.Channels().History(channel.ID).Do(ctx)
+		history, err := c.Channels().History(channel.ID()).Do(ctx)
 		if !assert.NoError(t, err, "Channels.History failed") {
 			return
 		}

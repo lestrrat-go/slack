@@ -54,7 +54,14 @@ func (f *field) GoAccessorName() string {
 	if f.AccessorName != "" {
 		return f.AccessorName
 	}
-	return stringutil.Camel(f.Name)
+	name := stringutil.Camel(f.Name)
+	switch name {
+	case "Id":
+		name = "ID"
+	case "Url":
+		name = "URL"
+	} // TODO
+	return name
 }
 
 type definition struct {
@@ -223,7 +230,7 @@ func writeBuilder(dst io.Writer, def definition) error {
 		fmt.Fprintf(&buf, "\n}")
 	}
 
-	fmt.Fprintf(&buf, "\n\nfunc (b *%[1]sBuilder) Do() (*%[1]s, error) {", def.GoName())
+	fmt.Fprintf(&buf, "\n\nfunc (b *%[1]sBuilder) Build() (*%[1]s, error) {", def.GoName())
 	if def.Validate {
 		fmt.Fprintf(&buf, "\nif err := b.Validate(); err != nil {")
 		fmt.Fprintf(&buf, "\nreturn nil, errors.Wrap(err, `validation for %s failed`)", def.GoName())
@@ -235,6 +242,14 @@ func writeBuilder(dst io.Writer, def definition) error {
 		fmt.Fprintf(&buf, "\nv.%s = b.%s", field.GoName(), field.GoName())
 	}
 	fmt.Fprintf(&buf, "\nreturn &v, nil")
+	fmt.Fprintf(&buf, "\n}")
+
+	fmt.Fprintf(&buf, "\n\nfunc (b *%[1]sBuilder) MustBuild() *%[1]s {", def.GoName())
+	fmt.Fprintf(&buf, "\nv, err := b.Build()")
+	fmt.Fprintf(&buf, "\nif err != nil {")
+	fmt.Fprintf(&buf, "\npanic("+ `"error during %s.MustBuild: " + err.Error())`, def.GoName())
+	fmt.Fprintf(&buf, "\n}")
+	fmt.Fprintf(&buf, "\nreturn v")
 	fmt.Fprintf(&buf, "\n}")
 
 	buf.WriteTo(dst)

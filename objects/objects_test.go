@@ -8,7 +8,7 @@ import (
 )
 
 func TestText(t *testing.T) {
-	o, err := objects.BuildText(objects.MarkdownTextType, "*Hello* World").Do()
+	o, err := objects.BuildText(objects.MarkdownTextType, "*Hello* World").Build()
 	if !assert.NoError(t, err, `text object should return no errors`) {
 		return
 	}
@@ -23,7 +23,7 @@ func TestText(t *testing.T) {
 }
 
 func TestSectionBlock(t *testing.T) {
-	b, err := objects.BuildSectionBlock(objects.MarkdownText("*Hello* World")).Do()
+	b, err := objects.BuildSectionBlock(objects.MarkdownText("*Hello* World")).Build()
 	if !assert.NoError(t, err, `building a section block should return no errors`) {
 		return
 	}
@@ -34,7 +34,7 @@ func TestSectionBlock(t *testing.T) {
 }
 
 func TestContextBlock(t *testing.T) {
-	b, err := objects.BuildContextBlock(objects.MarkdownText("*Hello* World")).Do()
+	b, err := objects.BuildContextBlock(objects.MarkdownText("*Hello* World")).Build()
 	if !assert.NoError(t, err, `building a context block should return no errors`) {
 		return
 	}

@@ -8,14 +8,14 @@ import "fmt"
 func PlainText(txt string) *Text {
 	// ignore errors, b/c we only check for the type, and we're darn sure
 	// what the type is
-	o, _ := BuildText(PlainTextType, txt).Do()
+	o := BuildText(PlainTextType, txt).MustBuild()
 	return o
 }
 
 func MarkdownText(txt string) *Text {
 	// ignore errors, b/c we only check for the type, and we're darn sure
 	// what the type is
-	o, _ := BuildText(MarkdownTextType, txt).Do()
+	o := BuildText(MarkdownTextType, txt).MustBuild()
 	return o
 }
 

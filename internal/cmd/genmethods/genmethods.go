@@ -489,7 +489,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 				fmt.Fprintf(&buf, "\n}") // end if err != nil
 				fmt.Fprintf(&buf, "\ntmp.%s = int(parsed)", arg.Name)
 			default:
-				fmt.Fprintf(&buf, "\nif err := tmp.%s.Decode(raw); err != nil {", arg.Name)
+				fmt.Fprintf(&buf, "\nif err := json.Unmarshal([]byte(raw), &tmp.%s); err != nil {", arg.Name)
 				fmt.Fprintf(&buf, "\nreturn errors.Wrap(err, `failed to decode value %s`)", strconv.Quote(qn))
 				fmt.Fprintf(&buf, "\n}") // end if err != nil
 			}

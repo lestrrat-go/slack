@@ -5,7 +5,7 @@ func BuildAuthTestResponse() *AuthTestResponseBuilder {
 	return &b
 }
 
-func (b *AuthTestResponseBuilder) Url(v string) *AuthTestResponseBuilder {
+func (b *AuthTestResponseBuilder) URL(v string) *AuthTestResponseBuilder {
 	b.url = v
 	return b
 }
@@ -20,17 +20,17 @@ func (b *AuthTestResponseBuilder) User(v string) *AuthTestResponseBuilder {
 	return b
 }
 
-func (b *AuthTestResponseBuilder) TeamId(v string) *AuthTestResponseBuilder {
+func (b *AuthTestResponseBuilder) TeamID(v string) *AuthTestResponseBuilder {
 	b.teamId = v
 	return b
 }
 
-func (b *AuthTestResponseBuilder) UserId(v string) *AuthTestResponseBuilder {
+func (b *AuthTestResponseBuilder) UserID(v string) *AuthTestResponseBuilder {
 	b.userId = v
 	return b
 }
 
-func (b *AuthTestResponseBuilder) Do() (*AuthTestResponse, error) {
+func (b *AuthTestResponseBuilder) Build() (*AuthTestResponse, error) {
 	var v AuthTestResponse
 	v.url = b.url
 	v.team = b.team
@@ -40,7 +40,15 @@ func (b *AuthTestResponseBuilder) Do() (*AuthTestResponse, error) {
 	return &v, nil
 }
 
-func (b *AuthTestResponse) Url() string {
+func (b *AuthTestResponseBuilder) MustBuild() *AuthTestResponse {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during AuthTestResponse.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *AuthTestResponse) URL() string {
 	return b.url
 }
 
@@ -52,11 +60,11 @@ func (b *AuthTestResponse) User() string {
 	return b.user
 }
 
-func (b *AuthTestResponse) TeamId() string {
+func (b *AuthTestResponse) TeamID() string {
 	return b.teamId
 }
 
-func (b *AuthTestResponse) UserId() string {
+func (b *AuthTestResponse) UserID() string {
 	return b.userId
 }
 
@@ -80,12 +88,20 @@ func (b *ChannelsHistoryResponseBuilder) Messages(v ...*Message) *ChannelsHistor
 	return b
 }
 
-func (b *ChannelsHistoryResponseBuilder) Do() (*ChannelsHistoryResponse, error) {
+func (b *ChannelsHistoryResponseBuilder) Build() (*ChannelsHistoryResponse, error) {
 	var v ChannelsHistoryResponse
 	v.hasMore = b.hasMore
 	v.latest = b.latest
 	v.messages = b.messages
 	return &v, nil
+}
+
+func (b *ChannelsHistoryResponseBuilder) MustBuild() *ChannelsHistoryResponse {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during ChannelsHistoryResponse.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *ChannelsHistoryResponse) HasMore() bool {
@@ -120,12 +136,20 @@ func (b *ChatResponseBuilder) Message(v interface{}) *ChatResponseBuilder {
 	return b
 }
 
-func (b *ChatResponseBuilder) Do() (*ChatResponse, error) {
+func (b *ChatResponseBuilder) Build() (*ChatResponse, error) {
 	var v ChatResponse
 	v.channel = b.channel
 	v.ts = b.ts
 	v.message = b.message
 	return &v, nil
+}
+
+func (b *ChatResponseBuilder) MustBuild() *ChatResponse {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during ChatResponse.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *ChatResponse) Channel() string {
@@ -150,10 +174,18 @@ func (b *EphemeralResponseBuilder) MessageTs(v string) *EphemeralResponseBuilder
 	return b
 }
 
-func (b *EphemeralResponseBuilder) Do() (*EphemeralResponse, error) {
+func (b *EphemeralResponseBuilder) Build() (*EphemeralResponse, error) {
 	var v EphemeralResponse
 	v.messageTs = b.messageTs
 	return &v, nil
+}
+
+func (b *EphemeralResponseBuilder) MustBuild() *EphemeralResponse {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during EphemeralResponse.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *EphemeralResponse) MessageTs() string {
@@ -185,13 +217,21 @@ func (b *GenericResponseBuilder) Timestamp(v string) *GenericResponseBuilder {
 	return b
 }
 
-func (b *GenericResponseBuilder) Do() (*GenericResponse, error) {
+func (b *GenericResponseBuilder) Build() (*GenericResponse, error) {
 	var v GenericResponse
 	v.ok = b.ok
 	v.replyTo = b.replyTo
 	v.error = b.error
 	v.ts = b.ts
 	return &v, nil
+}
+
+func (b *GenericResponseBuilder) MustBuild() *GenericResponse {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during GenericResponse.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *GenericResponse) OK() bool {
@@ -225,11 +265,19 @@ func (b *OAuthAccessResponseBuilder) Scope(v string) *OAuthAccessResponseBuilder
 	return b
 }
 
-func (b *OAuthAccessResponseBuilder) Do() (*OAuthAccessResponse, error) {
+func (b *OAuthAccessResponseBuilder) Build() (*OAuthAccessResponse, error) {
 	var v OAuthAccessResponse
 	v.accessToken = b.accessToken
 	v.scope = b.scope
 	return &v, nil
+}
+
+func (b *OAuthAccessResponseBuilder) MustBuild() *OAuthAccessResponse {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during OAuthAccessResponse.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *OAuthAccessResponse) AccessToken() string {
@@ -255,11 +303,19 @@ func (b *PermalinkResponseBuilder) Permalink(v string) *PermalinkResponseBuilder
 	return b
 }
 
-func (b *PermalinkResponseBuilder) Do() (*PermalinkResponse, error) {
+func (b *PermalinkResponseBuilder) Build() (*PermalinkResponse, error) {
 	var v PermalinkResponse
 	v.channel = b.channel
 	v.permalink = b.permalink
 	return &v, nil
+}
+
+func (b *PermalinkResponseBuilder) MustBuild() *PermalinkResponse {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during PermalinkResponse.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *PermalinkResponse) Channel() string {
@@ -268,6 +324,104 @@ func (b *PermalinkResponse) Channel() string {
 
 func (b *PermalinkResponse) Permalink() string {
 	return b.permalink
+}
+
+func BuildRTMResponse() *RTMResponseBuilder {
+	var b RTMResponseBuilder
+	return &b
+}
+
+func (b *RTMResponseBuilder) URL(v string) *RTMResponseBuilder {
+	b.url = v
+	return b
+}
+
+func (b *RTMResponseBuilder) Self(v *UserDetails) *RTMResponseBuilder {
+	b.self = v
+	return b
+}
+
+func (b *RTMResponseBuilder) Team(v *Team) *RTMResponseBuilder {
+	b.team = v
+	return b
+}
+
+func (b *RTMResponseBuilder) Users(v ...*User) *RTMResponseBuilder {
+	b.users = v
+	return b
+}
+
+func (b *RTMResponseBuilder) Channels(v ...*Channel) *RTMResponseBuilder {
+	b.channels = v
+	return b
+}
+
+func (b *RTMResponseBuilder) Groups(v ...*Group) *RTMResponseBuilder {
+	b.groups = v
+	return b
+}
+
+func (b *RTMResponseBuilder) Bots(v ...*Bot) *RTMResponseBuilder {
+	b.bots = v
+	return b
+}
+
+func (b *RTMResponseBuilder) IMs(v ...*IM) *RTMResponseBuilder {
+	b.ims = v
+	return b
+}
+
+func (b *RTMResponseBuilder) Build() (*RTMResponse, error) {
+	var v RTMResponse
+	v.url = b.url
+	v.self = b.self
+	v.team = b.team
+	v.users = b.users
+	v.channels = b.channels
+	v.groups = b.groups
+	v.bots = b.bots
+	v.ims = b.ims
+	return &v, nil
+}
+
+func (b *RTMResponseBuilder) MustBuild() *RTMResponse {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during RTMResponse.MustBuild: " + err.Error())
+	}
+	return v
+}
+
+func (b *RTMResponse) URL() string {
+	return b.url
+}
+
+func (b *RTMResponse) Self() *UserDetails {
+	return b.self
+}
+
+func (b *RTMResponse) Team() *Team {
+	return b.team
+}
+
+func (b *RTMResponse) Users() []*User {
+	return b.users
+}
+
+func (b *RTMResponse) Channels() []*Channel {
+	return b.channels
+}
+
+func (b *RTMResponse) Groups() []*Group {
+	return b.groups
+}
+
+func (b *RTMResponse) Bots() []*Bot {
+	return b.bots
+}
+
+func (b *RTMResponse) IMs() []*IM {
+	return b.ims
 }
 
 func BuildReactionsGetResponse() *ReactionsGetResponseBuilder {
@@ -300,7 +454,7 @@ func (b *ReactionsGetResponseBuilder) Type(v string) *ReactionsGetResponseBuilde
 	return b
 }
 
-func (b *ReactionsGetResponseBuilder) Do() (*ReactionsGetResponse, error) {
+func (b *ReactionsGetResponseBuilder) Build() (*ReactionsGetResponse, error) {
 	var v ReactionsGetResponse
 	v.channel = b.channel
 	v.comment = b.comment
@@ -308,6 +462,14 @@ func (b *ReactionsGetResponseBuilder) Do() (*ReactionsGetResponse, error) {
 	v.message = b.message
 	v.typ = b.typ
 	return &v, nil
+}
+
+func (b *ReactionsGetResponseBuilder) MustBuild() *ReactionsGetResponse {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during ReactionsGetResponse.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *ReactionsGetResponse) Channel() string {
@@ -345,11 +507,19 @@ func (b *ReactionsListResponseBuilder) Paging(v *Paging) *ReactionsListResponseB
 	return b
 }
 
-func (b *ReactionsListResponseBuilder) Do() (*ReactionsListResponse, error) {
+func (b *ReactionsListResponseBuilder) Build() (*ReactionsListResponse, error) {
 	var v ReactionsListResponse
 	v.items = b.items
 	v.paging = b.paging
 	return &v, nil
+}
+
+func (b *ReactionsListResponseBuilder) MustBuild() *ReactionsListResponse {
+	v, err := b.Build()
+	if err != nil {
+		panic("error during ReactionsListResponse.MustBuild: " + err.Error())
+	}
+	return v
 }
 
 func (b *ReactionsListResponse) Items() ReactionsGetResponseList {

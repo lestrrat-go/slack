@@ -208,7 +208,7 @@ func (c *UsersProfileSetCall) FromValues(v url.Values) error {
 		tmp.name = raw
 	}
 	if raw := strings.TrimSpace(v.Get("profile")); len(raw) > 0 {
-		if err := tmp.profile.Decode(raw); err != nil {
+		if err := json.Unmarshal([]byte(raw), &tmp.profile); err != nil {
 			return errors.Wrap(err, `failed to decode value "profile"`)
 		}
 	}

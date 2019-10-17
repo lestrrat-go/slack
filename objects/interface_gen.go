@@ -159,7 +159,7 @@ type Bot struct {
 	appId   string `json:"app_id,omitempty"`
 	deleted bool   `json:"deleted,omitempty"`
 	name    string `json:"name,omitempty"`
-	icons   Icons  `json:"icons,omitempty"`
+	icons   *Icons `json:"icons,omitempty"`
 }
 
 type BotBuilder struct {
@@ -167,7 +167,7 @@ type BotBuilder struct {
 	appId   string
 	deleted bool
 	name    string
-	icons   Icons
+	icons   *Icons
 }
 
 type ButtonElement struct {
@@ -205,8 +205,8 @@ type Channel struct {
 	nameNormalized     string    `json:"name_normalized,omitempty"`
 	numMembers         int       `json:"num_members,omitempty"`
 	previousNames      []string  `json:"previous_names,omitempty"`
-	purpose            Purpose   `json:"purpose,omitempty"`
-	topic              Topic     `json:"topic,omitempty"`
+	purpose            *Purpose  `json:"purpose,omitempty"`
+	topic              *Topic    `json:"topic,omitempty"`
 	isChannel          bool      `json:"is_channel,omitempty"`
 	isGeneral          bool      `json:"is_general,omitempty"`
 	isMember           bool      `json:"is_member,omitempty"`
@@ -231,8 +231,8 @@ type ChannelBuilder struct {
 	nameNormalized     string
 	numMembers         int
 	previousNames      []string
-	purpose            Purpose
-	topic              Topic
+	purpose            *Purpose
+	topic              *Topic
 	isChannel          bool
 	isGeneral          bool
 	isMember           bool
@@ -466,7 +466,7 @@ type File struct {
 	groups             []string     `json:"groups,omitempty"`
 	ims                []string     `json:"ims,omitempty"`
 	initialComment     Comment      `json:"initial_comment,omitempty"`
-	commentCount       int          `json:"comment_count,omitempty"`
+	commentsCount      int          `json:"comments_count,omitempty"`
 	numStars           int          `json:"num_stars,omitempty"`
 	isStarred          bool         `json:"is_starred,omitempty"`
 	title              string       `json:"title,omitempty"`
@@ -527,7 +527,7 @@ type FileBuilder struct {
 	groups             []string
 	ims                []string
 	initialComment     Comment
-	commentCount       int
+	commentsCount      int
 	numStars           int
 	isStarred          bool
 	title              string
@@ -605,6 +605,34 @@ type GroupBuilder struct {
 }
 
 type GroupList []*Group
+
+type IM struct {
+	id                 string    `json:"id,omitempty"`
+	created            EpochTime `json:"created,omitempty"`
+	isOpen             bool      `json:"is_open,omitempty"`
+	lastRead           string    `json:"last_read,omitempty"`
+	latest             *Message  `json:"latest,omitempty"`
+	unreadCount        int       `json:"unread_count,omitempty"`
+	unreadCountDisplay int       `json:"unread_count_display,omitempty"`
+	isIm               bool      `json:"is_im,omitempty"`
+	user               string    `json:"user,omitempty"`
+	isUserDeleted      bool      `json:"is_user_deleted,omitempty"`
+}
+
+type IMBuilder struct {
+	id                 string
+	created            EpochTime
+	isOpen             bool
+	lastRead           string
+	latest             *Message
+	unreadCount        int
+	unreadCountDisplay int
+	isIm               bool
+	user               string
+	isUserDeleted      bool
+}
+
+type IMList []*IM
 
 type Icons struct {
 	image36 string `json:"image_36,omitempty"`
@@ -816,6 +844,28 @@ type PurposeBuilder struct {
 	lastSet EpochTime
 }
 
+type RTMResponse struct {
+	url      string       `json:"url,omitempty"`
+	self     *UserDetails `json:"self,omitempty"`
+	team     *Team        `json:"team,omitempty"`
+	users    []*User      `json:"users,omitempty"`
+	channels []*Channel   `json:"channels,omitempty"`
+	groups   []*Group     `json:"groups,omitempty"`
+	bots     []*Bot       `json:"bots,omitempty"`
+	ims      []*IM        `json:"ims,omitempty"`
+}
+
+type RTMResponseBuilder struct {
+	url      string
+	self     *UserDetails
+	team     *Team
+	users    []*User
+	channels []*Channel
+	groups   []*Group
+	bots     []*Bot
+	ims      []*IM
+}
+
 type Reaction struct {
 	count int      `json:"count,omitempty"`
 	name  string   `json:"name,omitempty"`
@@ -977,6 +1027,92 @@ type TopicBuilder struct {
 	creator string
 	lastSet EpochTime
 }
+
+type User struct {
+	color             string       `json:"color,omitempty"`
+	deleted           bool         `json:"deleted,omitempty"`
+	id                string       `json:"id,omitempty"`
+	isAdmin           bool         `json:"is_admin,omitempty"`
+	isBot             bool         `json:"is_bot,omitempty"`
+	isOwner           bool         `json:"is_owner,omitempty"`
+	isRestricted      bool         `json:"is_restricted,omitempty"`
+	isUltraRestricted bool         `json:"is_ultra_restricted,omitempty"`
+	name              string       `json:"name,omitempty"`
+	profile           *UserProfile `json:"profile,omitempty"`
+	realName          string       `json:"real_name,omitempty"`
+	status            string       `json:"status,omitempty"`
+	teamId            string       `json:"team_id,omitempty"`
+	tz                string       `json:"tz,omitempty"`
+	tzLabel           string       `json:"tz_label,omitempty"`
+	tzOffset          int          `json:"tz_offset,omitempty"`
+	updated           int          `json:"updated,omitempty"`
+}
+
+type UserBuilder struct {
+	color             string
+	deleted           bool
+	id                string
+	isAdmin           bool
+	isBot             bool
+	isOwner           bool
+	isRestricted      bool
+	isUltraRestricted bool
+	name              string
+	profile           *UserProfile
+	realName          string
+	status            string
+	teamId            string
+	tz                string
+	tzLabel           string
+	tzOffset          int
+	updated           int
+}
+
+type UserList []*User
+
+type UserDetails struct {
+	id             string     `json:"id,omitempty"`
+	name           string     `json:"name,omitempty"`
+	created        EpochTime  `json:"created,omitempty"`
+	manualPresence string     `json:"manual_presence,omitempty"`
+	prefs          *UserPrefs `json:"prefs,omitempty"`
+}
+
+type UserDetailsBuilder struct {
+	id             string
+	name           string
+	created        EpochTime
+	manualPresence string
+	prefs          *UserPrefs
+}
+
+type UserDetailsList []*UserDetails
+
+type UserPrefs struct {
+}
+
+type UserPrefsBuilder struct {
+}
+
+type UserPresence struct {
+	autoAway        bool      `json:"auto_away,omitempty"`
+	connectionCount int       `json:"connection_count,omitempty"`
+	lastActivity    int       `json:"last_activity,omitempty"`
+	manualAway      bool      `json:"manual_away,omitempty"`
+	online          bool      `json:"online,omitempty"`
+	presence        *Presence `json:"presence,omitempty"`
+}
+
+type UserPresenceBuilder struct {
+	autoAway        bool
+	connectionCount int
+	lastActivity    int
+	manualAway      bool
+	online          bool
+	presence        *Presence
+}
+
+type UserPresenceList []*UserPresence
 
 type UserProfile struct {
 	alwaysActive       bool   `json:"always_active,omitempty"`
