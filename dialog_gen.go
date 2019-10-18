@@ -63,6 +63,29 @@ func (c *DialogOpenCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type DialogOpenCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *DialogOpenCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal DialogOpenCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *DialogOpenCallResponse) payload() (*objects.DialogResponse, error) {
+	var res0 objects.DialogResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.DialogResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access dialog.open endpoint
 func (c *DialogOpenCall) Do(ctx context.Context) (*objects.DialogResponse, error) {
 	const endpoint = "dialog.open"
@@ -70,18 +93,21 @@ func (c *DialogOpenCall) Do(ctx context.Context) (*objects.DialogResponse, error
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.DialogResponse
-	}
+	var res DialogOpenCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to dialog.open`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to dialog.open`)
+		}
+		return nil, err
 	}
 
-	return res.DialogResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`

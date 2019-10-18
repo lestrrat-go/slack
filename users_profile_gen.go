@@ -76,6 +76,29 @@ func (c *UsersProfileGetCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsersProfileGetCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *UsersProfileGetCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsersProfileGetCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *UsersProfileGetCallResponse) payload() (*objects.UserProfile, error) {
+	var res0 objects.UserProfile
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.UserProfile from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access users.profile.get endpoint
 func (c *UsersProfileGetCall) Do(ctx context.Context) (*objects.UserProfile, error) {
 	const endpoint = "users.profile.get"
@@ -83,18 +106,21 @@ func (c *UsersProfileGetCall) Do(ctx context.Context) (*objects.UserProfile, err
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.UserProfile
-	}
+	var res UsersProfileGetCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.profile.get`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to users.profile.get`)
+		}
+		return nil, err
 	}
 
-	return res.UserProfile, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -180,6 +206,29 @@ func (c *UsersProfileSetCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsersProfileSetCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *UsersProfileSetCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsersProfileSetCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *UsersProfileSetCallResponse) payload() (*objects.UserProfile, error) {
+	var res0 objects.UserProfile
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.UserProfile from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access users.profile.set endpoint
 func (c *UsersProfileSetCall) Do(ctx context.Context) (*objects.UserProfile, error) {
 	const endpoint = "users.profile.set"
@@ -187,18 +236,21 @@ func (c *UsersProfileSetCall) Do(ctx context.Context) (*objects.UserProfile, err
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.UserProfile
-	}
+	var res UsersProfileSetCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.profile.set`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to users.profile.set`)
+		}
+		return nil, err
 	}
 
-	return res.UserProfile, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`

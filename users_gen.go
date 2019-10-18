@@ -88,6 +88,22 @@ func (c *UsersDeletePhotoCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsersDeletePhotoCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *UsersDeletePhotoCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsersDeletePhotoCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access users.deletePhoto endpoint
 func (c *UsersDeletePhotoCall) Do(ctx context.Context) error {
 	const endpoint = "users.deletePhoto"
@@ -95,14 +111,18 @@ func (c *UsersDeletePhotoCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res UsersDeletePhotoCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.deletePhoto`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to users.deletePhoto`)
+		}
+		return err
 	}
 
 	return nil
@@ -143,6 +163,29 @@ func (c *UsersGetPresenceCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsersGetPresenceCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *UsersGetPresenceCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsersGetPresenceCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *UsersGetPresenceCallResponse) payload() (*objects.UserPresence, error) {
+	var res0 objects.UserPresence
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.UserPresence from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access users.getPresence endpoint
 func (c *UsersGetPresenceCall) Do(ctx context.Context) (*objects.UserPresence, error) {
 	const endpoint = "users.getPresence"
@@ -150,18 +193,21 @@ func (c *UsersGetPresenceCall) Do(ctx context.Context) (*objects.UserPresence, e
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.UserPresence
-	}
+	var res UsersGetPresenceCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.getPresence`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to users.getPresence`)
+		}
+		return nil, err
 	}
 
-	return res.UserPresence, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -196,6 +242,35 @@ func (c *UsersIdentityCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsersIdentityCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"user"`
+	Payload2  json.RawMessage        `json:"team"`
+}
+
+func (r *UsersIdentityCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsersIdentityCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *UsersIdentityCallResponse) payload() (*objects.UserProfile, *objects.Team, error) {
+	var res1 objects.UserProfile
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, nil, errors.Wrap(err, `failed to ummarshal objects.UserProfile from response`)
+	}
+	var res2 objects.Team
+	if err := json.Unmarshal(r.Payload2, &res2); err != nil {
+		return nil, nil, errors.Wrap(err, `failed to ummarshal objects.Team from response`)
+	}
+	return &res1, &res2, nil
+}
+
 // Do executes the call to access users.identity endpoint
 func (c *UsersIdentityCall) Do(ctx context.Context) (*objects.UserProfile, *objects.Team, error) {
 	const endpoint = "users.identity"
@@ -203,19 +278,21 @@ func (c *UsersIdentityCall) Do(ctx context.Context) (*objects.UserProfile, *obje
 	if err != nil {
 		return nil, nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.UserProfile `json:"user"`
-		*objects.Team        `json:"team"`
-	}
+	var res UsersIdentityCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, nil, errors.Wrap(err, `failed to post to users.identity`)
 	}
-	if !res.OK() {
-		return nil, nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to users.identity`)
+		}
+		return nil, nil, err
 	}
 
-	return res.UserProfile, res.Team, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -263,6 +340,30 @@ func (c *UsersInfoCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsersInfoCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"user"`
+}
+
+func (r *UsersInfoCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsersInfoCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *UsersInfoCallResponse) payload() (*objects.User, error) {
+	var res1 objects.User
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.User from response`)
+	}
+	return &res1, nil
+}
+
 // Do executes the call to access users.info endpoint
 func (c *UsersInfoCall) Do(ctx context.Context) (*objects.User, error) {
 	const endpoint = "users.info"
@@ -270,18 +371,21 @@ func (c *UsersInfoCall) Do(ctx context.Context) (*objects.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.User `json:"user"`
-	}
+	var res UsersInfoCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.info`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to users.info`)
+		}
+		return nil, err
 	}
 
-	return res.User, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -353,6 +457,30 @@ func (c *UsersListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsersListCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"members"`
+}
+
+func (r *UsersListCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsersListCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *UsersListCallResponse) payload() (objects.UserList, error) {
+	var res1 objects.UserList
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.UserList from response`)
+	}
+	return res1, nil
+}
+
 // Do executes the call to access users.list endpoint
 func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
 	const endpoint = "users.list"
@@ -360,18 +488,21 @@ func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		objects.UserList `json:"members"`
-	}
+	var res UsersListCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.list`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to users.list`)
+		}
+		return nil, err
 	}
 
-	return res.UserList, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -430,6 +561,30 @@ func (c *UsersLookupByEmailCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsersLookupByEmailCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"user"`
+}
+
+func (r *UsersLookupByEmailCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsersLookupByEmailCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *UsersLookupByEmailCallResponse) payload() (*objects.User, error) {
+	var res1 objects.User
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.User from response`)
+	}
+	return &res1, nil
+}
+
 // Do executes the call to access users.lookupByEmail endpoint
 func (c *UsersLookupByEmailCall) Do(ctx context.Context) (*objects.User, error) {
 	const endpoint = "users.lookupByEmail"
@@ -437,18 +592,21 @@ func (c *UsersLookupByEmailCall) Do(ctx context.Context) (*objects.User, error) 
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.User `json:"user"`
-	}
+	var res UsersLookupByEmailCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.lookupByEmail`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to users.lookupByEmail`)
+		}
+		return nil, err
 	}
 
-	return res.User, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -483,6 +641,22 @@ func (c *UsersSetActiveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsersSetActiveCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *UsersSetActiveCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsersSetActiveCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access users.setActive endpoint
 func (c *UsersSetActiveCall) Do(ctx context.Context) error {
 	const endpoint = "users.setActive"
@@ -490,14 +664,18 @@ func (c *UsersSetActiveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res UsersSetActiveCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.setActive`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to users.setActive`)
+		}
+		return err
 	}
 
 	return nil
@@ -538,6 +716,22 @@ func (c *UsersSetPresenceCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsersSetPresenceCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *UsersSetPresenceCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsersSetPresenceCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access users.setPresence endpoint
 func (c *UsersSetPresenceCall) Do(ctx context.Context) error {
 	const endpoint = "users.setPresence"
@@ -545,14 +739,18 @@ func (c *UsersSetPresenceCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res UsersSetPresenceCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.setPresence`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to users.setPresence`)
+		}
+		return err
 	}
 
 	return nil

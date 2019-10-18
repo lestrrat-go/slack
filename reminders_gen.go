@@ -93,6 +93,29 @@ func (c *RemindersAddCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type RemindersAddCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *RemindersAddCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal RemindersAddCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *RemindersAddCallResponse) payload() (*objects.Reminder, error) {
+	var res0 objects.Reminder
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Reminder from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access reminders.add endpoint
 func (c *RemindersAddCall) Do(ctx context.Context) (*objects.Reminder, error) {
 	const endpoint = "reminders.add"
@@ -100,18 +123,21 @@ func (c *RemindersAddCall) Do(ctx context.Context) (*objects.Reminder, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Reminder
-	}
+	var res RemindersAddCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reminders.add`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to reminders.add`)
+		}
+		return nil, err
 	}
 
-	return res.Reminder, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -162,6 +188,22 @@ func (c *RemindersCompleteCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type RemindersCompleteCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *RemindersCompleteCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal RemindersCompleteCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access reminders.complete endpoint
 func (c *RemindersCompleteCall) Do(ctx context.Context) error {
 	const endpoint = "reminders.complete"
@@ -169,14 +211,18 @@ func (c *RemindersCompleteCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res RemindersCompleteCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to reminders.complete`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to reminders.complete`)
+		}
+		return err
 	}
 
 	return nil
@@ -220,6 +266,22 @@ func (c *RemindersDeleteCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type RemindersDeleteCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *RemindersDeleteCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal RemindersDeleteCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access reminders.delete endpoint
 func (c *RemindersDeleteCall) Do(ctx context.Context) error {
 	const endpoint = "reminders.delete"
@@ -227,14 +289,18 @@ func (c *RemindersDeleteCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res RemindersDeleteCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to reminders.delete`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to reminders.delete`)
+		}
+		return err
 	}
 
 	return nil
@@ -278,6 +344,29 @@ func (c *RemindersInfoCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type RemindersInfoCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *RemindersInfoCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal RemindersInfoCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *RemindersInfoCallResponse) payload() (*objects.Reminder, error) {
+	var res0 objects.Reminder
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Reminder from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access reminders.info endpoint
 func (c *RemindersInfoCall) Do(ctx context.Context) (*objects.Reminder, error) {
 	const endpoint = "reminders.info"
@@ -285,18 +374,21 @@ func (c *RemindersInfoCall) Do(ctx context.Context) (*objects.Reminder, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Reminder
-	}
+	var res RemindersInfoCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reminders.info`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to reminders.info`)
+		}
+		return nil, err
 	}
 
-	return res.Reminder, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -331,6 +423,30 @@ func (c *RemindersListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type RemindersListCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"reminders"`
+}
+
+func (r *RemindersListCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal RemindersListCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *RemindersListCallResponse) payload() (objects.ReminderList, error) {
+	var res1 objects.ReminderList
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.ReminderList from response`)
+	}
+	return res1, nil
+}
+
 // Do executes the call to access reminders.list endpoint
 func (c *RemindersListCall) Do(ctx context.Context) (objects.ReminderList, error) {
 	const endpoint = "reminders.list"
@@ -338,18 +454,21 @@ func (c *RemindersListCall) Do(ctx context.Context) (objects.ReminderList, error
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		objects.ReminderList `json:"reminders"`
-	}
+	var res RemindersListCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reminders.list`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to reminders.list`)
+		}
+		return nil, err
 	}
 
-	return res.ReminderList, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`

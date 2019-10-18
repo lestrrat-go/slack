@@ -1,9 +1,14 @@
 // Package objects provide the building blocks to creating the various
-// objects used within the Slack API. It provides Builder objects 
+// objects used within the Slack API. It provides Builder objects
 // to cleanly create objects to be consumed by API calls
 package objects
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/pkg/errors"
+)
 
 func PlainText(txt string) *Text {
 	// ignore errors, b/c we only check for the type, and we're darn sure
@@ -33,7 +38,6 @@ func (b *ContextBlockBuilder) Validate() error {
 		return fmt.Errorf(`maximum number of elements in context block is 10: got %d`, len(b.elements))
 	}
 
-
 	for _, e := range b.elements {
 		switch e.(type) {
 		case *ImageElement, *Text:
@@ -41,5 +45,18 @@ func (b *ContextBlockBuilder) Validate() error {
 			return fmt.Errorf(`elements in context block can only be image elements or text objects: got %T`, e)
 		}
 	}
+	return nil
+}
+
+func (u MultiLevelJSONUnmarshaler) UnmarshalJSON(data []byte) error {
+	// This is really really really really inefficient...
+
+	for _, v := range u {
+		if err := json.Unmarshal(data, v); err != nil {
+			return errors.Wrapf(err, `failed to unmarshal over %T`, v)
+		}
+	}
+
+
 	return nil
 }

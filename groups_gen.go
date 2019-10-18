@@ -158,6 +158,22 @@ func (c *GroupsArchiveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsArchiveCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *GroupsArchiveCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsArchiveCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access groups.archive endpoint
 func (c *GroupsArchiveCall) Do(ctx context.Context) error {
 	const endpoint = "groups.archive"
@@ -165,14 +181,18 @@ func (c *GroupsArchiveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res GroupsArchiveCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.archive`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.archive`)
+		}
+		return err
 	}
 
 	return nil
@@ -226,6 +246,30 @@ func (c *GroupsCreateCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsCreateCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"group"`
+}
+
+func (r *GroupsCreateCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsCreateCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *GroupsCreateCallResponse) payload() (*objects.Group, error) {
+	var res1 objects.Group
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Group from response`)
+	}
+	return &res1, nil
+}
+
 // Do executes the call to access groups.create endpoint
 func (c *GroupsCreateCall) Do(ctx context.Context) (*objects.Group, error) {
 	const endpoint = "groups.create"
@@ -233,18 +277,21 @@ func (c *GroupsCreateCall) Do(ctx context.Context) (*objects.Group, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Group `json:"group"`
-	}
+	var res GroupsCreateCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to groups.create`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.create`)
+		}
+		return nil, err
 	}
 
-	return res.Group, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -292,6 +339,30 @@ func (c *GroupsCreateChildCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsCreateChildCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"group"`
+}
+
+func (r *GroupsCreateChildCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsCreateChildCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *GroupsCreateChildCallResponse) payload() (*objects.Group, error) {
+	var res1 objects.Group
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Group from response`)
+	}
+	return &res1, nil
+}
+
 // Do executes the call to access groups.createChild endpoint
 func (c *GroupsCreateChildCall) Do(ctx context.Context) (*objects.Group, error) {
 	const endpoint = "groups.createChild"
@@ -299,18 +370,21 @@ func (c *GroupsCreateChildCall) Do(ctx context.Context) (*objects.Group, error) 
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Group `json:"group"`
-	}
+	var res GroupsCreateChildCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to groups.createChild`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.createChild`)
+		}
+		return nil, err
 	}
 
-	return res.Group, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -401,6 +475,35 @@ func (c *GroupsHistoryCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsHistoryCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"latest"`
+	Payload2  json.RawMessage        `json:"messages"`
+}
+
+func (r *GroupsHistoryCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsHistoryCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *GroupsHistoryCallResponse) payload() (string, objects.MessageList, error) {
+	var res1 string
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return "", nil, errors.Wrap(err, `failed to ummarshal string from response`)
+	}
+	var res2 objects.MessageList
+	if err := json.Unmarshal(r.Payload2, &res2); err != nil {
+		return "", nil, errors.Wrap(err, `failed to ummarshal objects.MessageList from response`)
+	}
+	return res1, res2, nil
+}
+
 // Do executes the call to access groups.history endpoint
 func (c *GroupsHistoryCall) Do(ctx context.Context) (string, objects.MessageList, error) {
 	const endpoint = "groups.history"
@@ -408,19 +511,21 @@ func (c *GroupsHistoryCall) Do(ctx context.Context) (string, objects.MessageList
 	if err != nil {
 		return "", nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		string              `json:"latest"`
-		objects.MessageList `json:"messages"`
-	}
+	var res GroupsHistoryCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return "", nil, errors.Wrap(err, `failed to post to groups.history`)
 	}
-	if !res.OK() {
-		return "", nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.history`)
+		}
+		return "", nil, err
 	}
 
-	return res.string, res.MessageList, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -498,6 +603,30 @@ func (c *GroupsInfoCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsInfoCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"group"`
+}
+
+func (r *GroupsInfoCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsInfoCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *GroupsInfoCallResponse) payload() (*objects.Group, error) {
+	var res1 objects.Group
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Group from response`)
+	}
+	return &res1, nil
+}
+
 // Do executes the call to access groups.info endpoint
 func (c *GroupsInfoCall) Do(ctx context.Context) (*objects.Group, error) {
 	const endpoint = "groups.info"
@@ -505,18 +634,21 @@ func (c *GroupsInfoCall) Do(ctx context.Context) (*objects.Group, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Group `json:"group"`
-	}
+	var res GroupsInfoCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to groups.info`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.info`)
+		}
+		return nil, err
 	}
 
-	return res.Group, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -570,6 +702,35 @@ func (c *GroupsInviteCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsInviteCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"group"`
+	Payload2  json.RawMessage        `json:"already_in_group"`
+}
+
+func (r *GroupsInviteCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsInviteCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *GroupsInviteCallResponse) payload() (*objects.Group, bool, error) {
+	var res1 objects.Group
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, false, errors.Wrap(err, `failed to ummarshal objects.Group from response`)
+	}
+	var res2 bool
+	if err := json.Unmarshal(r.Payload2, &res2); err != nil {
+		return nil, false, errors.Wrap(err, `failed to ummarshal bool from response`)
+	}
+	return &res1, res2, nil
+}
+
 // Do executes the call to access groups.invite endpoint
 func (c *GroupsInviteCall) Do(ctx context.Context) (*objects.Group, bool, error) {
 	const endpoint = "groups.invite"
@@ -577,19 +738,21 @@ func (c *GroupsInviteCall) Do(ctx context.Context) (*objects.Group, bool, error)
 	if err != nil {
 		return nil, false, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Group `json:"group"`
-		bool           `json:"already_in_group"`
-	}
+	var res GroupsInviteCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, false, errors.Wrap(err, `failed to post to groups.invite`)
 	}
-	if !res.OK() {
-		return nil, false, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.invite`)
+		}
+		return nil, false, err
 	}
 
-	return res.Group, res.bool, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -639,6 +802,22 @@ func (c *GroupsKickCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsKickCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *GroupsKickCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsKickCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access groups.kick endpoint
 func (c *GroupsKickCall) Do(ctx context.Context) error {
 	const endpoint = "groups.kick"
@@ -646,14 +825,18 @@ func (c *GroupsKickCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res GroupsKickCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.kick`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.kick`)
+		}
+		return err
 	}
 
 	return nil
@@ -700,6 +883,22 @@ func (c *GroupsLeaveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsLeaveCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *GroupsLeaveCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsLeaveCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access groups.leave endpoint
 func (c *GroupsLeaveCall) Do(ctx context.Context) error {
 	const endpoint = "groups.leave"
@@ -707,14 +906,18 @@ func (c *GroupsLeaveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res GroupsLeaveCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.leave`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.leave`)
+		}
+		return err
 	}
 
 	return nil
@@ -772,6 +975,30 @@ func (c *GroupsListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsListCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"groups"`
+}
+
+func (r *GroupsListCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsListCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *GroupsListCallResponse) payload() (objects.GroupList, error) {
+	var res1 objects.GroupList
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.GroupList from response`)
+	}
+	return res1, nil
+}
+
 // Do executes the call to access groups.list endpoint
 func (c *GroupsListCall) Do(ctx context.Context) (objects.GroupList, error) {
 	const endpoint = "groups.list"
@@ -779,18 +1006,21 @@ func (c *GroupsListCall) Do(ctx context.Context) (objects.GroupList, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		objects.GroupList `json:"groups"`
-	}
+	var res GroupsListCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to groups.list`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.list`)
+		}
+		return nil, err
 	}
 
-	return res.GroupList, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -848,6 +1078,22 @@ func (c *GroupsMarkCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsMarkCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *GroupsMarkCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsMarkCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access groups.mark endpoint
 func (c *GroupsMarkCall) Do(ctx context.Context) error {
 	const endpoint = "groups.mark"
@@ -855,14 +1101,18 @@ func (c *GroupsMarkCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res GroupsMarkCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.mark`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.mark`)
+		}
+		return err
 	}
 
 	return nil
@@ -909,6 +1159,22 @@ func (c *GroupsOpenCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsOpenCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *GroupsOpenCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsOpenCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access groups.open endpoint
 func (c *GroupsOpenCall) Do(ctx context.Context) error {
 	const endpoint = "groups.open"
@@ -916,14 +1182,18 @@ func (c *GroupsOpenCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res GroupsOpenCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.open`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.open`)
+		}
+		return err
 	}
 
 	return nil
@@ -983,6 +1253,30 @@ func (c *GroupsRenameCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsRenameCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"group"`
+}
+
+func (r *GroupsRenameCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsRenameCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *GroupsRenameCallResponse) payload() (*objects.Group, error) {
+	var res1 objects.Group
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Group from response`)
+	}
+	return &res1, nil
+}
+
 // Do executes the call to access groups.rename endpoint
 func (c *GroupsRenameCall) Do(ctx context.Context) (*objects.Group, error) {
 	const endpoint = "groups.rename"
@@ -990,18 +1284,21 @@ func (c *GroupsRenameCall) Do(ctx context.Context) (*objects.Group, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Group `json:"group"`
-	}
+	var res GroupsRenameCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to groups.rename`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.rename`)
+		}
+		return nil, err
 	}
 
-	return res.Group, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -1058,6 +1355,35 @@ func (c *GroupsRepliesCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsRepliesCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"messages"`
+	Payload2  json.RawMessage        `json:"thread_info"`
+}
+
+func (r *GroupsRepliesCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsRepliesCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *GroupsRepliesCallResponse) payload() (objects.MessageList, *objects.ThreadInfo, error) {
+	var res1 objects.MessageList
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, nil, errors.Wrap(err, `failed to ummarshal objects.MessageList from response`)
+	}
+	var res2 objects.ThreadInfo
+	if err := json.Unmarshal(r.Payload2, &res2); err != nil {
+		return nil, nil, errors.Wrap(err, `failed to ummarshal objects.ThreadInfo from response`)
+	}
+	return res1, &res2, nil
+}
+
 // Do executes the call to access groups.replies endpoint
 func (c *GroupsRepliesCall) Do(ctx context.Context) (objects.MessageList, *objects.ThreadInfo, error) {
 	const endpoint = "groups.replies"
@@ -1065,19 +1391,21 @@ func (c *GroupsRepliesCall) Do(ctx context.Context) (objects.MessageList, *objec
 	if err != nil {
 		return nil, nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		objects.MessageList `json:"messages"`
-		*objects.ThreadInfo `json:"thread_info"`
-	}
+	var res GroupsRepliesCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, nil, errors.Wrap(err, `failed to post to groups.replies`)
 	}
-	if !res.OK() {
-		return nil, nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.replies`)
+		}
+		return nil, nil, err
 	}
 
-	return res.MessageList, res.ThreadInfo, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -1127,6 +1455,30 @@ func (c *GroupsSetPurposeCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsSetPurposeCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"purpose"`
+}
+
+func (r *GroupsSetPurposeCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsSetPurposeCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *GroupsSetPurposeCallResponse) payload() (string, error) {
+	var res1 string
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return "", errors.Wrap(err, `failed to ummarshal string from response`)
+	}
+	return res1, nil
+}
+
 // Do executes the call to access groups.setPurpose endpoint
 func (c *GroupsSetPurposeCall) Do(ctx context.Context) (string, error) {
 	const endpoint = "groups.setPurpose"
@@ -1134,18 +1486,21 @@ func (c *GroupsSetPurposeCall) Do(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var res struct {
-		objects.GenericResponse
-		string `json:"purpose"`
-	}
+	var res GroupsSetPurposeCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return "", errors.Wrap(err, `failed to post to groups.setPurpose`)
 	}
-	if !res.OK() {
-		return "", errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.setPurpose`)
+		}
+		return "", err
 	}
 
-	return res.string, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -1195,6 +1550,30 @@ func (c *GroupsSetTopicCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsSetTopicCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"topic"`
+}
+
+func (r *GroupsSetTopicCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsSetTopicCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *GroupsSetTopicCallResponse) payload() (string, error) {
+	var res1 string
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return "", errors.Wrap(err, `failed to ummarshal string from response`)
+	}
+	return res1, nil
+}
+
 // Do executes the call to access groups.setTopic endpoint
 func (c *GroupsSetTopicCall) Do(ctx context.Context) (string, error) {
 	const endpoint = "groups.setTopic"
@@ -1202,18 +1581,21 @@ func (c *GroupsSetTopicCall) Do(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var res struct {
-		objects.GenericResponse
-		string `json:"topic"`
-	}
+	var res GroupsSetTopicCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return "", errors.Wrap(err, `failed to post to groups.setTopic`)
 	}
-	if !res.OK() {
-		return "", errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.setTopic`)
+		}
+		return "", err
 	}
 
-	return res.string, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -1257,6 +1639,22 @@ func (c *GroupsUnarchiveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type GroupsUnarchiveCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *GroupsUnarchiveCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal GroupsUnarchiveCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access groups.unarchive endpoint
 func (c *GroupsUnarchiveCall) Do(ctx context.Context) error {
 	const endpoint = "groups.unarchive"
@@ -1264,14 +1662,18 @@ func (c *GroupsUnarchiveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res GroupsUnarchiveCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to groups.unarchive`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to groups.unarchive`)
+		}
+		return err
 	}
 
 	return nil

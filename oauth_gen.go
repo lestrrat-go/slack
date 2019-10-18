@@ -76,6 +76,29 @@ func (c *OAuthAccessCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type OAuthAccessCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *OAuthAccessCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal OAuthAccessCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *OAuthAccessCallResponse) payload() (*objects.OAuthAccessResponse, error) {
+	var res0 objects.OAuthAccessResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.OAuthAccessResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access oauth.access endpoint
 func (c *OAuthAccessCall) Do(ctx context.Context) (*objects.OAuthAccessResponse, error) {
 	const endpoint = "oauth.access"
@@ -83,18 +106,21 @@ func (c *OAuthAccessCall) Do(ctx context.Context) (*objects.OAuthAccessResponse,
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.OAuthAccessResponse
-	}
+	var res OAuthAccessCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to oauth.access`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to oauth.access`)
+		}
+		return nil, err
 	}
 
-	return res.OAuthAccessResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`

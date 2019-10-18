@@ -125,6 +125,22 @@ func (c *ReactionsAddCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ReactionsAddCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ReactionsAddCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ReactionsAddCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access reactions.add endpoint
 func (c *ReactionsAddCall) Do(ctx context.Context) error {
 	const endpoint = "reactions.add"
@@ -132,14 +148,18 @@ func (c *ReactionsAddCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res ReactionsAddCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to reactions.add`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to reactions.add`)
+		}
+		return err
 	}
 
 	return nil
@@ -239,6 +259,29 @@ func (c *ReactionsGetCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ReactionsGetCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ReactionsGetCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ReactionsGetCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ReactionsGetCallResponse) payload() (*objects.ReactionsGetResponse, error) {
+	var res0 objects.ReactionsGetResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.ReactionsGetResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access reactions.get endpoint
 func (c *ReactionsGetCall) Do(ctx context.Context) (*objects.ReactionsGetResponse, error) {
 	const endpoint = "reactions.get"
@@ -246,18 +289,21 @@ func (c *ReactionsGetCall) Do(ctx context.Context) (*objects.ReactionsGetRespons
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.ReactionsGetResponse
-	}
+	var res ReactionsGetCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reactions.get`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to reactions.get`)
+		}
+		return nil, err
 	}
 
-	return res.ReactionsGetResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -348,6 +394,29 @@ func (c *ReactionsListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ReactionsListCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ReactionsListCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ReactionsListCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ReactionsListCallResponse) payload() (*objects.ReactionsListResponse, error) {
+	var res0 objects.ReactionsListResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.ReactionsListResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access reactions.list endpoint
 func (c *ReactionsListCall) Do(ctx context.Context) (*objects.ReactionsListResponse, error) {
 	const endpoint = "reactions.list"
@@ -355,18 +424,21 @@ func (c *ReactionsListCall) Do(ctx context.Context) (*objects.ReactionsListRespo
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.ReactionsListResponse
-	}
+	var res ReactionsListCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reactions.list`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to reactions.list`)
+		}
+		return nil, err
 	}
 
-	return res.ReactionsListResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -468,6 +540,22 @@ func (c *ReactionsRemoveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ReactionsRemoveCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ReactionsRemoveCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ReactionsRemoveCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access reactions.remove endpoint
 func (c *ReactionsRemoveCall) Do(ctx context.Context) error {
 	const endpoint = "reactions.remove"
@@ -475,14 +563,18 @@ func (c *ReactionsRemoveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res ReactionsRemoveCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to reactions.remove`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to reactions.remove`)
+		}
+		return err
 	}
 
 	return nil

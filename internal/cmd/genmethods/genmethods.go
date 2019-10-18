@@ -13,6 +13,7 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/lestrrat-go/slack/internal/codegen"
 	"github.com/pkg/errors"
 )
 
@@ -107,15 +108,34 @@ func camelit(s string) string {
 
 func _main() error {
 	var endpoints []Endpoint
+	var objectList []codegen.Object
 
-	fh, err := os.Open("endpoints.json")
+	{
+		fh, err := os.Open("endpoints.json")
+		if err != nil {
+			return errors.Wrap(err, `failed to open endpoints.json`)
+		}
+
+		if err := json.NewDecoder(fh).Decode(&endpoints); err != nil {
+			fh.Close()
+			return errors.Wrap(err, `failed to decode endpoints.json`)
+		}
+		fh.Close()
+	}
+
+	fh, err := os.Open("objects.json")
 	if err != nil {
-		return errors.Wrap(err, `failed to open endpoints.json`)
+		return errors.Wrap(err, `failed to open objects.json`)
 	}
 	defer fh.Close()
 
-	if err := json.NewDecoder(fh).Decode(&endpoints); err != nil {
-		return errors.Wrap(err, `failed to decode endpoints.json`)
+	if err := json.NewDecoder(fh).Decode(&objectList); err != nil {
+		return errors.Wrap(err, `failed to decode objects.json`)
+	}
+
+	objects := make(map[string]codegen.Object)
+	for _, object := range objectList {
+		objects["objects."+object.Name] = object
 	}
 
 	groups := map[string]struct{}{}
@@ -137,7 +157,7 @@ func _main() error {
 	}
 
 	for fn, endpoints := range group {
-		if err := generateServiceDetailsFile(fn, endpoints); err != nil {
+		if err := generateServiceDetailsFile(fn, endpoints, objects); err != nil {
 			return errors.Wrapf(err, `failed to generate file %s`, fn)
 		}
 	}
@@ -185,7 +205,7 @@ func writeZeroReturnValues(dst io.Writer, endpoint *Endpoint) {
 	}
 }
 
-func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
+func generateServiceDetailsFile(file string, endpoints []Endpoint, objects map[string]codegen.Object) error {
 	sort.Slice(endpoints, func(i, j int) bool {
 		return strings.Compare(endpoints[i].Name, endpoints[j].Name) < 0
 	})
@@ -394,6 +414,90 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 			returnType = rtbuf.String()
 		}
 
+		// Because *Call objects need to parse composite structs, we need to
+		// jump through hoops.
+
+		fmt.Fprintf(&buf, "\ntype %s%sCallResponse struct {", endpoint.Group, endpoint.methodName)
+		// inline fields from objects.GenericResponse
+		o := objects["objects.GenericResponse"]
+		for _, field := range o.Fields {
+			ftyp := field.Type
+			if !isBuiltin(ftyp) {
+				if strings.HasPrefix(ftyp, "*") {
+					ftyp = "*objects." + ftyp[1:]
+				} else {
+					ftyp = "objects." + ftyp
+				}
+			}
+			fmt.Fprintf(&buf, "\n%s %s `json:%s`", field.GoAccessorName(), ftyp, strconv.Quote(field.Name))
+		}
+
+		var payloadCount int
+
+		// We always have a buffer to store the original data
+		fmt.Fprintf(&buf, "\nPayload0 json.RawMessage `json:%s`", strconv.Quote("-"))
+
+		// We always keep extra raw JSON buffers so that we can capture
+		// named fields
+		if hasReturn {
+			for i := range endpoint.ReturnType {
+				if i < len(endpoint.JSON) {
+					if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
+						payloadCount++
+						fmt.Fprintf(&buf, "\nPayload%d json.RawMessage `json:%s`", payloadCount, strconv.Quote(jtyp))
+					}
+				}
+			}
+		}
+		fmt.Fprintf(&buf, "\n}")
+
+		// We create a custom "unmarshal()" method so that we don't recursively call UnmarshalJSON
+		fmt.Fprintf(&buf, "\nfunc (r *%s%sCallResponse) parse(data []byte) error {", endpoint.Group, endpoint.methodName)
+		fmt.Fprintf(&buf, "\nif err := json.Unmarshal(data, r); err != nil {")
+		fmt.Fprintf(&buf, "\nreturn errors.Wrap(err, `failed to unmarshal %s%sCallResponse`)", endpoint.Group, endpoint.methodName)
+		fmt.Fprintf(&buf, "\n}")
+		fmt.Fprintf(&buf, "\nr.Payload0 = data")
+		fmt.Fprintf(&buf, "\nreturn nil")
+		fmt.Fprintf(&buf, "\n}")
+
+		if hasReturn {
+			fmt.Fprintf(&buf, "\nfunc (r *%s%sCallResponse) payload() (%s, error) {", endpoint.Group, endpoint.methodName, returnType)
+			for i, typ := range endpoint.ReturnType {
+				if payloadCount == 0 {
+					fmt.Fprintf(&buf, "\nvar res%d %s", i, typ)
+					fmt.Fprintf(&buf, "\nif err := json.Unmarshal(r.Payload0, &res0); err != nil {")
+				} else {
+					fmt.Fprintf(&buf, "\nvar res%d %s", i+1, typ)
+					fmt.Fprintf(&buf, "\nif err := json.Unmarshal(r.Payload%[1]d, &res%[1]d); err != nil {", i+1)
+				}
+				fmt.Fprintf(&buf, "\nreturn ")
+				for _, typ := range endpoint.ReturnType {
+					if !isBuiltin(typ) && !strings.HasSuffix(typ, "List") {
+						fmt.Fprintf(&buf, "nil, ")
+					} else {
+						fmt.Fprintf(&buf, "%s, ", zeroValue(typ))
+					}
+				}
+				fmt.Fprintf(&buf, "errors.Wrap(err, `failed to ummarshal %s from response`)", typ)
+				fmt.Fprintf(&buf, "\n}")
+			}
+
+			fmt.Fprintf(&buf, "\nreturn ")
+			for i, typ := range endpoint.ReturnType {
+				if !isBuiltin(typ) && !strings.HasSuffix(typ, "List") {
+					fmt.Fprintf(&buf, "&")
+				}
+
+				if payloadCount == 0 {
+					fmt.Fprintf(&buf, "res%d, ", i)
+				} else {
+					fmt.Fprintf(&buf, "res%d, ", i+1)
+				}
+			}
+			fmt.Fprintf(&buf, "nil")
+			fmt.Fprintf(&buf, "\n}")
+		}
+
 		fmt.Fprintf(&buf, "\n// Do executes the call to access %s endpoint", endpoint.Name)
 		fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) Do(ctx context.Context) ", endpoint.Group, endpoint.methodName)
 		if hasReturn {
@@ -411,27 +515,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		}
 		fmt.Fprintf(&buf, "err")
 		fmt.Fprintf(&buf, "\n}")
-		fmt.Fprintf(&buf, "\nvar res struct {")
-		fmt.Fprintf(&buf, "\nobjects.GenericResponse")
-		if hasReturn {
-			fmt.Fprintf(&buf, "\n")
-			for i, typ := range endpoint.ReturnType {
-				if !isBuiltin(typ) && !strings.HasSuffix(typ, "List") {
-					fmt.Fprintf(&buf, "*")
-				}
-				fmt.Fprintf(&buf, typ)
-
-				if len(endpoint.JSON) <= i {
-					continue
-				}
-
-				if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
-					fmt.Fprintf(&buf, fmt.Sprintf(" `json:\"%s\"`", jtyp))
-				}
-				fmt.Fprintf(&buf, "\n")
-			}
-		}
-		fmt.Fprintf(&buf, "\n}")
+		fmt.Fprintf(&buf, "\nvar res %s%sCallResponse", endpoint.Group, endpoint.methodName)
 		fmt.Fprintf(&buf, "\nif err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {")
 		fmt.Fprintf(&buf, "\nreturn ")
 		if hasReturn {
@@ -440,27 +524,25 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		fmt.Fprintf(&buf, "errors.Wrap(err, `failed to post to %s`)", endpoint.Name)
 		fmt.Fprintf(&buf, "\n}")
 
-		fmt.Fprintf(&buf, "\nif !res.OK() {")
+		fmt.Fprintf(&buf, "\nif !res.OK {")
+		fmt.Fprintf(&buf, "\nvar err error")
+		fmt.Fprintf(&buf, "\nif errresp := res.Error; errresp != nil {")
+		fmt.Fprintf(&buf, "\nerr = errors.New(errresp.String())")
+		fmt.Fprintf(&buf, "\n} else {")
+		fmt.Fprintf(&buf, "\nerr = errors.New(`unknown error while posting to %s`)", endpoint.Name)
+		fmt.Fprintf(&buf, "\n}")
 		fmt.Fprintf(&buf, "\nreturn ")
 		if hasReturn {
 			writeZeroReturnValues(&buf, &endpoint)
 		}
-		fmt.Fprintf(&buf, "errors.New(res.Error().String())")
+		fmt.Fprintf(&buf, "err")
 		fmt.Fprintf(&buf, "\n}")
 
-		fmt.Fprintf(&buf, "\n\nreturn ")
 		if hasReturn {
-			for _, typ := range endpoint.ReturnType {
-				fmt.Fprintf(&buf, "res.")
-				if i := strings.LastIndexByte(typ, '.'); i > -1 {
-					fmt.Fprintf(&buf, typ[i+1:])
-				} else {
-					fmt.Fprintf(&buf, typ)
-				}
-				fmt.Fprintf(&buf, ", ")
-			}
+			fmt.Fprintf(&buf, "\n\nreturn res.payload()")
+		} else {
+			fmt.Fprintf(&buf, "\n\nreturn nil")
 		}
-		fmt.Fprintf(&buf, "nil")
 		fmt.Fprintf(&buf, "\n}")
 
 		fmt.Fprintf(&buf, "\n\n// FromValues parses the data in v and populates `c`")
@@ -498,21 +580,7 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint) error {
 		fmt.Fprintf(&buf, "\n*c = tmp")
 		fmt.Fprintf(&buf, "\nreturn nil")
 		fmt.Fprintf(&buf, "\n}") // end of FromValues
-
-	}
-	formatted, err := format.Source(buf.Bytes())
-	if err != nil {
-		log.Printf("%s", buf.Bytes())
-		return errors.Wrap(err, `failed to format code`)
 	}
 
-	fh, err := os.Create(file)
-	if err != nil {
-		return errors.Wrapf(err, `failed to open file %s for writing`, file)
-	}
-	defer fh.Close()
-
-	fh.Write(formatted)
-	return nil
-
+	return codegen.WriteGoCodeToFile(file, buf.Bytes())
 }

@@ -45,6 +45,29 @@ func (c *RTMStartCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type RTMStartCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *RTMStartCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal RTMStartCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *RTMStartCallResponse) payload() (*objects.RTMResponse, error) {
+	var res0 objects.RTMResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.RTMResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access rtm.start endpoint
 func (c *RTMStartCall) Do(ctx context.Context) (*objects.RTMResponse, error) {
 	const endpoint = "rtm.start"
@@ -52,18 +75,21 @@ func (c *RTMStartCall) Do(ctx context.Context) (*objects.RTMResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.RTMResponse
-	}
+	var res RTMStartCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to rtm.start`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to rtm.start`)
+		}
+		return nil, err
 	}
 
-	return res.RTMResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`

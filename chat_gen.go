@@ -142,6 +142,29 @@ func (c *ChatDeleteCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChatDeleteCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChatDeleteCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChatDeleteCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChatDeleteCallResponse) payload() (*objects.ChatResponse, error) {
+	var res0 objects.ChatResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.ChatResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access chat.delete endpoint
 func (c *ChatDeleteCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.delete"
@@ -149,18 +172,21 @@ func (c *ChatDeleteCall) Do(ctx context.Context) (*objects.ChatResponse, error) 
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.ChatResponse
-	}
+	var res ChatDeleteCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.delete`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to chat.delete`)
+		}
+		return nil, err
 	}
 
-	return res.ChatResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -217,6 +243,29 @@ func (c *ChatGetPermalinkCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChatGetPermalinkCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChatGetPermalinkCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChatGetPermalinkCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChatGetPermalinkCallResponse) payload() (*objects.PermalinkResponse, error) {
+	var res0 objects.PermalinkResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.PermalinkResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access chat.getPermalink endpoint
 func (c *ChatGetPermalinkCall) Do(ctx context.Context) (*objects.PermalinkResponse, error) {
 	const endpoint = "chat.getPermalink"
@@ -224,18 +273,21 @@ func (c *ChatGetPermalinkCall) Do(ctx context.Context) (*objects.PermalinkRespon
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.PermalinkResponse
-	}
+	var res ChatGetPermalinkCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.getPermalink`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to chat.getPermalink`)
+		}
+		return nil, err
 	}
 
-	return res.PermalinkResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -289,6 +341,29 @@ func (c *ChatMeMessageCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChatMeMessageCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChatMeMessageCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChatMeMessageCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChatMeMessageCallResponse) payload() (*objects.ChatResponse, error) {
+	var res0 objects.ChatResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.ChatResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access chat.meMessage endpoint
 func (c *ChatMeMessageCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.meMessage"
@@ -296,18 +371,21 @@ func (c *ChatMeMessageCall) Do(ctx context.Context) (*objects.ChatResponse, erro
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.ChatResponse
-	}
+	var res ChatMeMessageCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.meMessage`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to chat.meMessage`)
+		}
+		return nil, err
 	}
 
-	return res.ChatResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -433,6 +511,29 @@ func (c *ChatPostEphemeralCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChatPostEphemeralCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChatPostEphemeralCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChatPostEphemeralCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChatPostEphemeralCallResponse) payload() (*objects.EphemeralResponse, error) {
+	var res0 objects.EphemeralResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.EphemeralResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access chat.postEphemeral endpoint
 func (c *ChatPostEphemeralCall) Do(ctx context.Context) (*objects.EphemeralResponse, error) {
 	const endpoint = "chat.postEphemeral"
@@ -440,18 +541,21 @@ func (c *ChatPostEphemeralCall) Do(ctx context.Context) (*objects.EphemeralRespo
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.EphemeralResponse
-	}
+	var res ChatPostEphemeralCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.postEphemeral`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to chat.postEphemeral`)
+		}
+		return nil, err
 	}
 
-	return res.EphemeralResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -675,6 +779,29 @@ func (c *ChatPostMessageCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChatPostMessageCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChatPostMessageCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChatPostMessageCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChatPostMessageCallResponse) payload() (*objects.ChatResponse, error) {
+	var res0 objects.ChatResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.ChatResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access chat.postMessage endpoint
 func (c *ChatPostMessageCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.postMessage"
@@ -682,18 +809,21 @@ func (c *ChatPostMessageCall) Do(ctx context.Context) (*objects.ChatResponse, er
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.ChatResponse
-	}
+	var res ChatPostMessageCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.postMessage`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to chat.postMessage`)
+		}
+		return nil, err
 	}
 
-	return res.ChatResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -823,6 +953,22 @@ func (c *ChatUnfurlCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChatUnfurlCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChatUnfurlCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChatUnfurlCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access chat.unfurl endpoint
 func (c *ChatUnfurlCall) Do(ctx context.Context) error {
 	const endpoint = "chat.unfurl"
@@ -830,14 +976,18 @@ func (c *ChatUnfurlCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res ChatUnfurlCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to chat.unfurl`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to chat.unfurl`)
+		}
+		return err
 	}
 
 	return nil
@@ -984,6 +1134,29 @@ func (c *ChatUpdateCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChatUpdateCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChatUpdateCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChatUpdateCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChatUpdateCallResponse) payload() (*objects.ChatResponse, error) {
+	var res0 objects.ChatResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.ChatResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access chat.update endpoint
 func (c *ChatUpdateCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
 	const endpoint = "chat.update"
@@ -991,18 +1164,21 @@ func (c *ChatUpdateCall) Do(ctx context.Context) (*objects.ChatResponse, error) 
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.ChatResponse
-	}
+	var res ChatUpdateCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.update`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to chat.update`)
+		}
+		return nil, err
 	}
 
-	return res.ChatResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`

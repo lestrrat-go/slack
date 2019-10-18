@@ -1,5 +1,10 @@
 package objects
 
+import (
+	"encoding/json"
+	"github.com/pkg/errors"
+)
+
 func BuildAuthTestResponse() *AuthTestResponseBuilder {
 	var b AuthTestResponseBuilder
 	return &b
@@ -68,6 +73,32 @@ func (b *AuthTestResponse) UserID() string {
 	return b.userId
 }
 
+func (v *AuthTestResponse) UnmarshalJSON(data []byte) error {
+	var proxy struct {
+		URL    string `json:"url"`
+		Team   string `json:"team"`
+		User   string `json:"user"`
+		TeamID string `json:"team_id"`
+		UserID string `json:"user_id"`
+	}
+	if err := json.Unmarshal(data, &proxy); err != nil {
+		return errors.Wrap(err, `failed to unmarshal JSON`)
+	}
+
+	x, err := BuildAuthTestResponse().
+		URL(proxy.URL).
+		Team(proxy.Team).
+		User(proxy.User).
+		TeamID(proxy.TeamID).
+		UserID(proxy.UserID).
+		Build()
+	if err != nil {
+		return errors.Wrap(err, `failed to build object from JSON`)
+	}
+	*v = *x
+	return nil
+}
+
 func BuildChannelsHistoryResponse() *ChannelsHistoryResponseBuilder {
 	var b ChannelsHistoryResponseBuilder
 	return &b
@@ -114,6 +145,28 @@ func (b *ChannelsHistoryResponse) Latest() string {
 
 func (b *ChannelsHistoryResponse) Messages() MessageList {
 	return b.messages
+}
+
+func (v *ChannelsHistoryResponse) UnmarshalJSON(data []byte) error {
+	var proxy struct {
+		HasMore  bool        `json:"has_more"`
+		Latest   string      `json:"latest"`
+		Messages MessageList `json:"messages"`
+	}
+	if err := json.Unmarshal(data, &proxy); err != nil {
+		return errors.Wrap(err, `failed to unmarshal JSON`)
+	}
+
+	x, err := BuildChannelsHistoryResponse().
+		HasMore(proxy.HasMore).
+		Latest(proxy.Latest).
+		Messages(proxy.Messages...).
+		Build()
+	if err != nil {
+		return errors.Wrap(err, `failed to build object from JSON`)
+	}
+	*v = *x
+	return nil
 }
 
 func BuildChatResponse() *ChatResponseBuilder {
@@ -164,6 +217,28 @@ func (b *ChatResponse) Message() interface{} {
 	return b.message
 }
 
+func (v *ChatResponse) UnmarshalJSON(data []byte) error {
+	var proxy struct {
+		Channel   string      `json:"channel"`
+		Timestamp string      `json:"ts"`
+		Message   interface{} `json:"message"`
+	}
+	if err := json.Unmarshal(data, &proxy); err != nil {
+		return errors.Wrap(err, `failed to unmarshal JSON`)
+	}
+
+	x, err := BuildChatResponse().
+		Channel(proxy.Channel).
+		Timestamp(proxy.Timestamp).
+		Message(proxy.Message).
+		Build()
+	if err != nil {
+		return errors.Wrap(err, `failed to build object from JSON`)
+	}
+	*v = *x
+	return nil
+}
+
 func BuildEphemeralResponse() *EphemeralResponseBuilder {
 	var b EphemeralResponseBuilder
 	return &b
@@ -190,6 +265,24 @@ func (b *EphemeralResponseBuilder) MustBuild() *EphemeralResponse {
 
 func (b *EphemeralResponse) MessageTs() string {
 	return b.messageTs
+}
+
+func (v *EphemeralResponse) UnmarshalJSON(data []byte) error {
+	var proxy struct {
+		MessageTs string `json:"message_ts"`
+	}
+	if err := json.Unmarshal(data, &proxy); err != nil {
+		return errors.Wrap(err, `failed to unmarshal JSON`)
+	}
+
+	x, err := BuildEphemeralResponse().
+		MessageTs(proxy.MessageTs).
+		Build()
+	if err != nil {
+		return errors.Wrap(err, `failed to build object from JSON`)
+	}
+	*v = *x
+	return nil
 }
 
 func BuildGenericResponse() *GenericResponseBuilder {
@@ -250,6 +343,30 @@ func (b *GenericResponse) Timestamp() string {
 	return b.ts
 }
 
+func (v *GenericResponse) UnmarshalJSON(data []byte) error {
+	var proxy struct {
+		OK        bool           `json:"ok"`
+		ReplyTo   int            `json:"reply_to"`
+		Error     *ErrorResponse `json:"error"`
+		Timestamp string         `json:"ts"`
+	}
+	if err := json.Unmarshal(data, &proxy); err != nil {
+		return errors.Wrap(err, `failed to unmarshal JSON`)
+	}
+
+	x, err := BuildGenericResponse().
+		OK(proxy.OK).
+		ReplyTo(proxy.ReplyTo).
+		Error(proxy.Error).
+		Timestamp(proxy.Timestamp).
+		Build()
+	if err != nil {
+		return errors.Wrap(err, `failed to build object from JSON`)
+	}
+	*v = *x
+	return nil
+}
+
 func BuildOAuthAccessResponse() *OAuthAccessResponseBuilder {
 	var b OAuthAccessResponseBuilder
 	return &b
@@ -288,6 +405,26 @@ func (b *OAuthAccessResponse) Scope() string {
 	return b.scope
 }
 
+func (v *OAuthAccessResponse) UnmarshalJSON(data []byte) error {
+	var proxy struct {
+		AccessToken string `json:"access_token"`
+		Scope       string `json:"scope"`
+	}
+	if err := json.Unmarshal(data, &proxy); err != nil {
+		return errors.Wrap(err, `failed to unmarshal JSON`)
+	}
+
+	x, err := BuildOAuthAccessResponse().
+		AccessToken(proxy.AccessToken).
+		Scope(proxy.Scope).
+		Build()
+	if err != nil {
+		return errors.Wrap(err, `failed to build object from JSON`)
+	}
+	*v = *x
+	return nil
+}
+
 func BuildPermalinkResponse() *PermalinkResponseBuilder {
 	var b PermalinkResponseBuilder
 	return &b
@@ -324,6 +461,26 @@ func (b *PermalinkResponse) Channel() string {
 
 func (b *PermalinkResponse) Permalink() string {
 	return b.permalink
+}
+
+func (v *PermalinkResponse) UnmarshalJSON(data []byte) error {
+	var proxy struct {
+		Channel   string `json:"channel"`
+		Permalink string `json:"permalink"`
+	}
+	if err := json.Unmarshal(data, &proxy); err != nil {
+		return errors.Wrap(err, `failed to unmarshal JSON`)
+	}
+
+	x, err := BuildPermalinkResponse().
+		Channel(proxy.Channel).
+		Permalink(proxy.Permalink).
+		Build()
+	if err != nil {
+		return errors.Wrap(err, `failed to build object from JSON`)
+	}
+	*v = *x
+	return nil
 }
 
 func BuildRTMResponse() *RTMResponseBuilder {
@@ -424,6 +581,38 @@ func (b *RTMResponse) IMs() []*IM {
 	return b.ims
 }
 
+func (v *RTMResponse) UnmarshalJSON(data []byte) error {
+	var proxy struct {
+		URL      string       `json:"url"`
+		Self     *UserDetails `json:"self"`
+		Team     *Team        `json:"team"`
+		Users    []*User      `json:"users"`
+		Channels []*Channel   `json:"channels"`
+		Groups   []*Group     `json:"groups"`
+		Bots     []*Bot       `json:"bots"`
+		IMs      []*IM        `json:"ims"`
+	}
+	if err := json.Unmarshal(data, &proxy); err != nil {
+		return errors.Wrap(err, `failed to unmarshal JSON`)
+	}
+
+	x, err := BuildRTMResponse().
+		URL(proxy.URL).
+		Self(proxy.Self).
+		Team(proxy.Team).
+		Users(proxy.Users...).
+		Channels(proxy.Channels...).
+		Groups(proxy.Groups...).
+		Bots(proxy.Bots...).
+		IMs(proxy.IMs...).
+		Build()
+	if err != nil {
+		return errors.Wrap(err, `failed to build object from JSON`)
+	}
+	*v = *x
+	return nil
+}
+
 func BuildReactionsGetResponse() *ReactionsGetResponseBuilder {
 	var b ReactionsGetResponseBuilder
 	return &b
@@ -492,6 +681,32 @@ func (b *ReactionsGetResponse) Type() string {
 	return b.typ
 }
 
+func (v *ReactionsGetResponse) UnmarshalJSON(data []byte) error {
+	var proxy struct {
+		Channel string   `json:"channel"`
+		Comment string   `json:"comment"`
+		File    *File    `json:"file"`
+		Message *Message `json:"message"`
+		Type    string   `json:"typ"`
+	}
+	if err := json.Unmarshal(data, &proxy); err != nil {
+		return errors.Wrap(err, `failed to unmarshal JSON`)
+	}
+
+	x, err := BuildReactionsGetResponse().
+		Channel(proxy.Channel).
+		Comment(proxy.Comment).
+		File(proxy.File).
+		Message(proxy.Message).
+		Type(proxy.Type).
+		Build()
+	if err != nil {
+		return errors.Wrap(err, `failed to build object from JSON`)
+	}
+	*v = *x
+	return nil
+}
+
 func BuildReactionsListResponse() *ReactionsListResponseBuilder {
 	var b ReactionsListResponseBuilder
 	return &b
@@ -528,4 +743,24 @@ func (b *ReactionsListResponse) Items() ReactionsGetResponseList {
 
 func (b *ReactionsListResponse) Paging() *Paging {
 	return b.paging
+}
+
+func (v *ReactionsListResponse) UnmarshalJSON(data []byte) error {
+	var proxy struct {
+		Items  ReactionsGetResponseList `json:"items"`
+		Paging *Paging                  `json:"paging"`
+	}
+	if err := json.Unmarshal(data, &proxy); err != nil {
+		return errors.Wrap(err, `failed to unmarshal JSON`)
+	}
+
+	x, err := BuildReactionsListResponse().
+		Items(proxy.Items...).
+		Paging(proxy.Paging).
+		Build()
+	if err != nil {
+		return errors.Wrap(err, `failed to build object from JSON`)
+	}
+	*v = *x
+	return nil
 }

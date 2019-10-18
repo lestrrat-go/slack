@@ -61,6 +61,22 @@ func (c *AuthRevokeCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type AuthRevokeCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *AuthRevokeCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal AuthRevokeCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access auth.revoke endpoint
 func (c *AuthRevokeCall) Do(ctx context.Context) error {
 	const endpoint = "auth.revoke"
@@ -68,14 +84,18 @@ func (c *AuthRevokeCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res AuthRevokeCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to auth.revoke`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to auth.revoke`)
+		}
+		return err
 	}
 
 	return nil
@@ -117,6 +137,29 @@ func (c *AuthTestCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type AuthTestCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *AuthTestCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal AuthTestCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *AuthTestCallResponse) payload() (*objects.AuthTestResponse, error) {
+	var res0 objects.AuthTestResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.AuthTestResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access auth.test endpoint
 func (c *AuthTestCall) Do(ctx context.Context) (*objects.AuthTestResponse, error) {
 	const endpoint = "auth.test"
@@ -124,18 +167,21 @@ func (c *AuthTestCall) Do(ctx context.Context) (*objects.AuthTestResponse, error
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.AuthTestResponse
-	}
+	var res AuthTestCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to auth.test`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to auth.test`)
+		}
+		return nil, err
 	}
 
-	return res.AuthTestResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`

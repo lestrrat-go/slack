@@ -71,6 +71,30 @@ func (c *UsergroupsUsersListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsergroupsUsersListCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"users"`
+}
+
+func (r *UsergroupsUsersListCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsergroupsUsersListCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *UsergroupsUsersListCallResponse) payload() (objects.UsergroupUsersList, error) {
+	var res1 objects.UsergroupUsersList
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.UsergroupUsersList from response`)
+	}
+	return res1, nil
+}
+
 // Do executes the call to access usergroups.users.list endpoint
 func (c *UsergroupsUsersListCall) Do(ctx context.Context) (objects.UsergroupUsersList, error) {
 	const endpoint = "usergroups.users.list"
@@ -78,18 +102,21 @@ func (c *UsergroupsUsersListCall) Do(ctx context.Context) (objects.UsergroupUser
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		objects.UsergroupUsersList `json:"users"`
-	}
+	var res UsergroupsUsersListCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to usergroups.users.list`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to usergroups.users.list`)
+		}
+		return nil, err
 	}
 
-	return res.UsergroupUsersList, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -153,6 +180,30 @@ func (c *UsergroupsUsersUpdateCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type UsergroupsUsersUpdateCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"usergroup"`
+}
+
+func (r *UsergroupsUsersUpdateCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal UsergroupsUsersUpdateCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *UsergroupsUsersUpdateCallResponse) payload() (*objects.Usergroup, error) {
+	var res1 objects.Usergroup
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Usergroup from response`)
+	}
+	return &res1, nil
+}
+
 // Do executes the call to access usergroups.users.update endpoint
 func (c *UsergroupsUsersUpdateCall) Do(ctx context.Context) (*objects.Usergroup, error) {
 	const endpoint = "usergroups.users.update"
@@ -160,18 +211,21 @@ func (c *UsergroupsUsersUpdateCall) Do(ctx context.Context) (*objects.Usergroup,
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Usergroup `json:"usergroup"`
-	}
+	var res UsergroupsUsersUpdateCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to usergroups.users.update`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to usergroups.users.update`)
+		}
+		return nil, err
 	}
 
-	return res.Usergroup, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`

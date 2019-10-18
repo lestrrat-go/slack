@@ -45,6 +45,29 @@ func (c *EmojiListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type EmojiListCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *EmojiListCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal EmojiListCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *EmojiListCallResponse) payload() (*objects.EmojiListResponse, error) {
+	var res0 objects.EmojiListResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.EmojiListResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access emoji.list endpoint
 func (c *EmojiListCall) Do(ctx context.Context) (*objects.EmojiListResponse, error) {
 	const endpoint = "emoji.list"
@@ -52,18 +75,21 @@ func (c *EmojiListCall) Do(ctx context.Context) (*objects.EmojiListResponse, err
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.EmojiListResponse
-	}
+	var res EmojiListCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to emoji.list`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to emoji.list`)
+		}
+		return nil, err
 	}
 
-	return res.EmojiListResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`

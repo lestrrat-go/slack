@@ -15,75 +15,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-type field struct {
-	AccessorName string `json:"accessor_name,omitempty"`
-	Name         string `json:"name"`
-	Required     bool   `json:"required"`
-	Type         string `json:"type"`
-}
-
-func (f *field) IsSliceType() bool {
-	return strings.HasPrefix(f.Type, "[]") ||
-		strings.HasSuffix(f.Type, "List")
-}
-
-func (f *field) SliceElementType() string {
-	if strings.HasPrefix(f.Type, "[]") {
-		return f.Type[2:]
-	}
-
-	if f.Type == "BlockList" {
-		return "Block"
-	}
-	return "*" + f.Type[:len(f.Type)-4]
-}
-
-func (f *field) Tag() string {
-	tag := stringutil.Snake(f.Name)
-	if !f.Required {
-		tag += ",omitempty"
-	}
-	return tag
-}
-
-func (f *field) GoName() string {
-	return stringutil.LowerCamel(f.Name)
-}
-
-func (f *field) GoAccessorName() string {
-	if f.AccessorName != "" {
-		return f.AccessorName
-	}
-	name := stringutil.Camel(f.Name)
-	switch name {
-	case "Id":
-		name = "ID"
-	case "Url":
-		name = "URL"
-	} // TODO
-	return name
-}
-
-type definition struct {
-	Group    string  `json:"group"`
-	SkipList bool    `json:"skip_list"`
-	Name     string  `json:"name"`
-	Fields   []field `json:"fields"`
-	Typ      string  `json:"type"`
-	Validate bool    `json:"validate"`
-}
-
-func (d *definition) GoName() string {
-	return stringutil.Camel(d.Name)
-}
-
-func (d *definition) Type() string {
-	if d.Typ == "" {
-		return stringutil.Snake(d.Name[:len(d.Name)-5])
-	}
-	return d.Typ
-}
-
 func main() {
 	if err := _main(); err != nil {
 		fmt.Printf("%s\n", err)
@@ -98,7 +29,7 @@ func _main() error {
 	}
 	defer f.Close()
 
-	var list []definition
+	var list []codegen.Object
 	if err := json.NewDecoder(f).Decode(&list); err != nil {
 		return err
 	}
@@ -126,7 +57,7 @@ func _main() error {
 	return nil
 }
 
-func writeInterface(list []definition) error {
+func writeInterface(list []codegen.Object) error {
 	var buf bytes.Buffer
 
 	fmt.Fprintf(&buf, "\npackage objects")
@@ -184,12 +115,12 @@ func writeInterface(list []definition) error {
 	return nil
 }
 
-func writeBuilder(dst io.Writer, def definition) error {
+func writeBuilder(dst io.Writer, def codegen.Object) error {
 	var buf bytes.Buffer
 
 	fmt.Fprintf(&buf, "\n\nfunc Build%s(", stringutil.Camel(def.Name))
-	var requireds []field
-	var optionals []field
+	var requireds []codegen.ObjectField
+	var optionals []codegen.ObjectField
 	for _, field := range def.Fields {
 		if !field.Required {
 			optionals = append(optionals, field)
@@ -247,7 +178,7 @@ func writeBuilder(dst io.Writer, def definition) error {
 	fmt.Fprintf(&buf, "\n\nfunc (b *%[1]sBuilder) MustBuild() *%[1]s {", def.GoName())
 	fmt.Fprintf(&buf, "\nv, err := b.Build()")
 	fmt.Fprintf(&buf, "\nif err != nil {")
-	fmt.Fprintf(&buf, "\npanic("+ `"error during %s.MustBuild: " + err.Error())`, def.GoName())
+	fmt.Fprintf(&buf, "\npanic("+`"error during %s.MustBuild: " + err.Error())`, def.GoName())
 	fmt.Fprintf(&buf, "\n}")
 	fmt.Fprintf(&buf, "\nreturn v")
 	fmt.Fprintf(&buf, "\n}")
@@ -256,7 +187,7 @@ func writeBuilder(dst io.Writer, def definition) error {
 	return nil
 }
 
-func writeBlock(list []definition) error {
+func writeBlock(list []codegen.Object) error {
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, "\npackage objects")
 	for _, def := range list {
@@ -278,7 +209,7 @@ func writeBlock(list []definition) error {
 	return codegen.WriteGoCodeToFile("objects/blocks_gen.go", buf.Bytes())
 }
 
-func writeObjects(list []definition) error {
+func writeObjects(list []codegen.Object) error {
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, "\npackage objects")
 
@@ -301,7 +232,7 @@ func writeObjects(list []definition) error {
 	return codegen.WriteGoCodeToFile("objects/objects_gen.go", buf.Bytes())
 }
 
-func writeAccessor(dst io.Writer, def definition, field field) error {
+func writeAccessor(dst io.Writer, def codegen.Object, field codegen.ObjectField) error {
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, "\n\nfunc(b *%s) %s() %s {", def.GoName(), field.GoAccessorName(), field.Type)
 	fmt.Fprintf(&buf, "\nreturn b.%s", field.GoName())
@@ -311,7 +242,7 @@ func writeAccessor(dst io.Writer, def definition, field field) error {
 	return nil
 }
 
-func writeLists(list []definition) error {
+func writeLists(list []codegen.Object) error {
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, "\npackage objects")
 
@@ -328,15 +259,21 @@ func writeLists(list []definition) error {
 			continue
 		}
 
-		writeAppend(&buf, "*" + def.Name + "List", "*" + def.Name)
+		writeAppend(&buf, "*"+def.Name+"List", "*"+def.Name)
 	}
 
 	return codegen.WriteGoCodeToFile("objects/lists_gen.go", buf.Bytes())
 }
 
-func writeResponses(list []definition) error {
+func writeResponses(list []codegen.Object) error {
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, "\npackage objects")
+
+	fmt.Fprintf(&buf, "\n\nimport (")
+	for _, pkg := range []string{"encoding/json", "github.com/pkg/errors"} {
+		fmt.Fprintf(&buf, "\n%s", strconv.Quote(pkg))
+	}
+	fmt.Fprintf(&buf, "\n)")
 
 	for _, def := range list {
 		if !strings.HasSuffix(def.Name, "Response") {
@@ -348,6 +285,30 @@ func writeResponses(list []definition) error {
 			writeAccessor(&buf, def, field)
 		}
 
+		fmt.Fprintf(&buf, "\n\nfunc (v *%s) UnmarshalJSON(data []byte) error {", def.Name)
+		fmt.Fprintf(&buf, "\nvar proxy struct {")
+		for _, field := range def.Fields {
+			fmt.Fprintf(&buf, "\n%s %s `json:%s`", field.GoAccessorName(), field.Type, strconv.Quote(field.Name))
+		}
+		fmt.Fprintf(&buf, "\n}")
+		fmt.Fprintf(&buf, "\nif err := json.Unmarshal(data, &proxy); err != nil {")
+		fmt.Fprintf(&buf, "\nreturn errors.Wrap(err, `failed to unmarshal JSON`)")
+		fmt.Fprintf(&buf, "\n}")
+		fmt.Fprintf(&buf, "\n\nx, err := Build%s().", def.Name)
+		for _, field := range def.Fields {
+			var flatten string
+			if field.IsSliceType() {
+				flatten = "..."
+			}
+			fmt.Fprintf(&buf, "\n%[1]s(proxy.%[1]s%[2]s).", field.GoAccessorName(), flatten)
+		}
+		fmt.Fprintf(&buf, "\nBuild()")
+		fmt.Fprintf(&buf, "\nif err != nil {")
+		fmt.Fprintf(&buf, "\nreturn errors.Wrap(err, `failed to build object from JSON`)")
+		fmt.Fprintf(&buf, "\n}")
+		fmt.Fprintf(&buf, "\n*v = *x")
+		fmt.Fprintf(&buf, "\nreturn nil")
+		fmt.Fprintf(&buf, "\n}")
 	}
 
 	return codegen.WriteGoCodeToFile("objects/responses_gen.go", buf.Bytes())

@@ -5,7 +5,6 @@ package slack
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/url"
 	"strconv"
 	"strings"
@@ -156,6 +155,22 @@ func (c *ChannelsArchiveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsArchiveCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChannelsArchiveCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsArchiveCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access channels.archive endpoint
 func (c *ChannelsArchiveCall) Do(ctx context.Context) error {
 	const endpoint = "channels.archive"
@@ -163,14 +178,18 @@ func (c *ChannelsArchiveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res ChannelsArchiveCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.archive`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.archive`)
+		}
+		return err
 	}
 
 	return nil
@@ -224,6 +243,22 @@ func (c *ChannelsCreateCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsCreateCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChannelsCreateCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsCreateCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access channels.create endpoint
 func (c *ChannelsCreateCall) Do(ctx context.Context) error {
 	const endpoint = "channels.create"
@@ -231,14 +266,18 @@ func (c *ChannelsCreateCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res ChannelsCreateCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.create`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.create`)
+		}
+		return err
 	}
 
 	return nil
@@ -349,6 +388,29 @@ func (c *ChannelsHistoryCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsHistoryCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChannelsHistoryCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsHistoryCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChannelsHistoryCallResponse) payload() (*objects.ChannelsHistoryResponse, error) {
+	var res0 objects.ChannelsHistoryResponse
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.ChannelsHistoryResponse from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access channels.history endpoint
 func (c *ChannelsHistoryCall) Do(ctx context.Context) (*objects.ChannelsHistoryResponse, error) {
 	const endpoint = "channels.history"
@@ -356,18 +418,21 @@ func (c *ChannelsHistoryCall) Do(ctx context.Context) (*objects.ChannelsHistoryR
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.ChannelsHistoryResponse
-	}
+	var res ChannelsHistoryCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.history`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.history`)
+		}
+		return nil, err
 	}
 
-	return res.ChannelsHistoryResponse, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -448,6 +513,30 @@ func (c *ChannelsInfoCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsInfoCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"channel"`
+}
+
+func (r *ChannelsInfoCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsInfoCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChannelsInfoCallResponse) payload() (*objects.Channel, error) {
+	var res1 objects.Channel
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Channel from response`)
+	}
+	return &res1, nil
+}
+
 // Do executes the call to access channels.info endpoint
 func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
 	const endpoint = "channels.info"
@@ -455,18 +544,21 @@ func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Channel `json:"channel"`
-	}
+	var res ChannelsInfoCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.info`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.info`)
+		}
+		return nil, err
 	}
 
-	return res.Channel, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -520,6 +612,30 @@ func (c *ChannelsInviteCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsInviteCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"channel"`
+}
+
+func (r *ChannelsInviteCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsInviteCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChannelsInviteCallResponse) payload() (*objects.Channel, error) {
+	var res1 objects.Channel
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Channel from response`)
+	}
+	return &res1, nil
+}
+
 // Do executes the call to access channels.invite endpoint
 func (c *ChannelsInviteCall) Do(ctx context.Context) (*objects.Channel, error) {
 	const endpoint = "channels.invite"
@@ -527,18 +643,21 @@ func (c *ChannelsInviteCall) Do(ctx context.Context) (*objects.Channel, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Channel `json:"channel"`
-	}
+	var res ChannelsInviteCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.invite`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.invite`)
+		}
+		return nil, err
 	}
 
-	return res.Channel, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -592,6 +711,29 @@ func (c *ChannelsJoinCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsJoinCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChannelsJoinCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsJoinCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChannelsJoinCallResponse) payload() (*objects.Channel, error) {
+	var res0 objects.Channel
+	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Channel from response`)
+	}
+	return &res0, nil
+}
+
 // Do executes the call to access channels.join endpoint
 func (c *ChannelsJoinCall) Do(ctx context.Context) (*objects.Channel, error) {
 	const endpoint = "channels.join"
@@ -599,18 +741,21 @@ func (c *ChannelsJoinCall) Do(ctx context.Context) (*objects.Channel, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Channel
-	}
+	var res ChannelsJoinCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.join`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.join`)
+		}
+		return nil, err
 	}
 
-	return res.Channel, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -664,6 +809,22 @@ func (c *ChannelsKickCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsKickCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChannelsKickCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsKickCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access channels.kick endpoint
 func (c *ChannelsKickCall) Do(ctx context.Context) error {
 	const endpoint = "channels.kick"
@@ -671,14 +832,18 @@ func (c *ChannelsKickCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res ChannelsKickCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.kick`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.kick`)
+		}
+		return err
 	}
 
 	return nil
@@ -725,6 +890,22 @@ func (c *ChannelsLeaveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsLeaveCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChannelsLeaveCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsLeaveCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access channels.leave endpoint
 func (c *ChannelsLeaveCall) Do(ctx context.Context) error {
 	const endpoint = "channels.leave"
@@ -732,14 +913,18 @@ func (c *ChannelsLeaveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res ChannelsLeaveCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.leave`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.leave`)
+		}
+		return err
 	}
 
 	return nil
@@ -807,6 +992,30 @@ func (c *ChannelsListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsListCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"channels"`
+}
+
+func (r *ChannelsListCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsListCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChannelsListCallResponse) payload() (objects.ChannelList, error) {
+	var res1 objects.ChannelList
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.ChannelList from response`)
+	}
+	return res1, nil
+}
+
 // Do executes the call to access channels.list endpoint
 func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) {
 	const endpoint = "channels.list"
@@ -814,20 +1023,21 @@ func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) 
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		objects.ChannelList `json:"channels"`
-	}
+	var res ChannelsListCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.list`)
 	}
-
-	fmt.Printf("%#v", res)
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.list`)
+		}
+		return nil, err
 	}
 
-	return res.ChannelList, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -896,6 +1106,22 @@ func (c *ChannelsMarkCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsMarkCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChannelsMarkCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsMarkCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access channels.mark endpoint
 func (c *ChannelsMarkCall) Do(ctx context.Context) error {
 	const endpoint = "channels.mark"
@@ -903,14 +1129,18 @@ func (c *ChannelsMarkCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res ChannelsMarkCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.mark`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.mark`)
+		}
+		return err
 	}
 
 	return nil
@@ -973,6 +1203,30 @@ func (c *ChannelsRenameCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsRenameCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"channel"`
+}
+
+func (r *ChannelsRenameCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsRenameCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChannelsRenameCallResponse) payload() (*objects.Channel, error) {
+	var res1 objects.Channel
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.Channel from response`)
+	}
+	return &res1, nil
+}
+
 // Do executes the call to access channels.rename endpoint
 func (c *ChannelsRenameCall) Do(ctx context.Context) (*objects.Channel, error) {
 	const endpoint = "channels.rename"
@@ -980,18 +1234,21 @@ func (c *ChannelsRenameCall) Do(ctx context.Context) (*objects.Channel, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		*objects.Channel `json:"channel"`
-	}
+	var res ChannelsRenameCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.rename`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.rename`)
+		}
+		return nil, err
 	}
 
-	return res.Channel, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -1048,6 +1305,30 @@ func (c *ChannelsRepliesCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsRepliesCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"messages"`
+}
+
+func (r *ChannelsRepliesCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsRepliesCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChannelsRepliesCallResponse) payload() (objects.MessageList, error) {
+	var res1 objects.MessageList
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return nil, errors.Wrap(err, `failed to ummarshal objects.MessageList from response`)
+	}
+	return res1, nil
+}
+
 // Do executes the call to access channels.replies endpoint
 func (c *ChannelsRepliesCall) Do(ctx context.Context) (objects.MessageList, error) {
 	const endpoint = "channels.replies"
@@ -1055,18 +1336,21 @@ func (c *ChannelsRepliesCall) Do(ctx context.Context) (objects.MessageList, erro
 	if err != nil {
 		return nil, err
 	}
-	var res struct {
-		objects.GenericResponse
-		objects.MessageList `json:"messages"`
-	}
+	var res ChannelsRepliesCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.replies`)
 	}
-	if !res.OK() {
-		return nil, errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.replies`)
+		}
+		return nil, err
 	}
 
-	return res.MessageList, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -1116,6 +1400,30 @@ func (c *ChannelsSetPurposeCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsSetPurposeCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"purpose"`
+}
+
+func (r *ChannelsSetPurposeCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsSetPurposeCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChannelsSetPurposeCallResponse) payload() (string, error) {
+	var res1 string
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return "", errors.Wrap(err, `failed to ummarshal string from response`)
+	}
+	return res1, nil
+}
+
 // Do executes the call to access channels.setPurpose endpoint
 func (c *ChannelsSetPurposeCall) Do(ctx context.Context) (string, error) {
 	const endpoint = "channels.setPurpose"
@@ -1123,18 +1431,21 @@ func (c *ChannelsSetPurposeCall) Do(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var res struct {
-		objects.GenericResponse
-		string `json:"purpose"`
-	}
+	var res ChannelsSetPurposeCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return "", errors.Wrap(err, `failed to post to channels.setPurpose`)
 	}
-	if !res.OK() {
-		return "", errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.setPurpose`)
+		}
+		return "", err
 	}
 
-	return res.string, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -1184,6 +1495,30 @@ func (c *ChannelsSetTopicCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsSetTopicCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+	Payload1  json.RawMessage        `json:"topic"`
+}
+
+func (r *ChannelsSetTopicCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsSetTopicCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+func (r *ChannelsSetTopicCallResponse) payload() (string, error) {
+	var res1 string
+	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
+		return "", errors.Wrap(err, `failed to ummarshal string from response`)
+	}
+	return res1, nil
+}
+
 // Do executes the call to access channels.setTopic endpoint
 func (c *ChannelsSetTopicCall) Do(ctx context.Context) (string, error) {
 	const endpoint = "channels.setTopic"
@@ -1191,18 +1526,21 @@ func (c *ChannelsSetTopicCall) Do(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var res struct {
-		objects.GenericResponse
-		string `json:"topic"`
-	}
+	var res ChannelsSetTopicCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return "", errors.Wrap(err, `failed to post to channels.setTopic`)
 	}
-	if !res.OK() {
-		return "", errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.setTopic`)
+		}
+		return "", err
 	}
 
-	return res.string, nil
+	return res.payload()
 }
 
 // FromValues parses the data in v and populates `c`
@@ -1246,6 +1584,22 @@ func (c *ChannelsUnarchiveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
+type ChannelsUnarchiveCallResponse struct {
+	OK        bool                   `json:"ok"`
+	ReplyTo   int                    `json:"reply_to"`
+	Error     *objects.ErrorResponse `json:"error"`
+	Timestamp string                 `json:"ts"`
+	Payload0  json.RawMessage        `json:"-"`
+}
+
+func (r *ChannelsUnarchiveCallResponse) parse(data []byte) error {
+	if err := json.Unmarshal(data, r); err != nil {
+		return errors.Wrap(err, `failed to unmarshal ChannelsUnarchiveCallResponse`)
+	}
+	r.Payload0 = data
+	return nil
+}
+
 // Do executes the call to access channels.unarchive endpoint
 func (c *ChannelsUnarchiveCall) Do(ctx context.Context) error {
 	const endpoint = "channels.unarchive"
@@ -1253,14 +1607,18 @@ func (c *ChannelsUnarchiveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res struct {
-		objects.GenericResponse
-	}
+	var res ChannelsUnarchiveCallResponse
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.unarchive`)
 	}
-	if !res.OK() {
-		return errors.New(res.Error().String())
+	if !res.OK {
+		var err error
+		if errresp := res.Error; errresp != nil {
+			err = errors.New(errresp.String())
+		} else {
+			err = errors.New(`unknown error while posting to channels.unarchive`)
+		}
+		return err
 	}
 
 	return nil

@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -13,6 +14,10 @@ import (
 
 	"github.com/pkg/errors"
 )
+
+type rparser interface {
+	parse([]byte) error
+}
 
 // Option defines an interface of optional parameters to the
 // `slack.New` constructor.
@@ -170,7 +175,7 @@ func (c *httpClient) makeSlackURL(path string) string {
 }
 
 // path is only passed for debugging purposes
-func (c *httpClient) parseResponse(ctx context.Context, path string, rdr io.Reader, res interface{}) error {
+func (c *httpClient) parseResponse(ctx context.Context, path string, rdr io.Reader, res rparser) error {
 	if c.debug {
 		var buf bytes.Buffer
 		io.Copy(&buf, rdr)
@@ -182,15 +187,22 @@ func (c *httpClient) parseResponse(ctx context.Context, path string, rdr io.Read
 			c.logger.Debugf(ctx, buf.String())
 		} else {
 			formatted, _ := json.MarshalIndent(m, "", "  ")
+			c.logger.Debugf(ctx, "# formatted payload")
 			c.logger.Debugf(ctx, "%s", formatted)
 		}
 		c.logger.Debugf(ctx, "<----- %s (response)", path)
 		rdr = &buf
 	}
-	return json.NewDecoder(rdr).Decode(res)
+
+	// TODO: probably should limit number of bytes to read
+	buf, err := ioutil.ReadAll(rdr)
+	if err != nil {
+		return errors.Wrap(err, `failed to read from response source`)
+	}
+	return res.parse(buf)
 }
 
-func (c *httpClient) postForm(ctx context.Context, path string, f url.Values, data interface{}) error {
+func (c *httpClient) postForm(ctx context.Context, path string, f url.Values, data rparser) error {
 	if c.debug {
 		c.logger.Debugf(ctx, "-----> %s (request)", path)
 		for k, list := range f {
@@ -212,7 +224,7 @@ func (c *httpClient) postForm(ctx context.Context, path string, f url.Values, da
 	return c.post(ctx, path, "application/x-www-form-urlencoded", strings.NewReader(f.Encode()), data)
 }
 
-func (c *httpClient) post(octx context.Context, path, ct string, body io.Reader, data interface{}) error {
+func (c *httpClient) post(octx context.Context, path, ct string, body io.Reader, data rparser) error {
 	u := c.makeSlackURL(path)
 	if c.debug {
 		c.logger.Debugf(octx, "posting to %s", u)
@@ -235,7 +247,7 @@ func (c *httpClient) post(octx context.Context, path, ct string, body io.Reader,
 	return c.parseResponse(octx, path, res.Body, data)
 }
 
-func (c *httpClient) get(octx context.Context, path string, f url.Values, data interface{}) error {
+func (c *httpClient) get(octx context.Context, path string, f url.Values, data rparser) error {
 	ustr := c.makeSlackURL(path)
 	u, err := url.Parse(ustr)
 	if err != nil {

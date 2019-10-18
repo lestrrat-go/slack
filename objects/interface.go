@@ -1,8 +1,11 @@
 package objects
 
+import "encoding/json"
+
 const (
 	ButtonActionType = "button"
 )
+
 type EpochTime int64
 type Timestamp float64
 
@@ -32,4 +35,6 @@ const (
 	PresenceAway  Presence = "away"
 )
 
-
+// MultiLevelJSONUnmarshaler is used unmarshal a JSON payload against a
+// composite struct that contains multiple json.Unmarshaler structs
+type MultiLevelJSONUnmarshaler []json.Unmarshaler
