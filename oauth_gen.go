@@ -76,22 +76,74 @@ func (c *OAuthAccessCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type OAuthAccessCallResponse struct {
+type OAuthAccessCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type oAuthAccessCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type oAuthAccessCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type OAuthAccessCallResponseBuilder struct {
+	resp *oAuthAccessCallResponse
+}
 
-func (r *OAuthAccessCallResponse) parse(data []byte) error {
+func BuildOAuthAccessCallResponse() *OAuthAccessCallResponseBuilder {
+	return &OAuthAccessCallResponseBuilder{resp: &oAuthAccessCallResponse{}}
+}
+func (v *oAuthAccessCallResponse) OK() bool {
+	return v.ok
+}
+func (v *oAuthAccessCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *oAuthAccessCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *oAuthAccessCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *OAuthAccessCallResponseBuilder) OK(v bool) *OAuthAccessCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *OAuthAccessCallResponseBuilder) ReplyTo(v int) *OAuthAccessCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *OAuthAccessCallResponseBuilder) Error(v *objects.ErrorResponse) *OAuthAccessCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *OAuthAccessCallResponseBuilder) Timestamp(v string) *OAuthAccessCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *OAuthAccessCallResponseBuilder) Build() OAuthAccessCallResponse {
+	v := b.resp
+	b.resp = &oAuthAccessCallResponse{}
+	return v
+}
+func (r *oAuthAccessCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal OAuthAccessCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *OAuthAccessCallResponse) payload() (*objects.OAuthAccessResponse, error) {
+func (r *oAuthAccessCallResponseProxy) payload() (*objects.OAuthAccessResponse, error) {
 	var res0 objects.OAuthAccessResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.OAuthAccessResponse from response`)
@@ -106,7 +158,7 @@ func (c *OAuthAccessCall) Do(ctx context.Context) (*objects.OAuthAccessResponse,
 	if err != nil {
 		return nil, err
 	}
-	var res OAuthAccessCallResponse
+	var res oAuthAccessCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to oauth.access`)
 	}

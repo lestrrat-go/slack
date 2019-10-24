@@ -52,22 +52,74 @@ func (c *BotsInfoCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type BotsInfoCallResponse struct {
+type BotsInfoCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type botsInfoCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type botsInfoCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type BotsInfoCallResponseBuilder struct {
+	resp *botsInfoCallResponse
+}
 
-func (r *BotsInfoCallResponse) parse(data []byte) error {
+func BuildBotsInfoCallResponse() *BotsInfoCallResponseBuilder {
+	return &BotsInfoCallResponseBuilder{resp: &botsInfoCallResponse{}}
+}
+func (v *botsInfoCallResponse) OK() bool {
+	return v.ok
+}
+func (v *botsInfoCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *botsInfoCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *botsInfoCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *BotsInfoCallResponseBuilder) OK(v bool) *BotsInfoCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *BotsInfoCallResponseBuilder) ReplyTo(v int) *BotsInfoCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *BotsInfoCallResponseBuilder) Error(v *objects.ErrorResponse) *BotsInfoCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *BotsInfoCallResponseBuilder) Timestamp(v string) *BotsInfoCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *BotsInfoCallResponseBuilder) Build() BotsInfoCallResponse {
+	v := b.resp
+	b.resp = &botsInfoCallResponse{}
+	return v
+}
+func (r *botsInfoCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal BotsInfoCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *BotsInfoCallResponse) payload() (*objects.Bot, error) {
+func (r *botsInfoCallResponseProxy) payload() (*objects.Bot, error) {
 	var res0 objects.Bot
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Bot from response`)
@@ -82,7 +134,7 @@ func (c *BotsInfoCall) Do(ctx context.Context) (*objects.Bot, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res BotsInfoCallResponse
+	var res botsInfoCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to bots.info`)
 	}

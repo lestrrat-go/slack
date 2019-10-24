@@ -659,7 +659,7 @@ func newDummyServer() *dummyServer {
 	mux.HandleFunc(
 		"/api/users.info",
 		ArgCheck(required(tokenArg), required(userArg), newArg("include_locale", nil)),
-		nil,
+		slack.BuildUsersInfoCallResponse().OK(true).User(mockserver.UserLukeSkywalker).Build(),
 	)
 	mux.HandleFunc(
 		"/api/users.list",

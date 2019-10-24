@@ -76,22 +76,74 @@ func (c *UsersProfileGetCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsersProfileGetCallResponse struct {
+type UsersProfileGetCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type usersProfileGetCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type usersProfileGetCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type UsersProfileGetCallResponseBuilder struct {
+	resp *usersProfileGetCallResponse
+}
 
-func (r *UsersProfileGetCallResponse) parse(data []byte) error {
+func BuildUsersProfileGetCallResponse() *UsersProfileGetCallResponseBuilder {
+	return &UsersProfileGetCallResponseBuilder{resp: &usersProfileGetCallResponse{}}
+}
+func (v *usersProfileGetCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usersProfileGetCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usersProfileGetCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usersProfileGetCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *UsersProfileGetCallResponseBuilder) OK(v bool) *UsersProfileGetCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsersProfileGetCallResponseBuilder) ReplyTo(v int) *UsersProfileGetCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsersProfileGetCallResponseBuilder) Error(v *objects.ErrorResponse) *UsersProfileGetCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsersProfileGetCallResponseBuilder) Timestamp(v string) *UsersProfileGetCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsersProfileGetCallResponseBuilder) Build() UsersProfileGetCallResponse {
+	v := b.resp
+	b.resp = &usersProfileGetCallResponse{}
+	return v
+}
+func (r *usersProfileGetCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsersProfileGetCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsersProfileGetCallResponse) payload() (*objects.UserProfile, error) {
+func (r *usersProfileGetCallResponseProxy) payload() (*objects.UserProfile, error) {
 	var res0 objects.UserProfile
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.UserProfile from response`)
@@ -106,7 +158,7 @@ func (c *UsersProfileGetCall) Do(ctx context.Context) (*objects.UserProfile, err
 	if err != nil {
 		return nil, err
 	}
-	var res UsersProfileGetCallResponse
+	var res usersProfileGetCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.profile.get`)
 	}
@@ -206,22 +258,74 @@ func (c *UsersProfileSetCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsersProfileSetCallResponse struct {
+type UsersProfileSetCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type usersProfileSetCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type usersProfileSetCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type UsersProfileSetCallResponseBuilder struct {
+	resp *usersProfileSetCallResponse
+}
 
-func (r *UsersProfileSetCallResponse) parse(data []byte) error {
+func BuildUsersProfileSetCallResponse() *UsersProfileSetCallResponseBuilder {
+	return &UsersProfileSetCallResponseBuilder{resp: &usersProfileSetCallResponse{}}
+}
+func (v *usersProfileSetCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usersProfileSetCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usersProfileSetCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usersProfileSetCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *UsersProfileSetCallResponseBuilder) OK(v bool) *UsersProfileSetCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsersProfileSetCallResponseBuilder) ReplyTo(v int) *UsersProfileSetCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsersProfileSetCallResponseBuilder) Error(v *objects.ErrorResponse) *UsersProfileSetCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsersProfileSetCallResponseBuilder) Timestamp(v string) *UsersProfileSetCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsersProfileSetCallResponseBuilder) Build() UsersProfileSetCallResponse {
+	v := b.resp
+	b.resp = &usersProfileSetCallResponse{}
+	return v
+}
+func (r *usersProfileSetCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsersProfileSetCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsersProfileSetCallResponse) payload() (*objects.UserProfile, error) {
+func (r *usersProfileSetCallResponseProxy) payload() (*objects.UserProfile, error) {
 	var res0 objects.UserProfile
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.UserProfile from response`)
@@ -236,7 +340,7 @@ func (c *UsersProfileSetCall) Do(ctx context.Context) (*objects.UserProfile, err
 	if err != nil {
 		return nil, err
 	}
-	var res UsersProfileSetCallResponse
+	var res usersProfileSetCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.profile.set`)
 	}

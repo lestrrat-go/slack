@@ -93,22 +93,74 @@ func (c *RemindersAddCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type RemindersAddCallResponse struct {
+type RemindersAddCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type remindersAddCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type remindersAddCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type RemindersAddCallResponseBuilder struct {
+	resp *remindersAddCallResponse
+}
 
-func (r *RemindersAddCallResponse) parse(data []byte) error {
+func BuildRemindersAddCallResponse() *RemindersAddCallResponseBuilder {
+	return &RemindersAddCallResponseBuilder{resp: &remindersAddCallResponse{}}
+}
+func (v *remindersAddCallResponse) OK() bool {
+	return v.ok
+}
+func (v *remindersAddCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *remindersAddCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *remindersAddCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *RemindersAddCallResponseBuilder) OK(v bool) *RemindersAddCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *RemindersAddCallResponseBuilder) ReplyTo(v int) *RemindersAddCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *RemindersAddCallResponseBuilder) Error(v *objects.ErrorResponse) *RemindersAddCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *RemindersAddCallResponseBuilder) Timestamp(v string) *RemindersAddCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *RemindersAddCallResponseBuilder) Build() RemindersAddCallResponse {
+	v := b.resp
+	b.resp = &remindersAddCallResponse{}
+	return v
+}
+func (r *remindersAddCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal RemindersAddCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *RemindersAddCallResponse) payload() (*objects.Reminder, error) {
+func (r *remindersAddCallResponseProxy) payload() (*objects.Reminder, error) {
 	var res0 objects.Reminder
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Reminder from response`)
@@ -123,7 +175,7 @@ func (c *RemindersAddCall) Do(ctx context.Context) (*objects.Reminder, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res RemindersAddCallResponse
+	var res remindersAddCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reminders.add`)
 	}
@@ -188,15 +240,67 @@ func (c *RemindersCompleteCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type RemindersCompleteCallResponse struct {
+type RemindersCompleteCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type remindersCompleteCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type remindersCompleteCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type RemindersCompleteCallResponseBuilder struct {
+	resp *remindersCompleteCallResponse
+}
 
-func (r *RemindersCompleteCallResponse) parse(data []byte) error {
+func BuildRemindersCompleteCallResponse() *RemindersCompleteCallResponseBuilder {
+	return &RemindersCompleteCallResponseBuilder{resp: &remindersCompleteCallResponse{}}
+}
+func (v *remindersCompleteCallResponse) OK() bool {
+	return v.ok
+}
+func (v *remindersCompleteCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *remindersCompleteCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *remindersCompleteCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *RemindersCompleteCallResponseBuilder) OK(v bool) *RemindersCompleteCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *RemindersCompleteCallResponseBuilder) ReplyTo(v int) *RemindersCompleteCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *RemindersCompleteCallResponseBuilder) Error(v *objects.ErrorResponse) *RemindersCompleteCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *RemindersCompleteCallResponseBuilder) Timestamp(v string) *RemindersCompleteCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *RemindersCompleteCallResponseBuilder) Build() RemindersCompleteCallResponse {
+	v := b.resp
+	b.resp = &remindersCompleteCallResponse{}
+	return v
+}
+func (r *remindersCompleteCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal RemindersCompleteCallResponse`)
 	}
@@ -211,7 +315,7 @@ func (c *RemindersCompleteCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res RemindersCompleteCallResponse
+	var res remindersCompleteCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to reminders.complete`)
 	}
@@ -266,15 +370,67 @@ func (c *RemindersDeleteCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type RemindersDeleteCallResponse struct {
+type RemindersDeleteCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type remindersDeleteCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type remindersDeleteCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type RemindersDeleteCallResponseBuilder struct {
+	resp *remindersDeleteCallResponse
+}
 
-func (r *RemindersDeleteCallResponse) parse(data []byte) error {
+func BuildRemindersDeleteCallResponse() *RemindersDeleteCallResponseBuilder {
+	return &RemindersDeleteCallResponseBuilder{resp: &remindersDeleteCallResponse{}}
+}
+func (v *remindersDeleteCallResponse) OK() bool {
+	return v.ok
+}
+func (v *remindersDeleteCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *remindersDeleteCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *remindersDeleteCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *RemindersDeleteCallResponseBuilder) OK(v bool) *RemindersDeleteCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *RemindersDeleteCallResponseBuilder) ReplyTo(v int) *RemindersDeleteCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *RemindersDeleteCallResponseBuilder) Error(v *objects.ErrorResponse) *RemindersDeleteCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *RemindersDeleteCallResponseBuilder) Timestamp(v string) *RemindersDeleteCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *RemindersDeleteCallResponseBuilder) Build() RemindersDeleteCallResponse {
+	v := b.resp
+	b.resp = &remindersDeleteCallResponse{}
+	return v
+}
+func (r *remindersDeleteCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal RemindersDeleteCallResponse`)
 	}
@@ -289,7 +445,7 @@ func (c *RemindersDeleteCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res RemindersDeleteCallResponse
+	var res remindersDeleteCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to reminders.delete`)
 	}
@@ -344,22 +500,74 @@ func (c *RemindersInfoCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type RemindersInfoCallResponse struct {
+type RemindersInfoCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type remindersInfoCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type remindersInfoCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type RemindersInfoCallResponseBuilder struct {
+	resp *remindersInfoCallResponse
+}
 
-func (r *RemindersInfoCallResponse) parse(data []byte) error {
+func BuildRemindersInfoCallResponse() *RemindersInfoCallResponseBuilder {
+	return &RemindersInfoCallResponseBuilder{resp: &remindersInfoCallResponse{}}
+}
+func (v *remindersInfoCallResponse) OK() bool {
+	return v.ok
+}
+func (v *remindersInfoCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *remindersInfoCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *remindersInfoCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *RemindersInfoCallResponseBuilder) OK(v bool) *RemindersInfoCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *RemindersInfoCallResponseBuilder) ReplyTo(v int) *RemindersInfoCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *RemindersInfoCallResponseBuilder) Error(v *objects.ErrorResponse) *RemindersInfoCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *RemindersInfoCallResponseBuilder) Timestamp(v string) *RemindersInfoCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *RemindersInfoCallResponseBuilder) Build() RemindersInfoCallResponse {
+	v := b.resp
+	b.resp = &remindersInfoCallResponse{}
+	return v
+}
+func (r *remindersInfoCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal RemindersInfoCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *RemindersInfoCallResponse) payload() (*objects.Reminder, error) {
+func (r *remindersInfoCallResponseProxy) payload() (*objects.Reminder, error) {
 	var res0 objects.Reminder
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Reminder from response`)
@@ -374,7 +582,7 @@ func (c *RemindersInfoCall) Do(ctx context.Context) (*objects.Reminder, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res RemindersInfoCallResponse
+	var res remindersInfoCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reminders.info`)
 	}
@@ -423,7 +631,15 @@ func (c *RemindersListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type RemindersListCallResponse struct {
+type RemindersListCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Reminders() *objects.ReminderList
+}
+
+type remindersListCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -431,15 +647,68 @@ type RemindersListCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"reminders"`
 }
+type remindersListCallResponse struct {
+	ok        bool
+	replyTo   int
+	error     *objects.ErrorResponse
+	ts        string
+	reminders *objects.ReminderList
+}
+type RemindersListCallResponseBuilder struct {
+	resp *remindersListCallResponse
+}
 
-func (r *RemindersListCallResponse) parse(data []byte) error {
+func BuildRemindersListCallResponse() *RemindersListCallResponseBuilder {
+	return &RemindersListCallResponseBuilder{resp: &remindersListCallResponse{}}
+}
+func (v *remindersListCallResponse) OK() bool {
+	return v.ok
+}
+func (v *remindersListCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *remindersListCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *remindersListCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *remindersListCallResponse) Reminders() *objects.ReminderList {
+	return v.reminders
+}
+func (b *RemindersListCallResponseBuilder) OK(v bool) *RemindersListCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *RemindersListCallResponseBuilder) ReplyTo(v int) *RemindersListCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *RemindersListCallResponseBuilder) Error(v *objects.ErrorResponse) *RemindersListCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *RemindersListCallResponseBuilder) Timestamp(v string) *RemindersListCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *RemindersListCallResponseBuilder) Reminders(v *objects.ReminderList) *RemindersListCallResponseBuilder {
+	b.resp.reminders = v
+	return b
+}
+func (b *RemindersListCallResponseBuilder) Build() RemindersListCallResponse {
+	v := b.resp
+	b.resp = &remindersListCallResponse{}
+	return v
+}
+func (r *remindersListCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal RemindersListCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *RemindersListCallResponse) payload() (objects.ReminderList, error) {
+func (r *remindersListCallResponseProxy) payload() (objects.ReminderList, error) {
 	var res1 objects.ReminderList
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ReminderList from response`)
@@ -454,7 +723,7 @@ func (c *RemindersListCall) Do(ctx context.Context) (objects.ReminderList, error
 	if err != nil {
 		return nil, err
 	}
-	var res RemindersListCallResponse
+	var res remindersListCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to reminders.list`)
 	}

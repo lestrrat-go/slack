@@ -88,15 +88,67 @@ func (c *UsersDeletePhotoCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsersDeletePhotoCallResponse struct {
+type UsersDeletePhotoCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type usersDeletePhotoCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type usersDeletePhotoCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type UsersDeletePhotoCallResponseBuilder struct {
+	resp *usersDeletePhotoCallResponse
+}
 
-func (r *UsersDeletePhotoCallResponse) parse(data []byte) error {
+func BuildUsersDeletePhotoCallResponse() *UsersDeletePhotoCallResponseBuilder {
+	return &UsersDeletePhotoCallResponseBuilder{resp: &usersDeletePhotoCallResponse{}}
+}
+func (v *usersDeletePhotoCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usersDeletePhotoCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usersDeletePhotoCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usersDeletePhotoCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *UsersDeletePhotoCallResponseBuilder) OK(v bool) *UsersDeletePhotoCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsersDeletePhotoCallResponseBuilder) ReplyTo(v int) *UsersDeletePhotoCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsersDeletePhotoCallResponseBuilder) Error(v *objects.ErrorResponse) *UsersDeletePhotoCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsersDeletePhotoCallResponseBuilder) Timestamp(v string) *UsersDeletePhotoCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsersDeletePhotoCallResponseBuilder) Build() UsersDeletePhotoCallResponse {
+	v := b.resp
+	b.resp = &usersDeletePhotoCallResponse{}
+	return v
+}
+func (r *usersDeletePhotoCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsersDeletePhotoCallResponse`)
 	}
@@ -111,7 +163,7 @@ func (c *UsersDeletePhotoCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res UsersDeletePhotoCallResponse
+	var res usersDeletePhotoCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.deletePhoto`)
 	}
@@ -163,22 +215,74 @@ func (c *UsersGetPresenceCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsersGetPresenceCallResponse struct {
+type UsersGetPresenceCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type usersGetPresenceCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type usersGetPresenceCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type UsersGetPresenceCallResponseBuilder struct {
+	resp *usersGetPresenceCallResponse
+}
 
-func (r *UsersGetPresenceCallResponse) parse(data []byte) error {
+func BuildUsersGetPresenceCallResponse() *UsersGetPresenceCallResponseBuilder {
+	return &UsersGetPresenceCallResponseBuilder{resp: &usersGetPresenceCallResponse{}}
+}
+func (v *usersGetPresenceCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usersGetPresenceCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usersGetPresenceCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usersGetPresenceCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *UsersGetPresenceCallResponseBuilder) OK(v bool) *UsersGetPresenceCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsersGetPresenceCallResponseBuilder) ReplyTo(v int) *UsersGetPresenceCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsersGetPresenceCallResponseBuilder) Error(v *objects.ErrorResponse) *UsersGetPresenceCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsersGetPresenceCallResponseBuilder) Timestamp(v string) *UsersGetPresenceCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsersGetPresenceCallResponseBuilder) Build() UsersGetPresenceCallResponse {
+	v := b.resp
+	b.resp = &usersGetPresenceCallResponse{}
+	return v
+}
+func (r *usersGetPresenceCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsersGetPresenceCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsersGetPresenceCallResponse) payload() (*objects.UserPresence, error) {
+func (r *usersGetPresenceCallResponseProxy) payload() (*objects.UserPresence, error) {
 	var res0 objects.UserPresence
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.UserPresence from response`)
@@ -193,7 +297,7 @@ func (c *UsersGetPresenceCall) Do(ctx context.Context) (*objects.UserPresence, e
 	if err != nil {
 		return nil, err
 	}
-	var res UsersGetPresenceCallResponse
+	var res usersGetPresenceCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.getPresence`)
 	}
@@ -242,7 +346,16 @@ func (c *UsersIdentityCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsersIdentityCallResponse struct {
+type UsersIdentityCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	User() *objects.UserProfile
+	Team() *objects.Team
+}
+
+type usersIdentityCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -251,15 +364,76 @@ type UsersIdentityCallResponse struct {
 	Payload1  json.RawMessage        `json:"user"`
 	Payload2  json.RawMessage        `json:"team"`
 }
+type usersIdentityCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+	user    *objects.UserProfile
+	team    *objects.Team
+}
+type UsersIdentityCallResponseBuilder struct {
+	resp *usersIdentityCallResponse
+}
 
-func (r *UsersIdentityCallResponse) parse(data []byte) error {
+func BuildUsersIdentityCallResponse() *UsersIdentityCallResponseBuilder {
+	return &UsersIdentityCallResponseBuilder{resp: &usersIdentityCallResponse{}}
+}
+func (v *usersIdentityCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usersIdentityCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usersIdentityCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usersIdentityCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *usersIdentityCallResponse) User() *objects.UserProfile {
+	return v.user
+}
+func (v *usersIdentityCallResponse) Team() *objects.Team {
+	return v.team
+}
+func (b *UsersIdentityCallResponseBuilder) OK(v bool) *UsersIdentityCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsersIdentityCallResponseBuilder) ReplyTo(v int) *UsersIdentityCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsersIdentityCallResponseBuilder) Error(v *objects.ErrorResponse) *UsersIdentityCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsersIdentityCallResponseBuilder) Timestamp(v string) *UsersIdentityCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsersIdentityCallResponseBuilder) User(v *objects.UserProfile) *UsersIdentityCallResponseBuilder {
+	b.resp.user = v
+	return b
+}
+func (b *UsersIdentityCallResponseBuilder) Team(v *objects.Team) *UsersIdentityCallResponseBuilder {
+	b.resp.team = v
+	return b
+}
+func (b *UsersIdentityCallResponseBuilder) Build() UsersIdentityCallResponse {
+	v := b.resp
+	b.resp = &usersIdentityCallResponse{}
+	return v
+}
+func (r *usersIdentityCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsersIdentityCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsersIdentityCallResponse) payload() (*objects.UserProfile, *objects.Team, error) {
+func (r *usersIdentityCallResponseProxy) payload() (*objects.UserProfile, *objects.Team, error) {
 	var res1 objects.UserProfile
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, nil, errors.Wrap(err, `failed to ummarshal objects.UserProfile from response`)
@@ -278,7 +452,7 @@ func (c *UsersIdentityCall) Do(ctx context.Context) (*objects.UserProfile, *obje
 	if err != nil {
 		return nil, nil, err
 	}
-	var res UsersIdentityCallResponse
+	var res usersIdentityCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, nil, errors.Wrap(err, `failed to post to users.identity`)
 	}
@@ -340,7 +514,15 @@ func (c *UsersInfoCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsersInfoCallResponse struct {
+type UsersInfoCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	User() *objects.User
+}
+
+type usersInfoCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -348,15 +530,68 @@ type UsersInfoCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"user"`
 }
+type usersInfoCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+	user    *objects.User
+}
+type UsersInfoCallResponseBuilder struct {
+	resp *usersInfoCallResponse
+}
 
-func (r *UsersInfoCallResponse) parse(data []byte) error {
+func BuildUsersInfoCallResponse() *UsersInfoCallResponseBuilder {
+	return &UsersInfoCallResponseBuilder{resp: &usersInfoCallResponse{}}
+}
+func (v *usersInfoCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usersInfoCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usersInfoCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usersInfoCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *usersInfoCallResponse) User() *objects.User {
+	return v.user
+}
+func (b *UsersInfoCallResponseBuilder) OK(v bool) *UsersInfoCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsersInfoCallResponseBuilder) ReplyTo(v int) *UsersInfoCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsersInfoCallResponseBuilder) Error(v *objects.ErrorResponse) *UsersInfoCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsersInfoCallResponseBuilder) Timestamp(v string) *UsersInfoCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsersInfoCallResponseBuilder) User(v *objects.User) *UsersInfoCallResponseBuilder {
+	b.resp.user = v
+	return b
+}
+func (b *UsersInfoCallResponseBuilder) Build() UsersInfoCallResponse {
+	v := b.resp
+	b.resp = &usersInfoCallResponse{}
+	return v
+}
+func (r *usersInfoCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsersInfoCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsersInfoCallResponse) payload() (*objects.User, error) {
+func (r *usersInfoCallResponseProxy) payload() (*objects.User, error) {
 	var res1 objects.User
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.User from response`)
@@ -371,7 +606,7 @@ func (c *UsersInfoCall) Do(ctx context.Context) (*objects.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res UsersInfoCallResponse
+	var res usersInfoCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.info`)
 	}
@@ -457,7 +692,15 @@ func (c *UsersListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsersListCallResponse struct {
+type UsersListCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Members() *objects.UserList
+}
+
+type usersListCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -465,15 +708,68 @@ type UsersListCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"members"`
 }
+type usersListCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+	members *objects.UserList
+}
+type UsersListCallResponseBuilder struct {
+	resp *usersListCallResponse
+}
 
-func (r *UsersListCallResponse) parse(data []byte) error {
+func BuildUsersListCallResponse() *UsersListCallResponseBuilder {
+	return &UsersListCallResponseBuilder{resp: &usersListCallResponse{}}
+}
+func (v *usersListCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usersListCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usersListCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usersListCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *usersListCallResponse) Members() *objects.UserList {
+	return v.members
+}
+func (b *UsersListCallResponseBuilder) OK(v bool) *UsersListCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsersListCallResponseBuilder) ReplyTo(v int) *UsersListCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsersListCallResponseBuilder) Error(v *objects.ErrorResponse) *UsersListCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsersListCallResponseBuilder) Timestamp(v string) *UsersListCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsersListCallResponseBuilder) Members(v *objects.UserList) *UsersListCallResponseBuilder {
+	b.resp.members = v
+	return b
+}
+func (b *UsersListCallResponseBuilder) Build() UsersListCallResponse {
+	v := b.resp
+	b.resp = &usersListCallResponse{}
+	return v
+}
+func (r *usersListCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsersListCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsersListCallResponse) payload() (objects.UserList, error) {
+func (r *usersListCallResponseProxy) payload() (objects.UserList, error) {
 	var res1 objects.UserList
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.UserList from response`)
@@ -488,7 +784,7 @@ func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res UsersListCallResponse
+	var res usersListCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.list`)
 	}
@@ -561,7 +857,15 @@ func (c *UsersLookupByEmailCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsersLookupByEmailCallResponse struct {
+type UsersLookupByEmailCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	User() *objects.User
+}
+
+type usersLookupByEmailCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -569,15 +873,68 @@ type UsersLookupByEmailCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"user"`
 }
+type usersLookupByEmailCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+	user    *objects.User
+}
+type UsersLookupByEmailCallResponseBuilder struct {
+	resp *usersLookupByEmailCallResponse
+}
 
-func (r *UsersLookupByEmailCallResponse) parse(data []byte) error {
+func BuildUsersLookupByEmailCallResponse() *UsersLookupByEmailCallResponseBuilder {
+	return &UsersLookupByEmailCallResponseBuilder{resp: &usersLookupByEmailCallResponse{}}
+}
+func (v *usersLookupByEmailCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usersLookupByEmailCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usersLookupByEmailCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usersLookupByEmailCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *usersLookupByEmailCallResponse) User() *objects.User {
+	return v.user
+}
+func (b *UsersLookupByEmailCallResponseBuilder) OK(v bool) *UsersLookupByEmailCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsersLookupByEmailCallResponseBuilder) ReplyTo(v int) *UsersLookupByEmailCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsersLookupByEmailCallResponseBuilder) Error(v *objects.ErrorResponse) *UsersLookupByEmailCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsersLookupByEmailCallResponseBuilder) Timestamp(v string) *UsersLookupByEmailCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsersLookupByEmailCallResponseBuilder) User(v *objects.User) *UsersLookupByEmailCallResponseBuilder {
+	b.resp.user = v
+	return b
+}
+func (b *UsersLookupByEmailCallResponseBuilder) Build() UsersLookupByEmailCallResponse {
+	v := b.resp
+	b.resp = &usersLookupByEmailCallResponse{}
+	return v
+}
+func (r *usersLookupByEmailCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsersLookupByEmailCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsersLookupByEmailCallResponse) payload() (*objects.User, error) {
+func (r *usersLookupByEmailCallResponseProxy) payload() (*objects.User, error) {
 	var res1 objects.User
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.User from response`)
@@ -592,7 +949,7 @@ func (c *UsersLookupByEmailCall) Do(ctx context.Context) (*objects.User, error) 
 	if err != nil {
 		return nil, err
 	}
-	var res UsersLookupByEmailCallResponse
+	var res usersLookupByEmailCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to users.lookupByEmail`)
 	}
@@ -641,15 +998,67 @@ func (c *UsersSetActiveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsersSetActiveCallResponse struct {
+type UsersSetActiveCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type usersSetActiveCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type usersSetActiveCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type UsersSetActiveCallResponseBuilder struct {
+	resp *usersSetActiveCallResponse
+}
 
-func (r *UsersSetActiveCallResponse) parse(data []byte) error {
+func BuildUsersSetActiveCallResponse() *UsersSetActiveCallResponseBuilder {
+	return &UsersSetActiveCallResponseBuilder{resp: &usersSetActiveCallResponse{}}
+}
+func (v *usersSetActiveCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usersSetActiveCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usersSetActiveCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usersSetActiveCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *UsersSetActiveCallResponseBuilder) OK(v bool) *UsersSetActiveCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsersSetActiveCallResponseBuilder) ReplyTo(v int) *UsersSetActiveCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsersSetActiveCallResponseBuilder) Error(v *objects.ErrorResponse) *UsersSetActiveCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsersSetActiveCallResponseBuilder) Timestamp(v string) *UsersSetActiveCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsersSetActiveCallResponseBuilder) Build() UsersSetActiveCallResponse {
+	v := b.resp
+	b.resp = &usersSetActiveCallResponse{}
+	return v
+}
+func (r *usersSetActiveCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsersSetActiveCallResponse`)
 	}
@@ -664,7 +1073,7 @@ func (c *UsersSetActiveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res UsersSetActiveCallResponse
+	var res usersSetActiveCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.setActive`)
 	}
@@ -716,15 +1125,67 @@ func (c *UsersSetPresenceCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsersSetPresenceCallResponse struct {
+type UsersSetPresenceCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type usersSetPresenceCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type usersSetPresenceCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type UsersSetPresenceCallResponseBuilder struct {
+	resp *usersSetPresenceCallResponse
+}
 
-func (r *UsersSetPresenceCallResponse) parse(data []byte) error {
+func BuildUsersSetPresenceCallResponse() *UsersSetPresenceCallResponseBuilder {
+	return &UsersSetPresenceCallResponseBuilder{resp: &usersSetPresenceCallResponse{}}
+}
+func (v *usersSetPresenceCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usersSetPresenceCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usersSetPresenceCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usersSetPresenceCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *UsersSetPresenceCallResponseBuilder) OK(v bool) *UsersSetPresenceCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsersSetPresenceCallResponseBuilder) ReplyTo(v int) *UsersSetPresenceCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsersSetPresenceCallResponseBuilder) Error(v *objects.ErrorResponse) *UsersSetPresenceCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsersSetPresenceCallResponseBuilder) Timestamp(v string) *UsersSetPresenceCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsersSetPresenceCallResponseBuilder) Build() UsersSetPresenceCallResponse {
+	v := b.resp
+	b.resp = &usersSetPresenceCallResponse{}
+	return v
+}
+func (r *usersSetPresenceCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsersSetPresenceCallResponse`)
 	}
@@ -739,7 +1200,7 @@ func (c *UsersSetPresenceCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res UsersSetPresenceCallResponse
+	var res usersSetPresenceCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to users.setPresence`)
 	}

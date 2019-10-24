@@ -255,15 +255,11 @@ type ChannelsHistoryResponseBuilder struct {
 }
 
 type ChatResponse struct {
-	channel string      `json:"channel,omitempty"`
-	ts      string      `json:"ts,omitempty"`
-	message interface{} `json:"message,omitempty"`
+	channel string `json:"channel,omitempty"`
 }
 
 type ChatResponseBuilder struct {
 	channel string
-	ts      string
-	message interface{}
 }
 
 type Comment struct {

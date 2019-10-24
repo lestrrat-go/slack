@@ -45,22 +45,74 @@ func (c *RTMStartCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type RTMStartCallResponse struct {
+type RTMStartCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type rTMStartCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type rTMStartCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type RTMStartCallResponseBuilder struct {
+	resp *rTMStartCallResponse
+}
 
-func (r *RTMStartCallResponse) parse(data []byte) error {
+func BuildRTMStartCallResponse() *RTMStartCallResponseBuilder {
+	return &RTMStartCallResponseBuilder{resp: &rTMStartCallResponse{}}
+}
+func (v *rTMStartCallResponse) OK() bool {
+	return v.ok
+}
+func (v *rTMStartCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *rTMStartCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *rTMStartCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *RTMStartCallResponseBuilder) OK(v bool) *RTMStartCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *RTMStartCallResponseBuilder) ReplyTo(v int) *RTMStartCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *RTMStartCallResponseBuilder) Error(v *objects.ErrorResponse) *RTMStartCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *RTMStartCallResponseBuilder) Timestamp(v string) *RTMStartCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *RTMStartCallResponseBuilder) Build() RTMStartCallResponse {
+	v := b.resp
+	b.resp = &rTMStartCallResponse{}
+	return v
+}
+func (r *rTMStartCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal RTMStartCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *RTMStartCallResponse) payload() (*objects.RTMResponse, error) {
+func (r *rTMStartCallResponseProxy) payload() (*objects.RTMResponse, error) {
 	var res0 objects.RTMResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.RTMResponse from response`)
@@ -75,7 +127,7 @@ func (c *RTMStartCall) Do(ctx context.Context) (*objects.RTMResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res RTMStartCallResponse
+	var res rTMStartCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to rtm.start`)
 	}

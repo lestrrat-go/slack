@@ -8,12 +8,14 @@ import (
 	"io"
 	"log"
 	"os"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
 	"unicode"
 
 	"github.com/lestrrat-go/slack/internal/codegen"
+	"github.com/lestrrat-go/slack/internal/stringutil"
 	"github.com/pkg/errors"
 )
 
@@ -24,9 +26,17 @@ func main() {
 	}
 }
 
+func isMap(typ string) bool {
+	return strings.HasPrefix(typ, "map[")
+}
+
+func isList(typ string) bool {
+	return strings.HasPrefix(typ, "[]")
+}
+
 func isBuiltin(typ string) bool {
 	switch typ {
-	case "bool", "byte", "complex128", "complex64", "float32", "float64", "int", "int8", "int16", "int32", "int64", "rune", "string", "uint", "uint8", "uint16", "uint32", "uint64", "uintptr":
+	case "interface{}", "bool", "byte", "complex128", "complex64", "float32", "float64", "int", "int8", "int16", "int32", "int64", "rune", "string", "uint", "uint8", "uint16", "uint32", "uint64", "uintptr":
 		return true
 	}
 	return false
@@ -133,9 +143,25 @@ func _main() error {
 		return errors.Wrap(err, `failed to decode objects.json`)
 	}
 
+	reNonAlpha := regexp.MustCompile("^((map)?[^A-Za-z]+)")
+
 	objects := make(map[string]codegen.Object)
 	for _, object := range objectList {
-		objects["objects."+object.Name] = object
+		var name string
+		if prefix := reNonAlpha.FindString(object.Name); prefix != "" {
+			if !isBuiltin(object.Name[len(prefix):]) {
+				name = prefix + "objects." + object.Name[len(prefix):]
+			} else {
+				name = object.Name
+			}
+		} else {
+			if !isBuiltin(object.Name) {
+				name = "objects." + object.Name
+			} else {
+				name = object.Name
+			}
+		}
+		objects[name] = object
 	}
 
 	groups := map[string]struct{}{}
@@ -414,90 +440,202 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint, objects map[s
 			returnType = rtbuf.String()
 		}
 
-		// Because *Call objects need to parse composite structs, we need to
-		// jump through hoops.
-
-		fmt.Fprintf(&buf, "\ntype %s%sCallResponse struct {", endpoint.Group, endpoint.methodName)
-		// inline fields from objects.GenericResponse
-		o := objects["objects.GenericResponse"]
-		for _, field := range o.Fields {
-			ftyp := field.Type
-			if !isBuiltin(ftyp) {
-				if strings.HasPrefix(ftyp, "*") {
-					ftyp = "*objects." + ftyp[1:]
-				} else {
-					ftyp = "objects." + ftyp
-				}
+		{ // Generate response objects
+			genericResponseType := objects["objects.GenericResponse"]
+			var allFields []codegen.ObjectField
+			for _, field := range genericResponseType.Fields {
+				allFields = append(allFields, field)
 			}
-			fmt.Fprintf(&buf, "\n%s %s `json:%s`", field.GoAccessorName(), ftyp, strconv.Quote(field.Name))
-		}
-
-		var payloadCount int
-
-		// We always have a buffer to store the original data
-		fmt.Fprintf(&buf, "\nPayload0 json.RawMessage `json:%s`", strconv.Quote("-"))
-
-		// We always keep extra raw JSON buffers so that we can capture
-		// named fields
-		if hasReturn {
-			for i := range endpoint.ReturnType {
-				if i < len(endpoint.JSON) {
-					if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
-						payloadCount++
-						fmt.Fprintf(&buf, "\nPayload%d json.RawMessage `json:%s`", payloadCount, strconv.Quote(jtyp))
-					}
-				}
-			}
-		}
-		fmt.Fprintf(&buf, "\n}")
-
-		// We create a custom "unmarshal()" method so that we don't recursively call UnmarshalJSON
-		fmt.Fprintf(&buf, "\nfunc (r *%s%sCallResponse) parse(data []byte) error {", endpoint.Group, endpoint.methodName)
-		fmt.Fprintf(&buf, "\nif err := json.Unmarshal(data, r); err != nil {")
-		fmt.Fprintf(&buf, "\nreturn errors.Wrap(err, `failed to unmarshal %s%sCallResponse`)", endpoint.Group, endpoint.methodName)
-		fmt.Fprintf(&buf, "\n}")
-		fmt.Fprintf(&buf, "\nr.Payload0 = data")
-		fmt.Fprintf(&buf, "\nreturn nil")
-		fmt.Fprintf(&buf, "\n}")
-
-		if hasReturn {
-			fmt.Fprintf(&buf, "\nfunc (r *%s%sCallResponse) payload() (%s, error) {", endpoint.Group, endpoint.methodName, returnType)
-			for i, typ := range endpoint.ReturnType {
-				if payloadCount == 0 {
-					fmt.Fprintf(&buf, "\nvar res%d %s", i, typ)
-					fmt.Fprintf(&buf, "\nif err := json.Unmarshal(r.Payload0, &res0); err != nil {")
-				} else {
-					fmt.Fprintf(&buf, "\nvar res%d %s", i+1, typ)
-					fmt.Fprintf(&buf, "\nif err := json.Unmarshal(r.Payload%[1]d, &res%[1]d); err != nil {", i+1)
-				}
-				fmt.Fprintf(&buf, "\nreturn ")
+			if hasReturn {
 				for _, typ := range endpoint.ReturnType {
-					if !isBuiltin(typ) && !strings.HasSuffix(typ, "List") {
-						fmt.Fprintf(&buf, "nil, ")
-					} else {
-						fmt.Fprintf(&buf, "%s, ", zeroValue(typ))
+					o := objects[typ]
+					for _, field := range o.Fields {
+						allFields = append(allFields, field)
 					}
 				}
-				fmt.Fprintf(&buf, "errors.Wrap(err, `failed to ummarshal %s from response`)", typ)
+			}
+
+			var respObjectFieldType func(ftyp string) string
+			respObjectFieldType = func(ftyp string) string {
+				if isList(ftyp) {
+					return `[]` + respObjectFieldType(ftyp[2:])
+				} else if isMap(ftyp) {
+					i := strings.Index(ftyp, "]")
+					return `map[` + respObjectFieldType(ftyp[4:i]) + `]` + respObjectFieldType(ftyp[i+1:])
+				}
+
+				if !isBuiltin(ftyp) {
+					if strings.HasPrefix(ftyp, "*") {
+						ftyp = "*objects." + ftyp[1:]
+					} else {
+						ftyp = "objects." + ftyp
+					}
+				}
+				return ftyp
+			}
+
+			// This is the user-facing interface
+			fmt.Fprintf(&buf, "\ntype %s%sCallResponse interface {", endpoint.Group, endpoint.methodName)
+			for _, field := range genericResponseType.Fields {
+				fmt.Fprintf(&buf, "\n%s() %s", field.GoAccessorName(), respObjectFieldType(field.Type))
+			}
+			if hasReturn {
+				for i, typ := range endpoint.ReturnType {
+					if i < len(endpoint.JSON) {
+						if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
+							fmt.Fprintf(&buf, "\n%s() *%s", stringutil.Camel(jtyp), typ)
+						}
+					}
+				}
+			}
+			fmt.Fprintf(&buf, "\n}")
+
+			// This is the proxy struct that is ONLY used for parsing
+			fmt.Fprintf(&buf, "\n\ntype %s%sCallResponseProxy struct {", stringutil.LcFirst(endpoint.Group), endpoint.methodName)
+			// Proxy structs need to be smart about parsing. For example, if
+			// {ok: false}, then we don't need to parse the payloads at all
+			for _, field := range genericResponseType.Fields {
+				fmt.Fprintf(&buf, "\n%s %s `json:%s`", field.GoAccessorName(), respObjectFieldType(field.Type), strconv.Quote(field.Name))
+			}
+			var payloadCount int
+
+			// The payload is the special object-in-the-response that each Call object wants to
+			// return from Do().
+			//
+			// These are assembled from the proxy structs.
+
+			// We always have a buffer to store the original data
+			fmt.Fprintf(&buf, "\nPayload0 json.RawMessage `json:%s`", strconv.Quote("-"))
+
+			// We always keep extra raw JSON buffers so that we can capture
+			// named fields
+			if hasReturn {
+				for i := range endpoint.ReturnType {
+					if i < len(endpoint.JSON) {
+						if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
+							payloadCount++
+							fmt.Fprintf(&buf, "\nPayload%d json.RawMessage `json:%s`", payloadCount, strconv.Quote(jtyp))
+						}
+					}
+				}
+			}
+			fmt.Fprintf(&buf, "\n}")
+
+			// This is the user-facing non-exported struct
+			fmt.Fprintf(&buf, "\ntype %s%sCallResponse struct {", stringutil.LcFirst(endpoint.Group), endpoint.methodName)
+			for _, field := range genericResponseType.Fields {
+				fmt.Fprintf(&buf, "\n%s %s", stringutil.LcFirst(stringutil.Camel(field.Name)), respObjectFieldType(field.Type))
+			}
+			if hasReturn {
+				for i, typ := range endpoint.ReturnType {
+					if i < len(endpoint.JSON) {
+						if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
+							payloadCount++
+							fmt.Fprintf(&buf, "\n%s *%s", jtyp, typ)
+						}
+					}
+				}
+			}
+			fmt.Fprintf(&buf, "\n}")
+
+			// Now we need to give users a way to build this
+			fmt.Fprintf(&buf, "\ntype %s%sCallResponseBuilder struct {", endpoint.Group, endpoint.methodName)
+			fmt.Fprintf(&buf, "\nresp *%s%sCallResponse", stringutil.LcFirst(endpoint.Group), endpoint.methodName)
+			fmt.Fprintf(&buf, "\n}")
+
+			fmt.Fprintf(&buf, "\nfunc Build%[1]s%[2]sCallResponse() *%[1]s%[2]sCallResponseBuilder {", endpoint.Group, endpoint.methodName)
+			fmt.Fprintf(&buf, "\nreturn &%[1]s%[2]sCallResponseBuilder{resp: &%[3]s%[2]sCallResponse{}}", endpoint.Group, endpoint.methodName, stringutil.LcFirst(endpoint.Group))
+			fmt.Fprintf(&buf, "\n}")
+
+			for _, field := range genericResponseType.Fields {
+				fmt.Fprintf(&buf, "\nfunc (v *%[1]s%[2]sCallResponse) %[3]s() %[4]s {", stringutil.LcFirst(endpoint.Group), endpoint.methodName, field.GoAccessorName(), respObjectFieldType(field.Type))
+				fmt.Fprintf(&buf, "\nreturn v.%s", stringutil.LcFirst(stringutil.Camel(field.Name)))
 				fmt.Fprintf(&buf, "\n}")
 			}
 
-			fmt.Fprintf(&buf, "\nreturn ")
-			for i, typ := range endpoint.ReturnType {
-				if !isBuiltin(typ) && !strings.HasSuffix(typ, "List") {
-					fmt.Fprintf(&buf, "&")
-				}
-
-				if payloadCount == 0 {
-					fmt.Fprintf(&buf, "res%d, ", i)
-				} else {
-					fmt.Fprintf(&buf, "res%d, ", i+1)
+			if hasReturn {
+				for i, typ := range endpoint.ReturnType {
+					if i < len(endpoint.JSON) {
+						if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
+							fmt.Fprintf(&buf, "\nfunc (v *%[1]s%[2]sCallResponse) %[3]s() *%[4]s {", stringutil.LcFirst(endpoint.Group), endpoint.methodName, stringutil.Camel(jtyp), typ)
+							fmt.Fprintf(&buf, "\nreturn v.%s", jtyp)
+							fmt.Fprintf(&buf, "\n}")
+						}
+					}
 				}
 			}
-			fmt.Fprintf(&buf, "nil")
-			fmt.Fprintf(&buf, "\n}")
-		}
+			for _, field := range genericResponseType.Fields {
+				fmt.Fprintf(&buf, "\nfunc (b *%[1]s%[2]sCallResponseBuilder) %[3]s(v %[4]s) *%[1]s%[2]sCallResponseBuilder {", endpoint.Group, endpoint.methodName, field.GoAccessorName(), respObjectFieldType(field.Type))
+				fmt.Fprintf(&buf, "\nb.resp.%s = v", stringutil.LcFirst(stringutil.Camel(field.Name)))
+				fmt.Fprintf(&buf, "\nreturn b")
+				fmt.Fprintf(&buf, "\n}")
+			}
+			if hasReturn {
+				for i, typ := range endpoint.ReturnType {
+					if i < len(endpoint.JSON) {
+						if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
+							fmt.Fprintf(&buf, "\nfunc (b *%[1]s%[2]sCallResponseBuilder) %[3]s(v *%[4]s) *%[1]s%[2]sCallResponseBuilder {", endpoint.Group, endpoint.methodName, stringutil.Camel(jtyp), typ)
+							fmt.Fprintf(&buf, "\nb.resp.%s = v", jtyp)
+							fmt.Fprintf(&buf, "\nreturn b")
+							fmt.Fprintf(&buf, "\n}")
+						}
+					}
+				}
+			}
 
+			fmt.Fprintf(&buf, "\nfunc (b *%[1]s%[2]sCallResponseBuilder) Build() %[1]s%[2]sCallResponse {", endpoint.Group, endpoint.methodName)
+			fmt.Fprintf(&buf, "\nv := b.resp")
+			fmt.Fprintf(&buf, "\nb.resp = &%[1]s%[2]sCallResponse{}", stringutil.LcFirst(endpoint.Group), endpoint.methodName)
+			fmt.Fprintf(&buf, "\nreturn v")
+			fmt.Fprintf(&buf, "\n}")
+
+			// We create a custom "unmarshal()" method so that we don't recursively call UnmarshalJSON
+			fmt.Fprintf(&buf, "\nfunc (r *%s%sCallResponseProxy) parse(data []byte) error {", stringutil.LcFirst(endpoint.Group), endpoint.methodName)
+			fmt.Fprintf(&buf, "\nif err := json.Unmarshal(data, r); err != nil {")
+			fmt.Fprintf(&buf, "\nreturn errors.Wrap(err, `failed to unmarshal %s%sCallResponse`)", endpoint.Group, endpoint.methodName)
+			fmt.Fprintf(&buf, "\n}")
+			fmt.Fprintf(&buf, "\nr.Payload0 = data")
+			fmt.Fprintf(&buf, "\nreturn nil")
+			fmt.Fprintf(&buf, "\n}")
+
+			if hasReturn {
+				fmt.Fprintf(&buf, "\nfunc (r *%s%sCallResponseProxy) payload() (%s, error) {", stringutil.LcFirst(endpoint.Group), endpoint.methodName, returnType)
+				for i, typ := range endpoint.ReturnType {
+					if payloadCount == 0 {
+						fmt.Fprintf(&buf, "\nvar res%d %s", i, typ)
+						fmt.Fprintf(&buf, "\nif err := json.Unmarshal(r.Payload0, &res0); err != nil {")
+					} else {
+						fmt.Fprintf(&buf, "\nvar res%d %s", i+1, typ)
+						fmt.Fprintf(&buf, "\nif err := json.Unmarshal(r.Payload%[1]d, &res%[1]d); err != nil {", i+1)
+					}
+					fmt.Fprintf(&buf, "\nreturn ")
+					for _, typ := range endpoint.ReturnType {
+						if !isBuiltin(typ) && !strings.HasSuffix(typ, "List") {
+							fmt.Fprintf(&buf, "nil, ")
+						} else {
+							fmt.Fprintf(&buf, "%s, ", zeroValue(typ))
+						}
+					}
+					fmt.Fprintf(&buf, "errors.Wrap(err, `failed to ummarshal %s from response`)", typ)
+					fmt.Fprintf(&buf, "\n}")
+				}
+
+				fmt.Fprintf(&buf, "\nreturn ")
+				for i, typ := range endpoint.ReturnType {
+					if !isBuiltin(typ) && !strings.HasSuffix(typ, "List") {
+						fmt.Fprintf(&buf, "&")
+					}
+
+					if payloadCount == 0 {
+						fmt.Fprintf(&buf, "res%d, ", i)
+					} else {
+						fmt.Fprintf(&buf, "res%d, ", i+1)
+					}
+				}
+				fmt.Fprintf(&buf, "nil")
+				fmt.Fprintf(&buf, "\n}")
+			}
+		}
 		fmt.Fprintf(&buf, "\n// Do executes the call to access %s endpoint", endpoint.Name)
 		fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) Do(ctx context.Context) ", endpoint.Group, endpoint.methodName)
 		if hasReturn {
@@ -515,7 +653,11 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint, objects map[s
 		}
 		fmt.Fprintf(&buf, "err")
 		fmt.Fprintf(&buf, "\n}")
-		fmt.Fprintf(&buf, "\nvar res %s%sCallResponse", endpoint.Group, endpoint.methodName)
+
+		// Here, we use the read-only proxy object. its job is to
+		// defer parsing the real payload until we know the request
+		// resulted in a successful call.
+		fmt.Fprintf(&buf, "\nvar res %s%sCallResponseProxy", stringutil.LcFirst(endpoint.Group), endpoint.methodName)
 		fmt.Fprintf(&buf, "\nif err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {")
 		fmt.Fprintf(&buf, "\nreturn ")
 		if hasReturn {

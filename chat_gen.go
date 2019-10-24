@@ -142,22 +142,74 @@ func (c *ChatDeleteCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChatDeleteCallResponse struct {
+type ChatDeleteCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type chatDeleteCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type chatDeleteCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChatDeleteCallResponseBuilder struct {
+	resp *chatDeleteCallResponse
+}
 
-func (r *ChatDeleteCallResponse) parse(data []byte) error {
+func BuildChatDeleteCallResponse() *ChatDeleteCallResponseBuilder {
+	return &ChatDeleteCallResponseBuilder{resp: &chatDeleteCallResponse{}}
+}
+func (v *chatDeleteCallResponse) OK() bool {
+	return v.ok
+}
+func (v *chatDeleteCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *chatDeleteCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *chatDeleteCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChatDeleteCallResponseBuilder) OK(v bool) *ChatDeleteCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChatDeleteCallResponseBuilder) ReplyTo(v int) *ChatDeleteCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChatDeleteCallResponseBuilder) Error(v *objects.ErrorResponse) *ChatDeleteCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChatDeleteCallResponseBuilder) Timestamp(v string) *ChatDeleteCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChatDeleteCallResponseBuilder) Build() ChatDeleteCallResponse {
+	v := b.resp
+	b.resp = &chatDeleteCallResponse{}
+	return v
+}
+func (r *chatDeleteCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChatDeleteCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChatDeleteCallResponse) payload() (*objects.ChatResponse, error) {
+func (r *chatDeleteCallResponseProxy) payload() (*objects.ChatResponse, error) {
 	var res0 objects.ChatResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ChatResponse from response`)
@@ -172,7 +224,7 @@ func (c *ChatDeleteCall) Do(ctx context.Context) (*objects.ChatResponse, error) 
 	if err != nil {
 		return nil, err
 	}
-	var res ChatDeleteCallResponse
+	var res chatDeleteCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.delete`)
 	}
@@ -243,22 +295,74 @@ func (c *ChatGetPermalinkCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChatGetPermalinkCallResponse struct {
+type ChatGetPermalinkCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type chatGetPermalinkCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type chatGetPermalinkCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChatGetPermalinkCallResponseBuilder struct {
+	resp *chatGetPermalinkCallResponse
+}
 
-func (r *ChatGetPermalinkCallResponse) parse(data []byte) error {
+func BuildChatGetPermalinkCallResponse() *ChatGetPermalinkCallResponseBuilder {
+	return &ChatGetPermalinkCallResponseBuilder{resp: &chatGetPermalinkCallResponse{}}
+}
+func (v *chatGetPermalinkCallResponse) OK() bool {
+	return v.ok
+}
+func (v *chatGetPermalinkCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *chatGetPermalinkCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *chatGetPermalinkCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChatGetPermalinkCallResponseBuilder) OK(v bool) *ChatGetPermalinkCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChatGetPermalinkCallResponseBuilder) ReplyTo(v int) *ChatGetPermalinkCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChatGetPermalinkCallResponseBuilder) Error(v *objects.ErrorResponse) *ChatGetPermalinkCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChatGetPermalinkCallResponseBuilder) Timestamp(v string) *ChatGetPermalinkCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChatGetPermalinkCallResponseBuilder) Build() ChatGetPermalinkCallResponse {
+	v := b.resp
+	b.resp = &chatGetPermalinkCallResponse{}
+	return v
+}
+func (r *chatGetPermalinkCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChatGetPermalinkCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChatGetPermalinkCallResponse) payload() (*objects.PermalinkResponse, error) {
+func (r *chatGetPermalinkCallResponseProxy) payload() (*objects.PermalinkResponse, error) {
 	var res0 objects.PermalinkResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.PermalinkResponse from response`)
@@ -273,7 +377,7 @@ func (c *ChatGetPermalinkCall) Do(ctx context.Context) (*objects.PermalinkRespon
 	if err != nil {
 		return nil, err
 	}
-	var res ChatGetPermalinkCallResponse
+	var res chatGetPermalinkCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.getPermalink`)
 	}
@@ -341,22 +445,74 @@ func (c *ChatMeMessageCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChatMeMessageCallResponse struct {
+type ChatMeMessageCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type chatMeMessageCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type chatMeMessageCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChatMeMessageCallResponseBuilder struct {
+	resp *chatMeMessageCallResponse
+}
 
-func (r *ChatMeMessageCallResponse) parse(data []byte) error {
+func BuildChatMeMessageCallResponse() *ChatMeMessageCallResponseBuilder {
+	return &ChatMeMessageCallResponseBuilder{resp: &chatMeMessageCallResponse{}}
+}
+func (v *chatMeMessageCallResponse) OK() bool {
+	return v.ok
+}
+func (v *chatMeMessageCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *chatMeMessageCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *chatMeMessageCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChatMeMessageCallResponseBuilder) OK(v bool) *ChatMeMessageCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChatMeMessageCallResponseBuilder) ReplyTo(v int) *ChatMeMessageCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChatMeMessageCallResponseBuilder) Error(v *objects.ErrorResponse) *ChatMeMessageCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChatMeMessageCallResponseBuilder) Timestamp(v string) *ChatMeMessageCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChatMeMessageCallResponseBuilder) Build() ChatMeMessageCallResponse {
+	v := b.resp
+	b.resp = &chatMeMessageCallResponse{}
+	return v
+}
+func (r *chatMeMessageCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChatMeMessageCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChatMeMessageCallResponse) payload() (*objects.ChatResponse, error) {
+func (r *chatMeMessageCallResponseProxy) payload() (*objects.ChatResponse, error) {
 	var res0 objects.ChatResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ChatResponse from response`)
@@ -371,7 +527,7 @@ func (c *ChatMeMessageCall) Do(ctx context.Context) (*objects.ChatResponse, erro
 	if err != nil {
 		return nil, err
 	}
-	var res ChatMeMessageCallResponse
+	var res chatMeMessageCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.meMessage`)
 	}
@@ -511,22 +667,74 @@ func (c *ChatPostEphemeralCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChatPostEphemeralCallResponse struct {
+type ChatPostEphemeralCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type chatPostEphemeralCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type chatPostEphemeralCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChatPostEphemeralCallResponseBuilder struct {
+	resp *chatPostEphemeralCallResponse
+}
 
-func (r *ChatPostEphemeralCallResponse) parse(data []byte) error {
+func BuildChatPostEphemeralCallResponse() *ChatPostEphemeralCallResponseBuilder {
+	return &ChatPostEphemeralCallResponseBuilder{resp: &chatPostEphemeralCallResponse{}}
+}
+func (v *chatPostEphemeralCallResponse) OK() bool {
+	return v.ok
+}
+func (v *chatPostEphemeralCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *chatPostEphemeralCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *chatPostEphemeralCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChatPostEphemeralCallResponseBuilder) OK(v bool) *ChatPostEphemeralCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChatPostEphemeralCallResponseBuilder) ReplyTo(v int) *ChatPostEphemeralCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChatPostEphemeralCallResponseBuilder) Error(v *objects.ErrorResponse) *ChatPostEphemeralCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChatPostEphemeralCallResponseBuilder) Timestamp(v string) *ChatPostEphemeralCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChatPostEphemeralCallResponseBuilder) Build() ChatPostEphemeralCallResponse {
+	v := b.resp
+	b.resp = &chatPostEphemeralCallResponse{}
+	return v
+}
+func (r *chatPostEphemeralCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChatPostEphemeralCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChatPostEphemeralCallResponse) payload() (*objects.EphemeralResponse, error) {
+func (r *chatPostEphemeralCallResponseProxy) payload() (*objects.EphemeralResponse, error) {
 	var res0 objects.EphemeralResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.EphemeralResponse from response`)
@@ -541,7 +749,7 @@ func (c *ChatPostEphemeralCall) Do(ctx context.Context) (*objects.EphemeralRespo
 	if err != nil {
 		return nil, err
 	}
-	var res ChatPostEphemeralCallResponse
+	var res chatPostEphemeralCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.postEphemeral`)
 	}
@@ -779,22 +987,74 @@ func (c *ChatPostMessageCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChatPostMessageCallResponse struct {
+type ChatPostMessageCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type chatPostMessageCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type chatPostMessageCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChatPostMessageCallResponseBuilder struct {
+	resp *chatPostMessageCallResponse
+}
 
-func (r *ChatPostMessageCallResponse) parse(data []byte) error {
+func BuildChatPostMessageCallResponse() *ChatPostMessageCallResponseBuilder {
+	return &ChatPostMessageCallResponseBuilder{resp: &chatPostMessageCallResponse{}}
+}
+func (v *chatPostMessageCallResponse) OK() bool {
+	return v.ok
+}
+func (v *chatPostMessageCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *chatPostMessageCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *chatPostMessageCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChatPostMessageCallResponseBuilder) OK(v bool) *ChatPostMessageCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChatPostMessageCallResponseBuilder) ReplyTo(v int) *ChatPostMessageCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChatPostMessageCallResponseBuilder) Error(v *objects.ErrorResponse) *ChatPostMessageCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChatPostMessageCallResponseBuilder) Timestamp(v string) *ChatPostMessageCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChatPostMessageCallResponseBuilder) Build() ChatPostMessageCallResponse {
+	v := b.resp
+	b.resp = &chatPostMessageCallResponse{}
+	return v
+}
+func (r *chatPostMessageCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChatPostMessageCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChatPostMessageCallResponse) payload() (*objects.ChatResponse, error) {
+func (r *chatPostMessageCallResponseProxy) payload() (*objects.ChatResponse, error) {
 	var res0 objects.ChatResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ChatResponse from response`)
@@ -809,7 +1069,7 @@ func (c *ChatPostMessageCall) Do(ctx context.Context) (*objects.ChatResponse, er
 	if err != nil {
 		return nil, err
 	}
-	var res ChatPostMessageCallResponse
+	var res chatPostMessageCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.postMessage`)
 	}
@@ -953,15 +1213,67 @@ func (c *ChatUnfurlCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChatUnfurlCallResponse struct {
+type ChatUnfurlCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type chatUnfurlCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type chatUnfurlCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChatUnfurlCallResponseBuilder struct {
+	resp *chatUnfurlCallResponse
+}
 
-func (r *ChatUnfurlCallResponse) parse(data []byte) error {
+func BuildChatUnfurlCallResponse() *ChatUnfurlCallResponseBuilder {
+	return &ChatUnfurlCallResponseBuilder{resp: &chatUnfurlCallResponse{}}
+}
+func (v *chatUnfurlCallResponse) OK() bool {
+	return v.ok
+}
+func (v *chatUnfurlCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *chatUnfurlCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *chatUnfurlCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChatUnfurlCallResponseBuilder) OK(v bool) *ChatUnfurlCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChatUnfurlCallResponseBuilder) ReplyTo(v int) *ChatUnfurlCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChatUnfurlCallResponseBuilder) Error(v *objects.ErrorResponse) *ChatUnfurlCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChatUnfurlCallResponseBuilder) Timestamp(v string) *ChatUnfurlCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChatUnfurlCallResponseBuilder) Build() ChatUnfurlCallResponse {
+	v := b.resp
+	b.resp = &chatUnfurlCallResponse{}
+	return v
+}
+func (r *chatUnfurlCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChatUnfurlCallResponse`)
 	}
@@ -976,7 +1288,7 @@ func (c *ChatUnfurlCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res ChatUnfurlCallResponse
+	var res chatUnfurlCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to chat.unfurl`)
 	}
@@ -1134,22 +1446,74 @@ func (c *ChatUpdateCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChatUpdateCallResponse struct {
+type ChatUpdateCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type chatUpdateCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type chatUpdateCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChatUpdateCallResponseBuilder struct {
+	resp *chatUpdateCallResponse
+}
 
-func (r *ChatUpdateCallResponse) parse(data []byte) error {
+func BuildChatUpdateCallResponse() *ChatUpdateCallResponseBuilder {
+	return &ChatUpdateCallResponseBuilder{resp: &chatUpdateCallResponse{}}
+}
+func (v *chatUpdateCallResponse) OK() bool {
+	return v.ok
+}
+func (v *chatUpdateCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *chatUpdateCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *chatUpdateCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChatUpdateCallResponseBuilder) OK(v bool) *ChatUpdateCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChatUpdateCallResponseBuilder) ReplyTo(v int) *ChatUpdateCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChatUpdateCallResponseBuilder) Error(v *objects.ErrorResponse) *ChatUpdateCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChatUpdateCallResponseBuilder) Timestamp(v string) *ChatUpdateCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChatUpdateCallResponseBuilder) Build() ChatUpdateCallResponse {
+	v := b.resp
+	b.resp = &chatUpdateCallResponse{}
+	return v
+}
+func (r *chatUpdateCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChatUpdateCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChatUpdateCallResponse) payload() (*objects.ChatResponse, error) {
+func (r *chatUpdateCallResponseProxy) payload() (*objects.ChatResponse, error) {
 	var res0 objects.ChatResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ChatResponse from response`)
@@ -1164,7 +1528,7 @@ func (c *ChatUpdateCall) Do(ctx context.Context) (*objects.ChatResponse, error) 
 	if err != nil {
 		return nil, err
 	}
-	var res ChatUpdateCallResponse
+	var res chatUpdateCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to chat.update`)
 	}

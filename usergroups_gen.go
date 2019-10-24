@@ -129,7 +129,15 @@ func (c *UsergroupsCreateCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsergroupsCreateCallResponse struct {
+type UsergroupsCreateCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Usergroup() *objects.Usergroup
+}
+
+type usergroupsCreateCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -137,15 +145,68 @@ type UsergroupsCreateCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"usergroup"`
 }
+type usergroupsCreateCallResponse struct {
+	ok        bool
+	replyTo   int
+	error     *objects.ErrorResponse
+	ts        string
+	usergroup *objects.Usergroup
+}
+type UsergroupsCreateCallResponseBuilder struct {
+	resp *usergroupsCreateCallResponse
+}
 
-func (r *UsergroupsCreateCallResponse) parse(data []byte) error {
+func BuildUsergroupsCreateCallResponse() *UsergroupsCreateCallResponseBuilder {
+	return &UsergroupsCreateCallResponseBuilder{resp: &usergroupsCreateCallResponse{}}
+}
+func (v *usergroupsCreateCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usergroupsCreateCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usergroupsCreateCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usergroupsCreateCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *usergroupsCreateCallResponse) Usergroup() *objects.Usergroup {
+	return v.usergroup
+}
+func (b *UsergroupsCreateCallResponseBuilder) OK(v bool) *UsergroupsCreateCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsergroupsCreateCallResponseBuilder) ReplyTo(v int) *UsergroupsCreateCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsergroupsCreateCallResponseBuilder) Error(v *objects.ErrorResponse) *UsergroupsCreateCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsergroupsCreateCallResponseBuilder) Timestamp(v string) *UsergroupsCreateCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsergroupsCreateCallResponseBuilder) Usergroup(v *objects.Usergroup) *UsergroupsCreateCallResponseBuilder {
+	b.resp.usergroup = v
+	return b
+}
+func (b *UsergroupsCreateCallResponseBuilder) Build() UsergroupsCreateCallResponse {
+	v := b.resp
+	b.resp = &usergroupsCreateCallResponse{}
+	return v
+}
+func (r *usergroupsCreateCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsergroupsCreateCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsergroupsCreateCallResponse) payload() (*objects.Usergroup, error) {
+func (r *usergroupsCreateCallResponseProxy) payload() (*objects.Usergroup, error) {
 	var res1 objects.Usergroup
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Usergroup from response`)
@@ -160,7 +221,7 @@ func (c *UsergroupsCreateCall) Do(ctx context.Context) (*objects.Usergroup, erro
 	if err != nil {
 		return nil, err
 	}
-	var res UsergroupsCreateCallResponse
+	var res usergroupsCreateCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to usergroups.create`)
 	}
@@ -241,7 +302,15 @@ func (c *UsergroupsDisableCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsergroupsDisableCallResponse struct {
+type UsergroupsDisableCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Usergroup() *objects.Usergroup
+}
+
+type usergroupsDisableCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -249,15 +318,68 @@ type UsergroupsDisableCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"usergroup"`
 }
+type usergroupsDisableCallResponse struct {
+	ok        bool
+	replyTo   int
+	error     *objects.ErrorResponse
+	ts        string
+	usergroup *objects.Usergroup
+}
+type UsergroupsDisableCallResponseBuilder struct {
+	resp *usergroupsDisableCallResponse
+}
 
-func (r *UsergroupsDisableCallResponse) parse(data []byte) error {
+func BuildUsergroupsDisableCallResponse() *UsergroupsDisableCallResponseBuilder {
+	return &UsergroupsDisableCallResponseBuilder{resp: &usergroupsDisableCallResponse{}}
+}
+func (v *usergroupsDisableCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usergroupsDisableCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usergroupsDisableCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usergroupsDisableCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *usergroupsDisableCallResponse) Usergroup() *objects.Usergroup {
+	return v.usergroup
+}
+func (b *UsergroupsDisableCallResponseBuilder) OK(v bool) *UsergroupsDisableCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsergroupsDisableCallResponseBuilder) ReplyTo(v int) *UsergroupsDisableCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsergroupsDisableCallResponseBuilder) Error(v *objects.ErrorResponse) *UsergroupsDisableCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsergroupsDisableCallResponseBuilder) Timestamp(v string) *UsergroupsDisableCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsergroupsDisableCallResponseBuilder) Usergroup(v *objects.Usergroup) *UsergroupsDisableCallResponseBuilder {
+	b.resp.usergroup = v
+	return b
+}
+func (b *UsergroupsDisableCallResponseBuilder) Build() UsergroupsDisableCallResponse {
+	v := b.resp
+	b.resp = &usergroupsDisableCallResponse{}
+	return v
+}
+func (r *usergroupsDisableCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsergroupsDisableCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsergroupsDisableCallResponse) payload() (*objects.Usergroup, error) {
+func (r *usergroupsDisableCallResponseProxy) payload() (*objects.Usergroup, error) {
 	var res1 objects.Usergroup
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Usergroup from response`)
@@ -272,7 +394,7 @@ func (c *UsergroupsDisableCall) Do(ctx context.Context) (*objects.Usergroup, err
 	if err != nil {
 		return nil, err
 	}
-	var res UsergroupsDisableCallResponse
+	var res usergroupsDisableCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to usergroups.disable`)
 	}
@@ -344,7 +466,15 @@ func (c *UsergroupsEnableCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsergroupsEnableCallResponse struct {
+type UsergroupsEnableCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Usergroup() *objects.Usergroup
+}
+
+type usergroupsEnableCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -352,15 +482,68 @@ type UsergroupsEnableCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"usergroup"`
 }
+type usergroupsEnableCallResponse struct {
+	ok        bool
+	replyTo   int
+	error     *objects.ErrorResponse
+	ts        string
+	usergroup *objects.Usergroup
+}
+type UsergroupsEnableCallResponseBuilder struct {
+	resp *usergroupsEnableCallResponse
+}
 
-func (r *UsergroupsEnableCallResponse) parse(data []byte) error {
+func BuildUsergroupsEnableCallResponse() *UsergroupsEnableCallResponseBuilder {
+	return &UsergroupsEnableCallResponseBuilder{resp: &usergroupsEnableCallResponse{}}
+}
+func (v *usergroupsEnableCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usergroupsEnableCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usergroupsEnableCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usergroupsEnableCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *usergroupsEnableCallResponse) Usergroup() *objects.Usergroup {
+	return v.usergroup
+}
+func (b *UsergroupsEnableCallResponseBuilder) OK(v bool) *UsergroupsEnableCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsergroupsEnableCallResponseBuilder) ReplyTo(v int) *UsergroupsEnableCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsergroupsEnableCallResponseBuilder) Error(v *objects.ErrorResponse) *UsergroupsEnableCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsergroupsEnableCallResponseBuilder) Timestamp(v string) *UsergroupsEnableCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsergroupsEnableCallResponseBuilder) Usergroup(v *objects.Usergroup) *UsergroupsEnableCallResponseBuilder {
+	b.resp.usergroup = v
+	return b
+}
+func (b *UsergroupsEnableCallResponseBuilder) Build() UsergroupsEnableCallResponse {
+	v := b.resp
+	b.resp = &usergroupsEnableCallResponse{}
+	return v
+}
+func (r *usergroupsEnableCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsergroupsEnableCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsergroupsEnableCallResponse) payload() (*objects.Usergroup, error) {
+func (r *usergroupsEnableCallResponseProxy) payload() (*objects.Usergroup, error) {
 	var res1 objects.Usergroup
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Usergroup from response`)
@@ -375,7 +558,7 @@ func (c *UsergroupsEnableCall) Do(ctx context.Context) (*objects.Usergroup, erro
 	if err != nil {
 		return nil, err
 	}
-	var res UsergroupsEnableCallResponse
+	var res usergroupsEnableCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to usergroups.enable`)
 	}
@@ -461,7 +644,15 @@ func (c *UsergroupsListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsergroupsListCallResponse struct {
+type UsergroupsListCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Usergroups() *objects.UsergroupList
+}
+
+type usergroupsListCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -469,15 +660,68 @@ type UsergroupsListCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"usergroups"`
 }
+type usergroupsListCallResponse struct {
+	ok         bool
+	replyTo    int
+	error      *objects.ErrorResponse
+	ts         string
+	usergroups *objects.UsergroupList
+}
+type UsergroupsListCallResponseBuilder struct {
+	resp *usergroupsListCallResponse
+}
 
-func (r *UsergroupsListCallResponse) parse(data []byte) error {
+func BuildUsergroupsListCallResponse() *UsergroupsListCallResponseBuilder {
+	return &UsergroupsListCallResponseBuilder{resp: &usergroupsListCallResponse{}}
+}
+func (v *usergroupsListCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usergroupsListCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usergroupsListCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usergroupsListCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *usergroupsListCallResponse) Usergroups() *objects.UsergroupList {
+	return v.usergroups
+}
+func (b *UsergroupsListCallResponseBuilder) OK(v bool) *UsergroupsListCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsergroupsListCallResponseBuilder) ReplyTo(v int) *UsergroupsListCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsergroupsListCallResponseBuilder) Error(v *objects.ErrorResponse) *UsergroupsListCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsergroupsListCallResponseBuilder) Timestamp(v string) *UsergroupsListCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsergroupsListCallResponseBuilder) Usergroups(v *objects.UsergroupList) *UsergroupsListCallResponseBuilder {
+	b.resp.usergroups = v
+	return b
+}
+func (b *UsergroupsListCallResponseBuilder) Build() UsergroupsListCallResponse {
+	v := b.resp
+	b.resp = &usergroupsListCallResponse{}
+	return v
+}
+func (r *usergroupsListCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsergroupsListCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsergroupsListCallResponse) payload() (objects.UsergroupList, error) {
+func (r *usergroupsListCallResponseProxy) payload() (objects.UsergroupList, error) {
 	var res1 objects.UsergroupList
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.UsergroupList from response`)
@@ -492,7 +736,7 @@ func (c *UsergroupsListCall) Do(ctx context.Context) (objects.UsergroupList, err
 	if err != nil {
 		return nil, err
 	}
-	var res UsergroupsListCallResponse
+	var res usergroupsListCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to usergroups.list`)
 	}
@@ -615,7 +859,15 @@ func (c *UsergroupsUpdateCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type UsergroupsUpdateCallResponse struct {
+type UsergroupsUpdateCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Usergroup() *objects.Usergroup
+}
+
+type usergroupsUpdateCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -623,15 +875,68 @@ type UsergroupsUpdateCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"usergroup"`
 }
+type usergroupsUpdateCallResponse struct {
+	ok        bool
+	replyTo   int
+	error     *objects.ErrorResponse
+	ts        string
+	usergroup *objects.Usergroup
+}
+type UsergroupsUpdateCallResponseBuilder struct {
+	resp *usergroupsUpdateCallResponse
+}
 
-func (r *UsergroupsUpdateCallResponse) parse(data []byte) error {
+func BuildUsergroupsUpdateCallResponse() *UsergroupsUpdateCallResponseBuilder {
+	return &UsergroupsUpdateCallResponseBuilder{resp: &usergroupsUpdateCallResponse{}}
+}
+func (v *usergroupsUpdateCallResponse) OK() bool {
+	return v.ok
+}
+func (v *usergroupsUpdateCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *usergroupsUpdateCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *usergroupsUpdateCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *usergroupsUpdateCallResponse) Usergroup() *objects.Usergroup {
+	return v.usergroup
+}
+func (b *UsergroupsUpdateCallResponseBuilder) OK(v bool) *UsergroupsUpdateCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *UsergroupsUpdateCallResponseBuilder) ReplyTo(v int) *UsergroupsUpdateCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *UsergroupsUpdateCallResponseBuilder) Error(v *objects.ErrorResponse) *UsergroupsUpdateCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *UsergroupsUpdateCallResponseBuilder) Timestamp(v string) *UsergroupsUpdateCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *UsergroupsUpdateCallResponseBuilder) Usergroup(v *objects.Usergroup) *UsergroupsUpdateCallResponseBuilder {
+	b.resp.usergroup = v
+	return b
+}
+func (b *UsergroupsUpdateCallResponseBuilder) Build() UsergroupsUpdateCallResponse {
+	v := b.resp
+	b.resp = &usergroupsUpdateCallResponse{}
+	return v
+}
+func (r *usergroupsUpdateCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal UsergroupsUpdateCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *UsergroupsUpdateCallResponse) payload() (*objects.Usergroup, error) {
+func (r *usergroupsUpdateCallResponseProxy) payload() (*objects.Usergroup, error) {
 	var res1 objects.Usergroup
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Usergroup from response`)
@@ -646,7 +951,7 @@ func (c *UsergroupsUpdateCall) Do(ctx context.Context) (*objects.Usergroup, erro
 	if err != nil {
 		return nil, err
 	}
-	var res UsergroupsUpdateCallResponse
+	var res usergroupsUpdateCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to usergroups.update`)
 	}

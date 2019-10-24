@@ -409,9 +409,7 @@
 	{
 		"name": "ChatResponse",
 		"fields": [
-			{ "name": "channel", "type": "string" },
-			{ "name": "ts", "type": "string", "accessor_name": "Timestamp" },
-			{ "name": "message", "type": "interface{}" }
+			{ "name": "channel", "type": "string" }
 		]
 	},
 	{

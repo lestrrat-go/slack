@@ -179,21 +179,9 @@ func (b *ChatResponseBuilder) Channel(v string) *ChatResponseBuilder {
 	return b
 }
 
-func (b *ChatResponseBuilder) Timestamp(v string) *ChatResponseBuilder {
-	b.ts = v
-	return b
-}
-
-func (b *ChatResponseBuilder) Message(v interface{}) *ChatResponseBuilder {
-	b.message = v
-	return b
-}
-
 func (b *ChatResponseBuilder) Build() (*ChatResponse, error) {
 	var v ChatResponse
 	v.channel = b.channel
-	v.ts = b.ts
-	v.message = b.message
 	return &v, nil
 }
 
@@ -209,19 +197,9 @@ func (b *ChatResponse) Channel() string {
 	return b.channel
 }
 
-func (b *ChatResponse) Timestamp() string {
-	return b.ts
-}
-
-func (b *ChatResponse) Message() interface{} {
-	return b.message
-}
-
 func (v *ChatResponse) UnmarshalJSON(data []byte) error {
 	var proxy struct {
-		Channel   string      `json:"channel"`
-		Timestamp string      `json:"ts"`
-		Message   interface{} `json:"message"`
+		Channel string `json:"channel"`
 	}
 	if err := json.Unmarshal(data, &proxy); err != nil {
 		return errors.Wrap(err, `failed to unmarshal JSON`)
@@ -229,8 +207,6 @@ func (v *ChatResponse) UnmarshalJSON(data []byte) error {
 
 	x, err := BuildChatResponse().
 		Channel(proxy.Channel).
-		Timestamp(proxy.Timestamp).
-		Message(proxy.Message).
 		Build()
 	if err != nil {
 		return errors.Wrap(err, `failed to build object from JSON`)

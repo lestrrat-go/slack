@@ -63,22 +63,74 @@ func (c *DialogOpenCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type DialogOpenCallResponse struct {
+type DialogOpenCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type dialogOpenCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type dialogOpenCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type DialogOpenCallResponseBuilder struct {
+	resp *dialogOpenCallResponse
+}
 
-func (r *DialogOpenCallResponse) parse(data []byte) error {
+func BuildDialogOpenCallResponse() *DialogOpenCallResponseBuilder {
+	return &DialogOpenCallResponseBuilder{resp: &dialogOpenCallResponse{}}
+}
+func (v *dialogOpenCallResponse) OK() bool {
+	return v.ok
+}
+func (v *dialogOpenCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *dialogOpenCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *dialogOpenCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *DialogOpenCallResponseBuilder) OK(v bool) *DialogOpenCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *DialogOpenCallResponseBuilder) ReplyTo(v int) *DialogOpenCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *DialogOpenCallResponseBuilder) Error(v *objects.ErrorResponse) *DialogOpenCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *DialogOpenCallResponseBuilder) Timestamp(v string) *DialogOpenCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *DialogOpenCallResponseBuilder) Build() DialogOpenCallResponse {
+	v := b.resp
+	b.resp = &dialogOpenCallResponse{}
+	return v
+}
+func (r *dialogOpenCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal DialogOpenCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *DialogOpenCallResponse) payload() (*objects.DialogResponse, error) {
+func (r *dialogOpenCallResponseProxy) payload() (*objects.DialogResponse, error) {
 	var res0 objects.DialogResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.DialogResponse from response`)
@@ -93,7 +145,7 @@ func (c *DialogOpenCall) Do(ctx context.Context) (*objects.DialogResponse, error
 	if err != nil {
 		return nil, err
 	}
-	var res DialogOpenCallResponse
+	var res dialogOpenCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to dialog.open`)
 	}

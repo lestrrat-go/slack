@@ -155,15 +155,67 @@ func (c *ChannelsArchiveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsArchiveCallResponse struct {
+type ChannelsArchiveCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type channelsArchiveCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type channelsArchiveCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChannelsArchiveCallResponseBuilder struct {
+	resp *channelsArchiveCallResponse
+}
 
-func (r *ChannelsArchiveCallResponse) parse(data []byte) error {
+func BuildChannelsArchiveCallResponse() *ChannelsArchiveCallResponseBuilder {
+	return &ChannelsArchiveCallResponseBuilder{resp: &channelsArchiveCallResponse{}}
+}
+func (v *channelsArchiveCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsArchiveCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsArchiveCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsArchiveCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChannelsArchiveCallResponseBuilder) OK(v bool) *ChannelsArchiveCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsArchiveCallResponseBuilder) ReplyTo(v int) *ChannelsArchiveCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsArchiveCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsArchiveCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsArchiveCallResponseBuilder) Timestamp(v string) *ChannelsArchiveCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsArchiveCallResponseBuilder) Build() ChannelsArchiveCallResponse {
+	v := b.resp
+	b.resp = &channelsArchiveCallResponse{}
+	return v
+}
+func (r *channelsArchiveCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsArchiveCallResponse`)
 	}
@@ -178,7 +230,7 @@ func (c *ChannelsArchiveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res ChannelsArchiveCallResponse
+	var res channelsArchiveCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.archive`)
 	}
@@ -243,15 +295,67 @@ func (c *ChannelsCreateCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsCreateCallResponse struct {
+type ChannelsCreateCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type channelsCreateCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type channelsCreateCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChannelsCreateCallResponseBuilder struct {
+	resp *channelsCreateCallResponse
+}
 
-func (r *ChannelsCreateCallResponse) parse(data []byte) error {
+func BuildChannelsCreateCallResponse() *ChannelsCreateCallResponseBuilder {
+	return &ChannelsCreateCallResponseBuilder{resp: &channelsCreateCallResponse{}}
+}
+func (v *channelsCreateCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsCreateCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsCreateCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsCreateCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChannelsCreateCallResponseBuilder) OK(v bool) *ChannelsCreateCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsCreateCallResponseBuilder) ReplyTo(v int) *ChannelsCreateCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsCreateCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsCreateCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsCreateCallResponseBuilder) Timestamp(v string) *ChannelsCreateCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsCreateCallResponseBuilder) Build() ChannelsCreateCallResponse {
+	v := b.resp
+	b.resp = &channelsCreateCallResponse{}
+	return v
+}
+func (r *channelsCreateCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsCreateCallResponse`)
 	}
@@ -266,7 +370,7 @@ func (c *ChannelsCreateCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res ChannelsCreateCallResponse
+	var res channelsCreateCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.create`)
 	}
@@ -388,22 +492,74 @@ func (c *ChannelsHistoryCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsHistoryCallResponse struct {
+type ChannelsHistoryCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type channelsHistoryCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type channelsHistoryCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChannelsHistoryCallResponseBuilder struct {
+	resp *channelsHistoryCallResponse
+}
 
-func (r *ChannelsHistoryCallResponse) parse(data []byte) error {
+func BuildChannelsHistoryCallResponse() *ChannelsHistoryCallResponseBuilder {
+	return &ChannelsHistoryCallResponseBuilder{resp: &channelsHistoryCallResponse{}}
+}
+func (v *channelsHistoryCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsHistoryCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsHistoryCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsHistoryCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChannelsHistoryCallResponseBuilder) OK(v bool) *ChannelsHistoryCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsHistoryCallResponseBuilder) ReplyTo(v int) *ChannelsHistoryCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsHistoryCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsHistoryCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsHistoryCallResponseBuilder) Timestamp(v string) *ChannelsHistoryCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsHistoryCallResponseBuilder) Build() ChannelsHistoryCallResponse {
+	v := b.resp
+	b.resp = &channelsHistoryCallResponse{}
+	return v
+}
+func (r *channelsHistoryCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsHistoryCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChannelsHistoryCallResponse) payload() (*objects.ChannelsHistoryResponse, error) {
+func (r *channelsHistoryCallResponseProxy) payload() (*objects.ChannelsHistoryResponse, error) {
 	var res0 objects.ChannelsHistoryResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ChannelsHistoryResponse from response`)
@@ -418,7 +574,7 @@ func (c *ChannelsHistoryCall) Do(ctx context.Context) (*objects.ChannelsHistoryR
 	if err != nil {
 		return nil, err
 	}
-	var res ChannelsHistoryCallResponse
+	var res channelsHistoryCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.history`)
 	}
@@ -513,7 +669,15 @@ func (c *ChannelsInfoCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsInfoCallResponse struct {
+type ChannelsInfoCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Channel() *objects.Channel
+}
+
+type channelsInfoCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -521,15 +685,68 @@ type ChannelsInfoCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"channel"`
 }
+type channelsInfoCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+	channel *objects.Channel
+}
+type ChannelsInfoCallResponseBuilder struct {
+	resp *channelsInfoCallResponse
+}
 
-func (r *ChannelsInfoCallResponse) parse(data []byte) error {
+func BuildChannelsInfoCallResponse() *ChannelsInfoCallResponseBuilder {
+	return &ChannelsInfoCallResponseBuilder{resp: &channelsInfoCallResponse{}}
+}
+func (v *channelsInfoCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsInfoCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsInfoCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsInfoCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *channelsInfoCallResponse) Channel() *objects.Channel {
+	return v.channel
+}
+func (b *ChannelsInfoCallResponseBuilder) OK(v bool) *ChannelsInfoCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsInfoCallResponseBuilder) ReplyTo(v int) *ChannelsInfoCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsInfoCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsInfoCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsInfoCallResponseBuilder) Timestamp(v string) *ChannelsInfoCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsInfoCallResponseBuilder) Channel(v *objects.Channel) *ChannelsInfoCallResponseBuilder {
+	b.resp.channel = v
+	return b
+}
+func (b *ChannelsInfoCallResponseBuilder) Build() ChannelsInfoCallResponse {
+	v := b.resp
+	b.resp = &channelsInfoCallResponse{}
+	return v
+}
+func (r *channelsInfoCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsInfoCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChannelsInfoCallResponse) payload() (*objects.Channel, error) {
+func (r *channelsInfoCallResponseProxy) payload() (*objects.Channel, error) {
 	var res1 objects.Channel
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Channel from response`)
@@ -544,7 +761,7 @@ func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res ChannelsInfoCallResponse
+	var res channelsInfoCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.info`)
 	}
@@ -612,7 +829,15 @@ func (c *ChannelsInviteCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsInviteCallResponse struct {
+type ChannelsInviteCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Channel() *objects.Channel
+}
+
+type channelsInviteCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -620,15 +845,68 @@ type ChannelsInviteCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"channel"`
 }
+type channelsInviteCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+	channel *objects.Channel
+}
+type ChannelsInviteCallResponseBuilder struct {
+	resp *channelsInviteCallResponse
+}
 
-func (r *ChannelsInviteCallResponse) parse(data []byte) error {
+func BuildChannelsInviteCallResponse() *ChannelsInviteCallResponseBuilder {
+	return &ChannelsInviteCallResponseBuilder{resp: &channelsInviteCallResponse{}}
+}
+func (v *channelsInviteCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsInviteCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsInviteCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsInviteCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *channelsInviteCallResponse) Channel() *objects.Channel {
+	return v.channel
+}
+func (b *ChannelsInviteCallResponseBuilder) OK(v bool) *ChannelsInviteCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsInviteCallResponseBuilder) ReplyTo(v int) *ChannelsInviteCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsInviteCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsInviteCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsInviteCallResponseBuilder) Timestamp(v string) *ChannelsInviteCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsInviteCallResponseBuilder) Channel(v *objects.Channel) *ChannelsInviteCallResponseBuilder {
+	b.resp.channel = v
+	return b
+}
+func (b *ChannelsInviteCallResponseBuilder) Build() ChannelsInviteCallResponse {
+	v := b.resp
+	b.resp = &channelsInviteCallResponse{}
+	return v
+}
+func (r *channelsInviteCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsInviteCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChannelsInviteCallResponse) payload() (*objects.Channel, error) {
+func (r *channelsInviteCallResponseProxy) payload() (*objects.Channel, error) {
 	var res1 objects.Channel
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Channel from response`)
@@ -643,7 +921,7 @@ func (c *ChannelsInviteCall) Do(ctx context.Context) (*objects.Channel, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res ChannelsInviteCallResponse
+	var res channelsInviteCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.invite`)
 	}
@@ -711,22 +989,74 @@ func (c *ChannelsJoinCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsJoinCallResponse struct {
+type ChannelsJoinCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type channelsJoinCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type channelsJoinCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChannelsJoinCallResponseBuilder struct {
+	resp *channelsJoinCallResponse
+}
 
-func (r *ChannelsJoinCallResponse) parse(data []byte) error {
+func BuildChannelsJoinCallResponse() *ChannelsJoinCallResponseBuilder {
+	return &ChannelsJoinCallResponseBuilder{resp: &channelsJoinCallResponse{}}
+}
+func (v *channelsJoinCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsJoinCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsJoinCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsJoinCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChannelsJoinCallResponseBuilder) OK(v bool) *ChannelsJoinCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsJoinCallResponseBuilder) ReplyTo(v int) *ChannelsJoinCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsJoinCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsJoinCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsJoinCallResponseBuilder) Timestamp(v string) *ChannelsJoinCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsJoinCallResponseBuilder) Build() ChannelsJoinCallResponse {
+	v := b.resp
+	b.resp = &channelsJoinCallResponse{}
+	return v
+}
+func (r *channelsJoinCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsJoinCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChannelsJoinCallResponse) payload() (*objects.Channel, error) {
+func (r *channelsJoinCallResponseProxy) payload() (*objects.Channel, error) {
 	var res0 objects.Channel
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Channel from response`)
@@ -741,7 +1071,7 @@ func (c *ChannelsJoinCall) Do(ctx context.Context) (*objects.Channel, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res ChannelsJoinCallResponse
+	var res channelsJoinCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.join`)
 	}
@@ -809,15 +1139,67 @@ func (c *ChannelsKickCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsKickCallResponse struct {
+type ChannelsKickCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type channelsKickCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type channelsKickCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChannelsKickCallResponseBuilder struct {
+	resp *channelsKickCallResponse
+}
 
-func (r *ChannelsKickCallResponse) parse(data []byte) error {
+func BuildChannelsKickCallResponse() *ChannelsKickCallResponseBuilder {
+	return &ChannelsKickCallResponseBuilder{resp: &channelsKickCallResponse{}}
+}
+func (v *channelsKickCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsKickCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsKickCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsKickCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChannelsKickCallResponseBuilder) OK(v bool) *ChannelsKickCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsKickCallResponseBuilder) ReplyTo(v int) *ChannelsKickCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsKickCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsKickCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsKickCallResponseBuilder) Timestamp(v string) *ChannelsKickCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsKickCallResponseBuilder) Build() ChannelsKickCallResponse {
+	v := b.resp
+	b.resp = &channelsKickCallResponse{}
+	return v
+}
+func (r *channelsKickCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsKickCallResponse`)
 	}
@@ -832,7 +1214,7 @@ func (c *ChannelsKickCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res ChannelsKickCallResponse
+	var res channelsKickCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.kick`)
 	}
@@ -890,15 +1272,67 @@ func (c *ChannelsLeaveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsLeaveCallResponse struct {
+type ChannelsLeaveCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type channelsLeaveCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type channelsLeaveCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChannelsLeaveCallResponseBuilder struct {
+	resp *channelsLeaveCallResponse
+}
 
-func (r *ChannelsLeaveCallResponse) parse(data []byte) error {
+func BuildChannelsLeaveCallResponse() *ChannelsLeaveCallResponseBuilder {
+	return &ChannelsLeaveCallResponseBuilder{resp: &channelsLeaveCallResponse{}}
+}
+func (v *channelsLeaveCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsLeaveCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsLeaveCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsLeaveCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChannelsLeaveCallResponseBuilder) OK(v bool) *ChannelsLeaveCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsLeaveCallResponseBuilder) ReplyTo(v int) *ChannelsLeaveCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsLeaveCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsLeaveCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsLeaveCallResponseBuilder) Timestamp(v string) *ChannelsLeaveCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsLeaveCallResponseBuilder) Build() ChannelsLeaveCallResponse {
+	v := b.resp
+	b.resp = &channelsLeaveCallResponse{}
+	return v
+}
+func (r *channelsLeaveCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsLeaveCallResponse`)
 	}
@@ -913,7 +1347,7 @@ func (c *ChannelsLeaveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res ChannelsLeaveCallResponse
+	var res channelsLeaveCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.leave`)
 	}
@@ -992,7 +1426,15 @@ func (c *ChannelsListCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsListCallResponse struct {
+type ChannelsListCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Channels() *objects.ChannelList
+}
+
+type channelsListCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -1000,15 +1442,68 @@ type ChannelsListCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"channels"`
 }
+type channelsListCallResponse struct {
+	ok       bool
+	replyTo  int
+	error    *objects.ErrorResponse
+	ts       string
+	channels *objects.ChannelList
+}
+type ChannelsListCallResponseBuilder struct {
+	resp *channelsListCallResponse
+}
 
-func (r *ChannelsListCallResponse) parse(data []byte) error {
+func BuildChannelsListCallResponse() *ChannelsListCallResponseBuilder {
+	return &ChannelsListCallResponseBuilder{resp: &channelsListCallResponse{}}
+}
+func (v *channelsListCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsListCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsListCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsListCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *channelsListCallResponse) Channels() *objects.ChannelList {
+	return v.channels
+}
+func (b *ChannelsListCallResponseBuilder) OK(v bool) *ChannelsListCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsListCallResponseBuilder) ReplyTo(v int) *ChannelsListCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsListCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsListCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsListCallResponseBuilder) Timestamp(v string) *ChannelsListCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsListCallResponseBuilder) Channels(v *objects.ChannelList) *ChannelsListCallResponseBuilder {
+	b.resp.channels = v
+	return b
+}
+func (b *ChannelsListCallResponseBuilder) Build() ChannelsListCallResponse {
+	v := b.resp
+	b.resp = &channelsListCallResponse{}
+	return v
+}
+func (r *channelsListCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsListCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChannelsListCallResponse) payload() (objects.ChannelList, error) {
+func (r *channelsListCallResponseProxy) payload() (objects.ChannelList, error) {
 	var res1 objects.ChannelList
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ChannelList from response`)
@@ -1023,7 +1518,7 @@ func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) 
 	if err != nil {
 		return nil, err
 	}
-	var res ChannelsListCallResponse
+	var res channelsListCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.list`)
 	}
@@ -1106,15 +1601,67 @@ func (c *ChannelsMarkCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsMarkCallResponse struct {
+type ChannelsMarkCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type channelsMarkCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type channelsMarkCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChannelsMarkCallResponseBuilder struct {
+	resp *channelsMarkCallResponse
+}
 
-func (r *ChannelsMarkCallResponse) parse(data []byte) error {
+func BuildChannelsMarkCallResponse() *ChannelsMarkCallResponseBuilder {
+	return &ChannelsMarkCallResponseBuilder{resp: &channelsMarkCallResponse{}}
+}
+func (v *channelsMarkCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsMarkCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsMarkCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsMarkCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChannelsMarkCallResponseBuilder) OK(v bool) *ChannelsMarkCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsMarkCallResponseBuilder) ReplyTo(v int) *ChannelsMarkCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsMarkCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsMarkCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsMarkCallResponseBuilder) Timestamp(v string) *ChannelsMarkCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsMarkCallResponseBuilder) Build() ChannelsMarkCallResponse {
+	v := b.resp
+	b.resp = &channelsMarkCallResponse{}
+	return v
+}
+func (r *channelsMarkCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsMarkCallResponse`)
 	}
@@ -1129,7 +1676,7 @@ func (c *ChannelsMarkCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res ChannelsMarkCallResponse
+	var res channelsMarkCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.mark`)
 	}
@@ -1203,7 +1750,15 @@ func (c *ChannelsRenameCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsRenameCallResponse struct {
+type ChannelsRenameCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Channel() *objects.Channel
+}
+
+type channelsRenameCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -1211,15 +1766,68 @@ type ChannelsRenameCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"channel"`
 }
+type channelsRenameCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+	channel *objects.Channel
+}
+type ChannelsRenameCallResponseBuilder struct {
+	resp *channelsRenameCallResponse
+}
 
-func (r *ChannelsRenameCallResponse) parse(data []byte) error {
+func BuildChannelsRenameCallResponse() *ChannelsRenameCallResponseBuilder {
+	return &ChannelsRenameCallResponseBuilder{resp: &channelsRenameCallResponse{}}
+}
+func (v *channelsRenameCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsRenameCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsRenameCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsRenameCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *channelsRenameCallResponse) Channel() *objects.Channel {
+	return v.channel
+}
+func (b *ChannelsRenameCallResponseBuilder) OK(v bool) *ChannelsRenameCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsRenameCallResponseBuilder) ReplyTo(v int) *ChannelsRenameCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsRenameCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsRenameCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsRenameCallResponseBuilder) Timestamp(v string) *ChannelsRenameCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsRenameCallResponseBuilder) Channel(v *objects.Channel) *ChannelsRenameCallResponseBuilder {
+	b.resp.channel = v
+	return b
+}
+func (b *ChannelsRenameCallResponseBuilder) Build() ChannelsRenameCallResponse {
+	v := b.resp
+	b.resp = &channelsRenameCallResponse{}
+	return v
+}
+func (r *channelsRenameCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsRenameCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChannelsRenameCallResponse) payload() (*objects.Channel, error) {
+func (r *channelsRenameCallResponseProxy) payload() (*objects.Channel, error) {
 	var res1 objects.Channel
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Channel from response`)
@@ -1234,7 +1842,7 @@ func (c *ChannelsRenameCall) Do(ctx context.Context) (*objects.Channel, error) {
 	if err != nil {
 		return nil, err
 	}
-	var res ChannelsRenameCallResponse
+	var res channelsRenameCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.rename`)
 	}
@@ -1305,7 +1913,15 @@ func (c *ChannelsRepliesCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsRepliesCallResponse struct {
+type ChannelsRepliesCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Messages() *objects.MessageList
+}
+
+type channelsRepliesCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -1313,15 +1929,68 @@ type ChannelsRepliesCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"messages"`
 }
+type channelsRepliesCallResponse struct {
+	ok       bool
+	replyTo  int
+	error    *objects.ErrorResponse
+	ts       string
+	messages *objects.MessageList
+}
+type ChannelsRepliesCallResponseBuilder struct {
+	resp *channelsRepliesCallResponse
+}
 
-func (r *ChannelsRepliesCallResponse) parse(data []byte) error {
+func BuildChannelsRepliesCallResponse() *ChannelsRepliesCallResponseBuilder {
+	return &ChannelsRepliesCallResponseBuilder{resp: &channelsRepliesCallResponse{}}
+}
+func (v *channelsRepliesCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsRepliesCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsRepliesCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsRepliesCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *channelsRepliesCallResponse) Messages() *objects.MessageList {
+	return v.messages
+}
+func (b *ChannelsRepliesCallResponseBuilder) OK(v bool) *ChannelsRepliesCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsRepliesCallResponseBuilder) ReplyTo(v int) *ChannelsRepliesCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsRepliesCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsRepliesCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsRepliesCallResponseBuilder) Timestamp(v string) *ChannelsRepliesCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsRepliesCallResponseBuilder) Messages(v *objects.MessageList) *ChannelsRepliesCallResponseBuilder {
+	b.resp.messages = v
+	return b
+}
+func (b *ChannelsRepliesCallResponseBuilder) Build() ChannelsRepliesCallResponse {
+	v := b.resp
+	b.resp = &channelsRepliesCallResponse{}
+	return v
+}
+func (r *channelsRepliesCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsRepliesCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChannelsRepliesCallResponse) payload() (objects.MessageList, error) {
+func (r *channelsRepliesCallResponseProxy) payload() (objects.MessageList, error) {
 	var res1 objects.MessageList
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.MessageList from response`)
@@ -1336,7 +2005,7 @@ func (c *ChannelsRepliesCall) Do(ctx context.Context) (objects.MessageList, erro
 	if err != nil {
 		return nil, err
 	}
-	var res ChannelsRepliesCallResponse
+	var res channelsRepliesCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to channels.replies`)
 	}
@@ -1400,7 +2069,15 @@ func (c *ChannelsSetPurposeCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsSetPurposeCallResponse struct {
+type ChannelsSetPurposeCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Purpose() *string
+}
+
+type channelsSetPurposeCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -1408,15 +2085,68 @@ type ChannelsSetPurposeCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"purpose"`
 }
+type channelsSetPurposeCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+	purpose *string
+}
+type ChannelsSetPurposeCallResponseBuilder struct {
+	resp *channelsSetPurposeCallResponse
+}
 
-func (r *ChannelsSetPurposeCallResponse) parse(data []byte) error {
+func BuildChannelsSetPurposeCallResponse() *ChannelsSetPurposeCallResponseBuilder {
+	return &ChannelsSetPurposeCallResponseBuilder{resp: &channelsSetPurposeCallResponse{}}
+}
+func (v *channelsSetPurposeCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsSetPurposeCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsSetPurposeCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsSetPurposeCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *channelsSetPurposeCallResponse) Purpose() *string {
+	return v.purpose
+}
+func (b *ChannelsSetPurposeCallResponseBuilder) OK(v bool) *ChannelsSetPurposeCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsSetPurposeCallResponseBuilder) ReplyTo(v int) *ChannelsSetPurposeCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsSetPurposeCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsSetPurposeCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsSetPurposeCallResponseBuilder) Timestamp(v string) *ChannelsSetPurposeCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsSetPurposeCallResponseBuilder) Purpose(v *string) *ChannelsSetPurposeCallResponseBuilder {
+	b.resp.purpose = v
+	return b
+}
+func (b *ChannelsSetPurposeCallResponseBuilder) Build() ChannelsSetPurposeCallResponse {
+	v := b.resp
+	b.resp = &channelsSetPurposeCallResponse{}
+	return v
+}
+func (r *channelsSetPurposeCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsSetPurposeCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChannelsSetPurposeCallResponse) payload() (string, error) {
+func (r *channelsSetPurposeCallResponseProxy) payload() (string, error) {
 	var res1 string
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return "", errors.Wrap(err, `failed to ummarshal string from response`)
@@ -1431,7 +2161,7 @@ func (c *ChannelsSetPurposeCall) Do(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var res ChannelsSetPurposeCallResponse
+	var res channelsSetPurposeCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return "", errors.Wrap(err, `failed to post to channels.setPurpose`)
 	}
@@ -1495,7 +2225,15 @@ func (c *ChannelsSetTopicCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsSetTopicCallResponse struct {
+type ChannelsSetTopicCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+	Topic() *string
+}
+
+type channelsSetTopicCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
@@ -1503,15 +2241,68 @@ type ChannelsSetTopicCallResponse struct {
 	Payload0  json.RawMessage        `json:"-"`
 	Payload1  json.RawMessage        `json:"topic"`
 }
+type channelsSetTopicCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+	topic   *string
+}
+type ChannelsSetTopicCallResponseBuilder struct {
+	resp *channelsSetTopicCallResponse
+}
 
-func (r *ChannelsSetTopicCallResponse) parse(data []byte) error {
+func BuildChannelsSetTopicCallResponse() *ChannelsSetTopicCallResponseBuilder {
+	return &ChannelsSetTopicCallResponseBuilder{resp: &channelsSetTopicCallResponse{}}
+}
+func (v *channelsSetTopicCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsSetTopicCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsSetTopicCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsSetTopicCallResponse) Timestamp() string {
+	return v.ts
+}
+func (v *channelsSetTopicCallResponse) Topic() *string {
+	return v.topic
+}
+func (b *ChannelsSetTopicCallResponseBuilder) OK(v bool) *ChannelsSetTopicCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsSetTopicCallResponseBuilder) ReplyTo(v int) *ChannelsSetTopicCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsSetTopicCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsSetTopicCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsSetTopicCallResponseBuilder) Timestamp(v string) *ChannelsSetTopicCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsSetTopicCallResponseBuilder) Topic(v *string) *ChannelsSetTopicCallResponseBuilder {
+	b.resp.topic = v
+	return b
+}
+func (b *ChannelsSetTopicCallResponseBuilder) Build() ChannelsSetTopicCallResponse {
+	v := b.resp
+	b.resp = &channelsSetTopicCallResponse{}
+	return v
+}
+func (r *channelsSetTopicCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsSetTopicCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *ChannelsSetTopicCallResponse) payload() (string, error) {
+func (r *channelsSetTopicCallResponseProxy) payload() (string, error) {
 	var res1 string
 	if err := json.Unmarshal(r.Payload1, &res1); err != nil {
 		return "", errors.Wrap(err, `failed to ummarshal string from response`)
@@ -1526,7 +2317,7 @@ func (c *ChannelsSetTopicCall) Do(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	var res ChannelsSetTopicCallResponse
+	var res channelsSetTopicCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return "", errors.Wrap(err, `failed to post to channels.setTopic`)
 	}
@@ -1584,15 +2375,67 @@ func (c *ChannelsUnarchiveCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type ChannelsUnarchiveCallResponse struct {
+type ChannelsUnarchiveCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type channelsUnarchiveCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type channelsUnarchiveCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type ChannelsUnarchiveCallResponseBuilder struct {
+	resp *channelsUnarchiveCallResponse
+}
 
-func (r *ChannelsUnarchiveCallResponse) parse(data []byte) error {
+func BuildChannelsUnarchiveCallResponse() *ChannelsUnarchiveCallResponseBuilder {
+	return &ChannelsUnarchiveCallResponseBuilder{resp: &channelsUnarchiveCallResponse{}}
+}
+func (v *channelsUnarchiveCallResponse) OK() bool {
+	return v.ok
+}
+func (v *channelsUnarchiveCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *channelsUnarchiveCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *channelsUnarchiveCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *ChannelsUnarchiveCallResponseBuilder) OK(v bool) *ChannelsUnarchiveCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *ChannelsUnarchiveCallResponseBuilder) ReplyTo(v int) *ChannelsUnarchiveCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *ChannelsUnarchiveCallResponseBuilder) Error(v *objects.ErrorResponse) *ChannelsUnarchiveCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *ChannelsUnarchiveCallResponseBuilder) Timestamp(v string) *ChannelsUnarchiveCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *ChannelsUnarchiveCallResponseBuilder) Build() ChannelsUnarchiveCallResponse {
+	v := b.resp
+	b.resp = &channelsUnarchiveCallResponse{}
+	return v
+}
+func (r *channelsUnarchiveCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal ChannelsUnarchiveCallResponse`)
 	}
@@ -1607,7 +2450,7 @@ func (c *ChannelsUnarchiveCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res ChannelsUnarchiveCallResponse
+	var res channelsUnarchiveCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to channels.unarchive`)
 	}

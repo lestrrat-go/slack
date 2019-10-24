@@ -61,15 +61,67 @@ func (c *AuthRevokeCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type AuthRevokeCallResponse struct {
+type AuthRevokeCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type authRevokeCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type authRevokeCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type AuthRevokeCallResponseBuilder struct {
+	resp *authRevokeCallResponse
+}
 
-func (r *AuthRevokeCallResponse) parse(data []byte) error {
+func BuildAuthRevokeCallResponse() *AuthRevokeCallResponseBuilder {
+	return &AuthRevokeCallResponseBuilder{resp: &authRevokeCallResponse{}}
+}
+func (v *authRevokeCallResponse) OK() bool {
+	return v.ok
+}
+func (v *authRevokeCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *authRevokeCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *authRevokeCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *AuthRevokeCallResponseBuilder) OK(v bool) *AuthRevokeCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *AuthRevokeCallResponseBuilder) ReplyTo(v int) *AuthRevokeCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *AuthRevokeCallResponseBuilder) Error(v *objects.ErrorResponse) *AuthRevokeCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *AuthRevokeCallResponseBuilder) Timestamp(v string) *AuthRevokeCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *AuthRevokeCallResponseBuilder) Build() AuthRevokeCallResponse {
+	v := b.resp
+	b.resp = &authRevokeCallResponse{}
+	return v
+}
+func (r *authRevokeCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal AuthRevokeCallResponse`)
 	}
@@ -84,7 +136,7 @@ func (c *AuthRevokeCall) Do(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	var res AuthRevokeCallResponse
+	var res authRevokeCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return errors.Wrap(err, `failed to post to auth.revoke`)
 	}
@@ -137,22 +189,74 @@ func (c *AuthTestCall) Values() (url.Values, error) {
 	return v, nil
 }
 
-type AuthTestCallResponse struct {
+type AuthTestCallResponse interface {
+	OK() bool
+	ReplyTo() int
+	Error() *objects.ErrorResponse
+	Timestamp() string
+}
+
+type authTestCallResponseProxy struct {
 	OK        bool                   `json:"ok"`
 	ReplyTo   int                    `json:"reply_to"`
 	Error     *objects.ErrorResponse `json:"error"`
 	Timestamp string                 `json:"ts"`
 	Payload0  json.RawMessage        `json:"-"`
 }
+type authTestCallResponse struct {
+	ok      bool
+	replyTo int
+	error   *objects.ErrorResponse
+	ts      string
+}
+type AuthTestCallResponseBuilder struct {
+	resp *authTestCallResponse
+}
 
-func (r *AuthTestCallResponse) parse(data []byte) error {
+func BuildAuthTestCallResponse() *AuthTestCallResponseBuilder {
+	return &AuthTestCallResponseBuilder{resp: &authTestCallResponse{}}
+}
+func (v *authTestCallResponse) OK() bool {
+	return v.ok
+}
+func (v *authTestCallResponse) ReplyTo() int {
+	return v.replyTo
+}
+func (v *authTestCallResponse) Error() *objects.ErrorResponse {
+	return v.error
+}
+func (v *authTestCallResponse) Timestamp() string {
+	return v.ts
+}
+func (b *AuthTestCallResponseBuilder) OK(v bool) *AuthTestCallResponseBuilder {
+	b.resp.ok = v
+	return b
+}
+func (b *AuthTestCallResponseBuilder) ReplyTo(v int) *AuthTestCallResponseBuilder {
+	b.resp.replyTo = v
+	return b
+}
+func (b *AuthTestCallResponseBuilder) Error(v *objects.ErrorResponse) *AuthTestCallResponseBuilder {
+	b.resp.error = v
+	return b
+}
+func (b *AuthTestCallResponseBuilder) Timestamp(v string) *AuthTestCallResponseBuilder {
+	b.resp.ts = v
+	return b
+}
+func (b *AuthTestCallResponseBuilder) Build() AuthTestCallResponse {
+	v := b.resp
+	b.resp = &authTestCallResponse{}
+	return v
+}
+func (r *authTestCallResponseProxy) parse(data []byte) error {
 	if err := json.Unmarshal(data, r); err != nil {
 		return errors.Wrap(err, `failed to unmarshal AuthTestCallResponse`)
 	}
 	r.Payload0 = data
 	return nil
 }
-func (r *AuthTestCallResponse) payload() (*objects.AuthTestResponse, error) {
+func (r *authTestCallResponseProxy) payload() (*objects.AuthTestResponse, error) {
 	var res0 objects.AuthTestResponse
 	if err := json.Unmarshal(r.Payload0, &res0); err != nil {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.AuthTestResponse from response`)
@@ -167,7 +271,7 @@ func (c *AuthTestCall) Do(ctx context.Context) (*objects.AuthTestResponse, error
 	if err != nil {
 		return nil, err
 	}
-	var res AuthTestCallResponse
+	var res authTestCallResponseProxy
 	if err := c.service.client.postForm(ctx, endpoint, v, &res); err != nil {
 		return nil, errors.Wrap(err, `failed to post to auth.test`)
 	}
