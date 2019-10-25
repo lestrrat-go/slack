@@ -74,6 +74,15 @@ var UserLukeSkywalker = objects.BuildUser().
 	Name("luke.skywalker").
 	MustBuild()
 
+var UserProfileLukeSkywalker = objects.BuildUserProfile().
+	AlwaysActive(true).
+	AvatarHash("abcdef01234566789").
+	Email("lukesky@tatooine.com").
+	FirstName("Luke").
+	LastName("Skywalker").
+	StatusText("I'm Luke Skywalker").
+	MustBuild()
+
 var UserObiwanKenobi = objects.BuildUser().
 	ID("U0012345").
 	Name("obiwan.kenobi").

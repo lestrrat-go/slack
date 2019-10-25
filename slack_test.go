@@ -654,7 +654,11 @@ func newDummyServer() *dummyServer {
 	mux.HandleFunc(
 		"/api/users.identity",
 		ArgCheck(required(tokenArg)),
-		nil,
+		slack.BuildUsersIdentityCallResponse().
+			OK(true).
+			User(mockserver.UserProfileLukeSkywalker).
+			Team(mockserver.TeamJedi).
+			Build(),
 	)
 	mux.HandleFunc(
 		"/api/users.info",
