@@ -126,6 +126,14 @@ func (r *botsInfoCallResponseProxy) payload() (*objects.Bot, error) {
 	}
 	return &res0, nil
 }
+func (r *botsInfoCallResponse) MarshalJSON() ([]byte, error) {
+	var p botsInfoCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access bots.info endpoint
 func (c *BotsInfoCall) Do(ctx context.Context) (*objects.Bot, error) {

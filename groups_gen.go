@@ -225,6 +225,14 @@ func (r *groupsArchiveCallResponseProxy) parse(data []byte) error {
 	r.Payload0 = data
 	return nil
 }
+func (r *groupsArchiveCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsArchiveCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access groups.archive endpoint
 func (c *GroupsArchiveCall) Do(ctx context.Context) error {
@@ -382,6 +390,19 @@ func (r *groupsCreateCallResponseProxy) payload() (*objects.Group, error) {
 	}
 	return &res1, nil
 }
+func (r *groupsCreateCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsCreateCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.group)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'group' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access groups.create endpoint
 func (c *GroupsCreateCall) Do(ctx context.Context) (*objects.Group, error) {
@@ -535,6 +556,19 @@ func (r *groupsCreateChildCallResponseProxy) payload() (*objects.Group, error) {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Group from response`)
 	}
 	return &res1, nil
+}
+func (r *groupsCreateChildCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsCreateChildCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.group)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'group' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
 }
 
 // Do executes the call to access groups.createChild endpoint
@@ -747,6 +781,24 @@ func (r *groupsHistoryCallResponseProxy) payload() (string, objects.MessageList,
 	}
 	return res1, res2, nil
 }
+func (r *groupsHistoryCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsHistoryCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.latest)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'latest' field`)
+	}
+	p.Payload1 = payload1
+	payload2, err := json.Marshal(r.messages)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'messages' field`)
+	}
+	p.Payload2 = payload2
+	return json.Marshal(p)
+}
 
 // Do executes the call to access groups.history endpoint
 func (c *GroupsHistoryCall) Do(ctx context.Context) (string, objects.MessageList, error) {
@@ -931,6 +983,19 @@ func (r *groupsInfoCallResponseProxy) payload() (*objects.Group, error) {
 	}
 	return &res1, nil
 }
+func (r *groupsInfoCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsInfoCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.group)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'group' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access groups.info endpoint
 func (c *GroupsInfoCall) Do(ctx context.Context) (*objects.Group, error) {
@@ -1105,6 +1170,24 @@ func (r *groupsInviteCallResponseProxy) payload() (*objects.Group, bool, error) 
 	}
 	return &res1, res2, nil
 }
+func (r *groupsInviteCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsInviteCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.group)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'group' field`)
+	}
+	p.Payload1 = payload1
+	payload2, err := json.Marshal(r.already_in_group)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'already_in_group' field`)
+	}
+	p.Payload2 = payload2
+	return json.Marshal(p)
+}
 
 // Do executes the call to access groups.invite endpoint
 func (c *GroupsInviteCall) Do(ctx context.Context) (*objects.Group, bool, error) {
@@ -1244,6 +1327,14 @@ func (r *groupsKickCallResponseProxy) parse(data []byte) error {
 	r.Payload0 = data
 	return nil
 }
+func (r *groupsKickCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsKickCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access groups.kick endpoint
 func (c *GroupsKickCall) Do(ctx context.Context) error {
@@ -1376,6 +1467,14 @@ func (r *groupsLeaveCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *groupsLeaveCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsLeaveCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access groups.leave endpoint
@@ -1538,6 +1637,19 @@ func (r *groupsListCallResponseProxy) payload() (objects.GroupList, error) {
 	}
 	return res1, nil
 }
+func (r *groupsListCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsListCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.groups)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'groups' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access groups.list endpoint
 func (c *GroupsListCall) Do(ctx context.Context) (objects.GroupList, error) {
@@ -1685,6 +1797,14 @@ func (r *groupsMarkCallResponseProxy) parse(data []byte) error {
 	r.Payload0 = data
 	return nil
 }
+func (r *groupsMarkCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsMarkCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access groups.mark endpoint
 func (c *GroupsMarkCall) Do(ctx context.Context) error {
@@ -1817,6 +1937,14 @@ func (r *groupsOpenCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *groupsOpenCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsOpenCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access groups.open endpoint
@@ -1980,6 +2108,19 @@ func (r *groupsRenameCallResponseProxy) payload() (*objects.Group, error) {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Group from response`)
 	}
 	return &res1, nil
+}
+func (r *groupsRenameCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsRenameCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.group)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'group' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
 }
 
 // Do executes the call to access groups.rename endpoint
@@ -2158,6 +2299,24 @@ func (r *groupsRepliesCallResponseProxy) payload() (objects.MessageList, *object
 	}
 	return res1, &res2, nil
 }
+func (r *groupsRepliesCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsRepliesCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.messages)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'messages' field`)
+	}
+	p.Payload1 = payload1
+	payload2, err := json.Marshal(r.thread_info)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'thread_info' field`)
+	}
+	p.Payload2 = payload2
+	return json.Marshal(p)
+}
 
 // Do executes the call to access groups.replies endpoint
 func (c *GroupsRepliesCall) Do(ctx context.Context) (objects.MessageList, *objects.ThreadInfo, error) {
@@ -2313,6 +2472,19 @@ func (r *groupsSetPurposeCallResponseProxy) payload() (string, error) {
 		return "", errors.Wrap(err, `failed to ummarshal string from response`)
 	}
 	return res1, nil
+}
+func (r *groupsSetPurposeCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsSetPurposeCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.purpose)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'purpose' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
 }
 
 // Do executes the call to access groups.setPurpose endpoint
@@ -2470,6 +2642,19 @@ func (r *groupsSetTopicCallResponseProxy) payload() (string, error) {
 	}
 	return res1, nil
 }
+func (r *groupsSetTopicCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsSetTopicCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.topic)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'topic' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access groups.setTopic endpoint
 func (c *GroupsSetTopicCall) Do(ctx context.Context) (string, error) {
@@ -2602,6 +2787,14 @@ func (r *groupsUnarchiveCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *groupsUnarchiveCallResponse) MarshalJSON() ([]byte, error) {
+	var p groupsUnarchiveCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access groups.unarchive endpoint

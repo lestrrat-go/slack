@@ -150,6 +150,14 @@ func (r *usersProfileGetCallResponseProxy) payload() (*objects.UserProfile, erro
 	}
 	return &res0, nil
 }
+func (r *usersProfileGetCallResponse) MarshalJSON() ([]byte, error) {
+	var p usersProfileGetCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access users.profile.get endpoint
 func (c *UsersProfileGetCall) Do(ctx context.Context) (*objects.UserProfile, error) {
@@ -331,6 +339,14 @@ func (r *usersProfileSetCallResponseProxy) payload() (*objects.UserProfile, erro
 		return nil, errors.Wrap(err, `failed to ummarshal objects.UserProfile from response`)
 	}
 	return &res0, nil
+}
+func (r *usersProfileSetCallResponse) MarshalJSON() ([]byte, error) {
+	var p usersProfileSetCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access users.profile.set endpoint

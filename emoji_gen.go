@@ -119,6 +119,14 @@ func (r *emojiListCallResponseProxy) payload() (*objects.EmojiListResponse, erro
 	}
 	return &res0, nil
 }
+func (r *emojiListCallResponse) MarshalJSON() ([]byte, error) {
+	var p emojiListCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access emoji.list endpoint
 func (c *EmojiListCall) Do(ctx context.Context) (*objects.EmojiListResponse, error) {

@@ -155,6 +155,14 @@ func (r *usersDeletePhotoCallResponseProxy) parse(data []byte) error {
 	r.Payload0 = data
 	return nil
 }
+func (r *usersDeletePhotoCallResponse) MarshalJSON() ([]byte, error) {
+	var p usersDeletePhotoCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access users.deletePhoto endpoint
 func (c *UsersDeletePhotoCall) Do(ctx context.Context) error {
@@ -288,6 +296,14 @@ func (r *usersGetPresenceCallResponseProxy) payload() (*objects.UserPresence, er
 		return nil, errors.Wrap(err, `failed to ummarshal objects.UserPresence from response`)
 	}
 	return &res0, nil
+}
+func (r *usersGetPresenceCallResponse) MarshalJSON() ([]byte, error) {
+	var p usersGetPresenceCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access users.getPresence endpoint
@@ -444,6 +460,24 @@ func (r *usersIdentityCallResponseProxy) payload() (*objects.UserProfile, *objec
 	}
 	return &res1, &res2, nil
 }
+func (r *usersIdentityCallResponse) MarshalJSON() ([]byte, error) {
+	var p usersIdentityCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.user)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'user' field`)
+	}
+	p.Payload1 = payload1
+	payload2, err := json.Marshal(r.team)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'team' field`)
+	}
+	p.Payload2 = payload2
+	return json.Marshal(p)
+}
 
 // Do executes the call to access users.identity endpoint
 func (c *UsersIdentityCall) Do(ctx context.Context) (*objects.UserProfile, *objects.Team, error) {
@@ -597,6 +631,19 @@ func (r *usersInfoCallResponseProxy) payload() (*objects.User, error) {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.User from response`)
 	}
 	return &res1, nil
+}
+func (r *usersInfoCallResponse) MarshalJSON() ([]byte, error) {
+	var p usersInfoCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.user)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'user' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
 }
 
 // Do executes the call to access users.info endpoint
@@ -776,6 +823,19 @@ func (r *usersListCallResponseProxy) payload() (objects.UserList, error) {
 	}
 	return res1, nil
 }
+func (r *usersListCallResponse) MarshalJSON() ([]byte, error) {
+	var p usersListCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.members)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'members' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access users.list endpoint
 func (c *UsersListCall) Do(ctx context.Context) (objects.UserList, error) {
@@ -941,6 +1001,19 @@ func (r *usersLookupByEmailCallResponseProxy) payload() (*objects.User, error) {
 	}
 	return &res1, nil
 }
+func (r *usersLookupByEmailCallResponse) MarshalJSON() ([]byte, error) {
+	var p usersLookupByEmailCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.user)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'user' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access users.lookupByEmail endpoint
 func (c *UsersLookupByEmailCall) Do(ctx context.Context) (*objects.User, error) {
@@ -1064,6 +1137,14 @@ func (r *usersSetActiveCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *usersSetActiveCallResponse) MarshalJSON() ([]byte, error) {
+	var p usersSetActiveCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access users.setActive endpoint
@@ -1191,6 +1272,14 @@ func (r *usersSetPresenceCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *usersSetPresenceCallResponse) MarshalJSON() ([]byte, error) {
+	var p usersSetPresenceCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access users.setPresence endpoint

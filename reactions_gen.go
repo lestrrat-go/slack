@@ -192,6 +192,14 @@ func (r *reactionsAddCallResponseProxy) parse(data []byte) error {
 	r.Payload0 = data
 	return nil
 }
+func (r *reactionsAddCallResponse) MarshalJSON() ([]byte, error) {
+	var p reactionsAddCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access reactions.add endpoint
 func (c *ReactionsAddCall) Do(ctx context.Context) error {
@@ -385,6 +393,14 @@ func (r *reactionsGetCallResponseProxy) payload() (*objects.ReactionsGetResponse
 	}
 	return &res0, nil
 }
+func (r *reactionsGetCallResponse) MarshalJSON() ([]byte, error) {
+	var p reactionsGetCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access reactions.get endpoint
 func (c *ReactionsGetCall) Do(ctx context.Context) (*objects.ReactionsGetResponse, error) {
@@ -571,6 +587,14 @@ func (r *reactionsListCallResponseProxy) payload() (*objects.ReactionsListRespon
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ReactionsListResponse from response`)
 	}
 	return &res0, nil
+}
+func (r *reactionsListCallResponse) MarshalJSON() ([]byte, error) {
+	var p reactionsListCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access reactions.list endpoint
@@ -762,6 +786,14 @@ func (r *reactionsRemoveCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *reactionsRemoveCallResponse) MarshalJSON() ([]byte, error) {
+	var p reactionsRemoveCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access reactions.remove endpoint

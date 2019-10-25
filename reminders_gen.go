@@ -167,6 +167,14 @@ func (r *remindersAddCallResponseProxy) payload() (*objects.Reminder, error) {
 	}
 	return &res0, nil
 }
+func (r *remindersAddCallResponse) MarshalJSON() ([]byte, error) {
+	var p remindersAddCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access reminders.add endpoint
 func (c *RemindersAddCall) Do(ctx context.Context) (*objects.Reminder, error) {
@@ -307,6 +315,14 @@ func (r *remindersCompleteCallResponseProxy) parse(data []byte) error {
 	r.Payload0 = data
 	return nil
 }
+func (r *remindersCompleteCallResponse) MarshalJSON() ([]byte, error) {
+	var p remindersCompleteCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access reminders.complete endpoint
 func (c *RemindersCompleteCall) Do(ctx context.Context) error {
@@ -436,6 +452,14 @@ func (r *remindersDeleteCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *remindersDeleteCallResponse) MarshalJSON() ([]byte, error) {
+	var p remindersDeleteCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access reminders.delete endpoint
@@ -573,6 +597,14 @@ func (r *remindersInfoCallResponseProxy) payload() (*objects.Reminder, error) {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Reminder from response`)
 	}
 	return &res0, nil
+}
+func (r *remindersInfoCallResponse) MarshalJSON() ([]byte, error) {
+	var p remindersInfoCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access reminders.info endpoint
@@ -714,6 +746,19 @@ func (r *remindersListCallResponseProxy) payload() (objects.ReminderList, error)
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ReminderList from response`)
 	}
 	return res1, nil
+}
+func (r *remindersListCallResponse) MarshalJSON() ([]byte, error) {
+	var p remindersListCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.reminders)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'reminders' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
 }
 
 // Do executes the call to access reminders.list endpoint

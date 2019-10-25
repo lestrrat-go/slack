@@ -468,7 +468,6 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint, objects map[s
 					if strings.HasPrefix(ftyp, "*") {
 						ftyp = "*objects." + ftyp[1:]
 					} else {
-						ftyp = "objects." + ftyp
 					}
 				}
 				return ftyp
@@ -635,6 +634,28 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint, objects map[s
 				fmt.Fprintf(&buf, "nil")
 				fmt.Fprintf(&buf, "\n}")
 			}
+
+			fmt.Fprintf(&buf, "\nfunc (r *%s%sCallResponse) MarshalJSON() ([]byte, error) {", stringutil.LcFirst(endpoint.Group), endpoint.methodName)
+			// Populate the fields in xxxxProxy
+			fmt.Fprintf(&buf, "\nvar p %s%sCallResponseProxy", stringutil.LcFirst(endpoint.Group), endpoint.methodName)
+			for _, field := range genericResponseType.Fields {
+				fmt.Fprintf(&buf, "\np.%s = r.%s", field.GoAccessorName(), stringutil.LcFirst(stringutil.Camel(field.Name)))
+			}
+			if hasReturn {
+				for i := range endpoint.ReturnType {
+					if i < len(endpoint.JSON) {
+						if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
+							fmt.Fprintf(&buf, "\npayload%d, err := json.Marshal(r.%s)", i+1, jtyp)
+							fmt.Fprintf(&buf, "\nif err != nil {")
+							fmt.Fprintf(&buf, "\nreturn nil, errors.Wrap(err, `failed to marshal '%s' field`)", jtyp)
+							fmt.Fprintf(&buf, "\n}")
+							fmt.Fprintf(&buf, "\np.Payload%[1]d = payload%[1]d", i+1)
+						}
+					}
+				}
+			}
+			fmt.Fprintf(&buf, "\nreturn json.Marshal(p)")
+			fmt.Fprintf(&buf, "\n}")
 		}
 		fmt.Fprintf(&buf, "\n// Do executes the call to access %s endpoint", endpoint.Name)
 		fmt.Fprintf(&buf, "\nfunc (c *%s%sCall) Do(ctx context.Context) ", endpoint.Group, endpoint.methodName)

@@ -128,6 +128,14 @@ func (r *authRevokeCallResponseProxy) parse(data []byte) error {
 	r.Payload0 = data
 	return nil
 }
+func (r *authRevokeCallResponse) MarshalJSON() ([]byte, error) {
+	var p authRevokeCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access auth.revoke endpoint
 func (c *AuthRevokeCall) Do(ctx context.Context) error {
@@ -262,6 +270,14 @@ func (r *authTestCallResponseProxy) payload() (*objects.AuthTestResponse, error)
 		return nil, errors.Wrap(err, `failed to ummarshal objects.AuthTestResponse from response`)
 	}
 	return &res0, nil
+}
+func (r *authTestCallResponse) MarshalJSON() ([]byte, error) {
+	var p authTestCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access auth.test endpoint

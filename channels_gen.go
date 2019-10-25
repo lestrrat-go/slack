@@ -222,6 +222,14 @@ func (r *channelsArchiveCallResponseProxy) parse(data []byte) error {
 	r.Payload0 = data
 	return nil
 }
+func (r *channelsArchiveCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsArchiveCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access channels.archive endpoint
 func (c *ChannelsArchiveCall) Do(ctx context.Context) error {
@@ -361,6 +369,14 @@ func (r *channelsCreateCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *channelsCreateCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsCreateCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access channels.create endpoint
@@ -566,6 +582,14 @@ func (r *channelsHistoryCallResponseProxy) payload() (*objects.ChannelsHistoryRe
 	}
 	return &res0, nil
 }
+func (r *channelsHistoryCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsHistoryCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access channels.history endpoint
 func (c *ChannelsHistoryCall) Do(ctx context.Context) (*objects.ChannelsHistoryResponse, error) {
@@ -753,6 +777,19 @@ func (r *channelsInfoCallResponseProxy) payload() (*objects.Channel, error) {
 	}
 	return &res1, nil
 }
+func (r *channelsInfoCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsInfoCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.channel)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'channel' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access channels.info endpoint
 func (c *ChannelsInfoCall) Do(ctx context.Context) (*objects.Channel, error) {
@@ -913,6 +950,19 @@ func (r *channelsInviteCallResponseProxy) payload() (*objects.Channel, error) {
 	}
 	return &res1, nil
 }
+func (r *channelsInviteCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsInviteCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.channel)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'channel' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access channels.invite endpoint
 func (c *ChannelsInviteCall) Do(ctx context.Context) (*objects.Channel, error) {
@@ -1063,6 +1113,14 @@ func (r *channelsJoinCallResponseProxy) payload() (*objects.Channel, error) {
 	}
 	return &res0, nil
 }
+func (r *channelsJoinCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsJoinCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access channels.join endpoint
 func (c *ChannelsJoinCall) Do(ctx context.Context) (*objects.Channel, error) {
@@ -1206,6 +1264,14 @@ func (r *channelsKickCallResponseProxy) parse(data []byte) error {
 	r.Payload0 = data
 	return nil
 }
+func (r *channelsKickCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsKickCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access channels.kick endpoint
 func (c *ChannelsKickCall) Do(ctx context.Context) error {
@@ -1338,6 +1404,14 @@ func (r *channelsLeaveCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *channelsLeaveCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsLeaveCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access channels.leave endpoint
@@ -1510,6 +1584,19 @@ func (r *channelsListCallResponseProxy) payload() (objects.ChannelList, error) {
 	}
 	return res1, nil
 }
+func (r *channelsListCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsListCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.channels)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'channels' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access channels.list endpoint
 func (c *ChannelsListCall) Do(ctx context.Context) (objects.ChannelList, error) {
@@ -1667,6 +1754,14 @@ func (r *channelsMarkCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *channelsMarkCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsMarkCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access channels.mark endpoint
@@ -1834,6 +1929,19 @@ func (r *channelsRenameCallResponseProxy) payload() (*objects.Channel, error) {
 	}
 	return &res1, nil
 }
+func (r *channelsRenameCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsRenameCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.channel)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'channel' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access channels.rename endpoint
 func (c *ChannelsRenameCall) Do(ctx context.Context) (*objects.Channel, error) {
@@ -1997,6 +2105,19 @@ func (r *channelsRepliesCallResponseProxy) payload() (objects.MessageList, error
 	}
 	return res1, nil
 }
+func (r *channelsRepliesCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsRepliesCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.messages)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'messages' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access channels.replies endpoint
 func (c *ChannelsRepliesCall) Do(ctx context.Context) (objects.MessageList, error) {
@@ -2152,6 +2273,19 @@ func (r *channelsSetPurposeCallResponseProxy) payload() (string, error) {
 		return "", errors.Wrap(err, `failed to ummarshal string from response`)
 	}
 	return res1, nil
+}
+func (r *channelsSetPurposeCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsSetPurposeCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.purpose)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'purpose' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
 }
 
 // Do executes the call to access channels.setPurpose endpoint
@@ -2309,6 +2443,19 @@ func (r *channelsSetTopicCallResponseProxy) payload() (string, error) {
 	}
 	return res1, nil
 }
+func (r *channelsSetTopicCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsSetTopicCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.topic)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'topic' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access channels.setTopic endpoint
 func (c *ChannelsSetTopicCall) Do(ctx context.Context) (string, error) {
@@ -2441,6 +2588,14 @@ func (r *channelsUnarchiveCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *channelsUnarchiveCallResponse) MarshalJSON() ([]byte, error) {
+	var p channelsUnarchiveCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access channels.unarchive endpoint

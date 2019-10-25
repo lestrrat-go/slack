@@ -216,6 +216,14 @@ func (r *chatDeleteCallResponseProxy) payload() (*objects.ChatResponse, error) {
 	}
 	return &res0, nil
 }
+func (r *chatDeleteCallResponse) MarshalJSON() ([]byte, error) {
+	var p chatDeleteCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access chat.delete endpoint
 func (c *ChatDeleteCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
@@ -369,6 +377,14 @@ func (r *chatGetPermalinkCallResponseProxy) payload() (*objects.PermalinkRespons
 	}
 	return &res0, nil
 }
+func (r *chatGetPermalinkCallResponse) MarshalJSON() ([]byte, error) {
+	var p chatGetPermalinkCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access chat.getPermalink endpoint
 func (c *ChatGetPermalinkCall) Do(ctx context.Context) (*objects.PermalinkResponse, error) {
@@ -518,6 +534,14 @@ func (r *chatMeMessageCallResponseProxy) payload() (*objects.ChatResponse, error
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ChatResponse from response`)
 	}
 	return &res0, nil
+}
+func (r *chatMeMessageCallResponse) MarshalJSON() ([]byte, error) {
+	var p chatMeMessageCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access chat.meMessage endpoint
@@ -740,6 +764,14 @@ func (r *chatPostEphemeralCallResponseProxy) payload() (*objects.EphemeralRespon
 		return nil, errors.Wrap(err, `failed to ummarshal objects.EphemeralResponse from response`)
 	}
 	return &res0, nil
+}
+func (r *chatPostEphemeralCallResponse) MarshalJSON() ([]byte, error) {
+	var p chatPostEphemeralCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access chat.postEphemeral endpoint
@@ -1061,6 +1093,14 @@ func (r *chatPostMessageCallResponseProxy) payload() (*objects.ChatResponse, err
 	}
 	return &res0, nil
 }
+func (r *chatPostMessageCallResponse) MarshalJSON() ([]byte, error) {
+	var p chatPostMessageCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access chat.postMessage endpoint
 func (c *ChatPostMessageCall) Do(ctx context.Context) (*objects.ChatResponse, error) {
@@ -1279,6 +1319,14 @@ func (r *chatUnfurlCallResponseProxy) parse(data []byte) error {
 	}
 	r.Payload0 = data
 	return nil
+}
+func (r *chatUnfurlCallResponse) MarshalJSON() ([]byte, error) {
+	var p chatUnfurlCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access chat.unfurl endpoint
@@ -1519,6 +1567,14 @@ func (r *chatUpdateCallResponseProxy) payload() (*objects.ChatResponse, error) {
 		return nil, errors.Wrap(err, `failed to ummarshal objects.ChatResponse from response`)
 	}
 	return &res0, nil
+}
+func (r *chatUpdateCallResponse) MarshalJSON() ([]byte, error) {
+	var p chatUpdateCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
 }
 
 // Do executes the call to access chat.update endpoint

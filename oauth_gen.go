@@ -150,6 +150,14 @@ func (r *oAuthAccessCallResponseProxy) payload() (*objects.OAuthAccessResponse, 
 	}
 	return &res0, nil
 }
+func (r *oAuthAccessCallResponse) MarshalJSON() ([]byte, error) {
+	var p oAuthAccessCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access oauth.access endpoint
 func (c *OAuthAccessCall) Do(ctx context.Context) (*objects.OAuthAccessResponse, error) {

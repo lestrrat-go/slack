@@ -119,6 +119,14 @@ func (r *rTMStartCallResponseProxy) payload() (*objects.RTMResponse, error) {
 	}
 	return &res0, nil
 }
+func (r *rTMStartCallResponse) MarshalJSON() ([]byte, error) {
+	var p rTMStartCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access rtm.start endpoint
 func (c *RTMStartCall) Do(ctx context.Context) (*objects.RTMResponse, error) {

@@ -137,6 +137,14 @@ func (r *dialogOpenCallResponseProxy) payload() (*objects.DialogResponse, error)
 	}
 	return &res0, nil
 }
+func (r *dialogOpenCallResponse) MarshalJSON() ([]byte, error) {
+	var p dialogOpenCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	return json.Marshal(p)
+}
 
 // Do executes the call to access dialog.open endpoint
 func (c *DialogOpenCall) Do(ctx context.Context) (*objects.DialogResponse, error) {

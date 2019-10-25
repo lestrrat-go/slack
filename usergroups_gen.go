@@ -213,6 +213,19 @@ func (r *usergroupsCreateCallResponseProxy) payload() (*objects.Usergroup, error
 	}
 	return &res1, nil
 }
+func (r *usergroupsCreateCallResponse) MarshalJSON() ([]byte, error) {
+	var p usergroupsCreateCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.usergroup)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'usergroup' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access usergroups.create endpoint
 func (c *UsergroupsCreateCall) Do(ctx context.Context) (*objects.Usergroup, error) {
@@ -386,6 +399,19 @@ func (r *usergroupsDisableCallResponseProxy) payload() (*objects.Usergroup, erro
 	}
 	return &res1, nil
 }
+func (r *usergroupsDisableCallResponse) MarshalJSON() ([]byte, error) {
+	var p usergroupsDisableCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.usergroup)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'usergroup' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
+}
 
 // Do executes the call to access usergroups.disable endpoint
 func (c *UsergroupsDisableCall) Do(ctx context.Context) (*objects.Usergroup, error) {
@@ -549,6 +575,19 @@ func (r *usergroupsEnableCallResponseProxy) payload() (*objects.Usergroup, error
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Usergroup from response`)
 	}
 	return &res1, nil
+}
+func (r *usergroupsEnableCallResponse) MarshalJSON() ([]byte, error) {
+	var p usergroupsEnableCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.usergroup)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'usergroup' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
 }
 
 // Do executes the call to access usergroups.enable endpoint
@@ -727,6 +766,19 @@ func (r *usergroupsListCallResponseProxy) payload() (objects.UsergroupList, erro
 		return nil, errors.Wrap(err, `failed to ummarshal objects.UsergroupList from response`)
 	}
 	return res1, nil
+}
+func (r *usergroupsListCallResponse) MarshalJSON() ([]byte, error) {
+	var p usergroupsListCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.usergroups)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'usergroups' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
 }
 
 // Do executes the call to access usergroups.list endpoint
@@ -942,6 +994,19 @@ func (r *usergroupsUpdateCallResponseProxy) payload() (*objects.Usergroup, error
 		return nil, errors.Wrap(err, `failed to ummarshal objects.Usergroup from response`)
 	}
 	return &res1, nil
+}
+func (r *usergroupsUpdateCallResponse) MarshalJSON() ([]byte, error) {
+	var p usergroupsUpdateCallResponseProxy
+	p.OK = r.ok
+	p.ReplyTo = r.replyTo
+	p.Error = r.error
+	p.Timestamp = r.ts
+	payload1, err := json.Marshal(r.usergroup)
+	if err != nil {
+		return nil, errors.Wrap(err, `failed to marshal 'usergroup' field`)
+	}
+	p.Payload1 = payload1
+	return json.Marshal(p)
 }
 
 // Do executes the call to access usergroups.update endpoint
