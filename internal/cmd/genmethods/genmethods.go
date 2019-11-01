@@ -31,7 +31,8 @@ func isMap(typ string) bool {
 }
 
 func isList(typ string) bool {
-	return strings.HasPrefix(typ, "[]")
+	return strings.HasPrefix(typ, "[]") ||
+		strings.HasSuffix(typ, "List")
 }
 
 func isBuiltin(typ string) bool {
@@ -467,7 +468,6 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint, objects map[s
 				if !isBuiltin(ftyp) {
 					if strings.HasPrefix(ftyp, "*") {
 						ftyp = "*objects." + ftyp[1:]
-					} else {
 					}
 				}
 				return ftyp
@@ -482,7 +482,11 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint, objects map[s
 				for i, typ := range endpoint.ReturnType {
 					if i < len(endpoint.JSON) {
 						if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
-							fmt.Fprintf(&buf, "\n%s() *%s", stringutil.Camel(jtyp), typ)
+							fmt.Fprintf(&buf, "\n%s() ", stringutil.Camel(jtyp))
+							if !isBuiltin(typ) && !isList(typ) {
+								fmt.Fprintf(&buf, "*")
+							}
+							fmt.Fprintf(&buf, "%s", typ)
 						}
 					}
 				}
@@ -530,7 +534,11 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint, objects map[s
 					if i < len(endpoint.JSON) {
 						if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
 							payloadCount++
-							fmt.Fprintf(&buf, "\n%s *%s", jtyp, typ)
+							fmt.Fprintf(&buf, "\n%s ", jtyp)
+							if !isBuiltin(typ) && !isList(typ) {
+								fmt.Fprintf(&buf, "*")
+							}
+							fmt.Fprintf(&buf, "%s", typ)
 						}
 					}
 				}
@@ -556,7 +564,11 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint, objects map[s
 				for i, typ := range endpoint.ReturnType {
 					if i < len(endpoint.JSON) {
 						if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
-							fmt.Fprintf(&buf, "\nfunc (v *%[1]s%[2]sCallResponse) %[3]s() *%[4]s {", stringutil.LcFirst(endpoint.Group), endpoint.methodName, stringutil.Camel(jtyp), typ)
+							fmt.Fprintf(&buf, "\nfunc (v *%[1]s%[2]sCallResponse) %[3]s() ", stringutil.LcFirst(endpoint.Group), endpoint.methodName, stringutil.Camel(jtyp))
+							if !isBuiltin(typ) && !isList(typ) {
+								fmt.Fprintf(&buf, "*")
+							}
+							fmt.Fprintf(&buf, "%s {", typ)
 							fmt.Fprintf(&buf, "\nreturn v.%s", jtyp)
 							fmt.Fprintf(&buf, "\n}")
 						}
@@ -573,7 +585,12 @@ func generateServiceDetailsFile(file string, endpoints []Endpoint, objects map[s
 				for i, typ := range endpoint.ReturnType {
 					if i < len(endpoint.JSON) {
 						if jtyp := endpoint.JSON[i]; len(jtyp) > 0 {
-							fmt.Fprintf(&buf, "\nfunc (b *%[1]s%[2]sCallResponseBuilder) %[3]s(v *%[4]s) *%[1]s%[2]sCallResponseBuilder {", endpoint.Group, endpoint.methodName, stringutil.Camel(jtyp), typ)
+							fmt.Fprintf(&buf, "\nfunc (b *%[1]s%[2]sCallResponseBuilder) %[3]s(v ", endpoint.Group, endpoint.methodName, stringutil.Camel(jtyp))
+							if !isBuiltin(typ) && !isList(typ) {
+								fmt.Fprintf(&buf, "*")
+							}
+							fmt.Fprintf(&buf, "%s) *", typ)
+							fmt.Fprintf(&buf, "%[1]s%[2]sCallResponseBuilder {", endpoint.Group, endpoint.methodName)
 							fmt.Fprintf(&buf, "\nb.resp.%s = v", jtyp)
 							fmt.Fprintf(&buf, "\nreturn b")
 							fmt.Fprintf(&buf, "\n}")

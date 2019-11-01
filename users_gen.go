@@ -744,7 +744,7 @@ type UsersListCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Members() *objects.UserList
+	Members() objects.UserList
 }
 
 type usersListCallResponseProxy struct {
@@ -760,7 +760,7 @@ type usersListCallResponse struct {
 	replyTo int
 	error   *objects.ErrorResponse
 	ts      string
-	members *objects.UserList
+	members objects.UserList
 }
 type UsersListCallResponseBuilder struct {
 	resp *usersListCallResponse
@@ -781,7 +781,7 @@ func (v *usersListCallResponse) Error() *objects.ErrorResponse {
 func (v *usersListCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *usersListCallResponse) Members() *objects.UserList {
+func (v *usersListCallResponse) Members() objects.UserList {
 	return v.members
 }
 func (b *UsersListCallResponseBuilder) OK(v bool) *UsersListCallResponseBuilder {
@@ -800,7 +800,7 @@ func (b *UsersListCallResponseBuilder) Timestamp(v string) *UsersListCallRespons
 	b.resp.ts = v
 	return b
 }
-func (b *UsersListCallResponseBuilder) Members(v *objects.UserList) *UsersListCallResponseBuilder {
+func (b *UsersListCallResponseBuilder) Members(v objects.UserList) *UsersListCallResponseBuilder {
 	b.resp.members = v
 	return b
 }

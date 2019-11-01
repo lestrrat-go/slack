@@ -668,7 +668,7 @@ type RemindersListCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Reminders() *objects.ReminderList
+	Reminders() objects.ReminderList
 }
 
 type remindersListCallResponseProxy struct {
@@ -684,7 +684,7 @@ type remindersListCallResponse struct {
 	replyTo   int
 	error     *objects.ErrorResponse
 	ts        string
-	reminders *objects.ReminderList
+	reminders objects.ReminderList
 }
 type RemindersListCallResponseBuilder struct {
 	resp *remindersListCallResponse
@@ -705,7 +705,7 @@ func (v *remindersListCallResponse) Error() *objects.ErrorResponse {
 func (v *remindersListCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *remindersListCallResponse) Reminders() *objects.ReminderList {
+func (v *remindersListCallResponse) Reminders() objects.ReminderList {
 	return v.reminders
 }
 func (b *RemindersListCallResponseBuilder) OK(v bool) *RemindersListCallResponseBuilder {
@@ -724,7 +724,7 @@ func (b *RemindersListCallResponseBuilder) Timestamp(v string) *RemindersListCal
 	b.resp.ts = v
 	return b
 }
-func (b *RemindersListCallResponseBuilder) Reminders(v *objects.ReminderList) *RemindersListCallResponseBuilder {
+func (b *RemindersListCallResponseBuilder) Reminders(v objects.ReminderList) *RemindersListCallResponseBuilder {
 	b.resp.reminders = v
 	return b
 }

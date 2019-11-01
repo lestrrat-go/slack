@@ -1505,7 +1505,7 @@ type ChannelsListCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Channels() *objects.ChannelList
+	Channels() objects.ChannelList
 }
 
 type channelsListCallResponseProxy struct {
@@ -1521,7 +1521,7 @@ type channelsListCallResponse struct {
 	replyTo  int
 	error    *objects.ErrorResponse
 	ts       string
-	channels *objects.ChannelList
+	channels objects.ChannelList
 }
 type ChannelsListCallResponseBuilder struct {
 	resp *channelsListCallResponse
@@ -1542,7 +1542,7 @@ func (v *channelsListCallResponse) Error() *objects.ErrorResponse {
 func (v *channelsListCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *channelsListCallResponse) Channels() *objects.ChannelList {
+func (v *channelsListCallResponse) Channels() objects.ChannelList {
 	return v.channels
 }
 func (b *ChannelsListCallResponseBuilder) OK(v bool) *ChannelsListCallResponseBuilder {
@@ -1561,7 +1561,7 @@ func (b *ChannelsListCallResponseBuilder) Timestamp(v string) *ChannelsListCallR
 	b.resp.ts = v
 	return b
 }
-func (b *ChannelsListCallResponseBuilder) Channels(v *objects.ChannelList) *ChannelsListCallResponseBuilder {
+func (b *ChannelsListCallResponseBuilder) Channels(v objects.ChannelList) *ChannelsListCallResponseBuilder {
 	b.resp.channels = v
 	return b
 }
@@ -2026,7 +2026,7 @@ type ChannelsRepliesCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Messages() *objects.MessageList
+	Messages() objects.MessageList
 }
 
 type channelsRepliesCallResponseProxy struct {
@@ -2042,7 +2042,7 @@ type channelsRepliesCallResponse struct {
 	replyTo  int
 	error    *objects.ErrorResponse
 	ts       string
-	messages *objects.MessageList
+	messages objects.MessageList
 }
 type ChannelsRepliesCallResponseBuilder struct {
 	resp *channelsRepliesCallResponse
@@ -2063,7 +2063,7 @@ func (v *channelsRepliesCallResponse) Error() *objects.ErrorResponse {
 func (v *channelsRepliesCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *channelsRepliesCallResponse) Messages() *objects.MessageList {
+func (v *channelsRepliesCallResponse) Messages() objects.MessageList {
 	return v.messages
 }
 func (b *ChannelsRepliesCallResponseBuilder) OK(v bool) *ChannelsRepliesCallResponseBuilder {
@@ -2082,7 +2082,7 @@ func (b *ChannelsRepliesCallResponseBuilder) Timestamp(v string) *ChannelsReplie
 	b.resp.ts = v
 	return b
 }
-func (b *ChannelsRepliesCallResponseBuilder) Messages(v *objects.MessageList) *ChannelsRepliesCallResponseBuilder {
+func (b *ChannelsRepliesCallResponseBuilder) Messages(v objects.MessageList) *ChannelsRepliesCallResponseBuilder {
 	b.resp.messages = v
 	return b
 }
@@ -2195,7 +2195,7 @@ type ChannelsSetPurposeCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Purpose() *string
+	Purpose() string
 }
 
 type channelsSetPurposeCallResponseProxy struct {
@@ -2211,7 +2211,7 @@ type channelsSetPurposeCallResponse struct {
 	replyTo int
 	error   *objects.ErrorResponse
 	ts      string
-	purpose *string
+	purpose string
 }
 type ChannelsSetPurposeCallResponseBuilder struct {
 	resp *channelsSetPurposeCallResponse
@@ -2232,7 +2232,7 @@ func (v *channelsSetPurposeCallResponse) Error() *objects.ErrorResponse {
 func (v *channelsSetPurposeCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *channelsSetPurposeCallResponse) Purpose() *string {
+func (v *channelsSetPurposeCallResponse) Purpose() string {
 	return v.purpose
 }
 func (b *ChannelsSetPurposeCallResponseBuilder) OK(v bool) *ChannelsSetPurposeCallResponseBuilder {
@@ -2251,7 +2251,7 @@ func (b *ChannelsSetPurposeCallResponseBuilder) Timestamp(v string) *ChannelsSet
 	b.resp.ts = v
 	return b
 }
-func (b *ChannelsSetPurposeCallResponseBuilder) Purpose(v *string) *ChannelsSetPurposeCallResponseBuilder {
+func (b *ChannelsSetPurposeCallResponseBuilder) Purpose(v string) *ChannelsSetPurposeCallResponseBuilder {
 	b.resp.purpose = v
 	return b
 }
@@ -2364,7 +2364,7 @@ type ChannelsSetTopicCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Topic() *string
+	Topic() string
 }
 
 type channelsSetTopicCallResponseProxy struct {
@@ -2380,7 +2380,7 @@ type channelsSetTopicCallResponse struct {
 	replyTo int
 	error   *objects.ErrorResponse
 	ts      string
-	topic   *string
+	topic   string
 }
 type ChannelsSetTopicCallResponseBuilder struct {
 	resp *channelsSetTopicCallResponse
@@ -2401,7 +2401,7 @@ func (v *channelsSetTopicCallResponse) Error() *objects.ErrorResponse {
 func (v *channelsSetTopicCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *channelsSetTopicCallResponse) Topic() *string {
+func (v *channelsSetTopicCallResponse) Topic() string {
 	return v.topic
 }
 func (b *ChannelsSetTopicCallResponseBuilder) OK(v bool) *ChannelsSetTopicCallResponseBuilder {
@@ -2420,7 +2420,7 @@ func (b *ChannelsSetTopicCallResponseBuilder) Timestamp(v string) *ChannelsSetTo
 	b.resp.ts = v
 	return b
 }
-func (b *ChannelsSetTopicCallResponseBuilder) Topic(v *string) *ChannelsSetTopicCallResponseBuilder {
+func (b *ChannelsSetTopicCallResponseBuilder) Topic(v string) *ChannelsSetTopicCallResponseBuilder {
 	b.resp.topic = v
 	return b
 }

@@ -688,8 +688,8 @@ type GroupsHistoryCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Latest() *string
-	Messages() *objects.MessageList
+	Latest() string
+	Messages() objects.MessageList
 }
 
 type groupsHistoryCallResponseProxy struct {
@@ -706,8 +706,8 @@ type groupsHistoryCallResponse struct {
 	replyTo  int
 	error    *objects.ErrorResponse
 	ts       string
-	latest   *string
-	messages *objects.MessageList
+	latest   string
+	messages objects.MessageList
 }
 type GroupsHistoryCallResponseBuilder struct {
 	resp *groupsHistoryCallResponse
@@ -728,10 +728,10 @@ func (v *groupsHistoryCallResponse) Error() *objects.ErrorResponse {
 func (v *groupsHistoryCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *groupsHistoryCallResponse) Latest() *string {
+func (v *groupsHistoryCallResponse) Latest() string {
 	return v.latest
 }
-func (v *groupsHistoryCallResponse) Messages() *objects.MessageList {
+func (v *groupsHistoryCallResponse) Messages() objects.MessageList {
 	return v.messages
 }
 func (b *GroupsHistoryCallResponseBuilder) OK(v bool) *GroupsHistoryCallResponseBuilder {
@@ -750,11 +750,11 @@ func (b *GroupsHistoryCallResponseBuilder) Timestamp(v string) *GroupsHistoryCal
 	b.resp.ts = v
 	return b
 }
-func (b *GroupsHistoryCallResponseBuilder) Latest(v *string) *GroupsHistoryCallResponseBuilder {
+func (b *GroupsHistoryCallResponseBuilder) Latest(v string) *GroupsHistoryCallResponseBuilder {
 	b.resp.latest = v
 	return b
 }
-func (b *GroupsHistoryCallResponseBuilder) Messages(v *objects.MessageList) *GroupsHistoryCallResponseBuilder {
+func (b *GroupsHistoryCallResponseBuilder) Messages(v objects.MessageList) *GroupsHistoryCallResponseBuilder {
 	b.resp.messages = v
 	return b
 }
@@ -1078,7 +1078,7 @@ type GroupsInviteCallResponse interface {
 	Error() *objects.ErrorResponse
 	Timestamp() string
 	Group() *objects.Group
-	AlreadyInGroup() *bool
+	AlreadyInGroup() bool
 }
 
 type groupsInviteCallResponseProxy struct {
@@ -1096,7 +1096,7 @@ type groupsInviteCallResponse struct {
 	error            *objects.ErrorResponse
 	ts               string
 	group            *objects.Group
-	already_in_group *bool
+	already_in_group bool
 }
 type GroupsInviteCallResponseBuilder struct {
 	resp *groupsInviteCallResponse
@@ -1120,7 +1120,7 @@ func (v *groupsInviteCallResponse) Timestamp() string {
 func (v *groupsInviteCallResponse) Group() *objects.Group {
 	return v.group
 }
-func (v *groupsInviteCallResponse) AlreadyInGroup() *bool {
+func (v *groupsInviteCallResponse) AlreadyInGroup() bool {
 	return v.already_in_group
 }
 func (b *GroupsInviteCallResponseBuilder) OK(v bool) *GroupsInviteCallResponseBuilder {
@@ -1143,7 +1143,7 @@ func (b *GroupsInviteCallResponseBuilder) Group(v *objects.Group) *GroupsInviteC
 	b.resp.group = v
 	return b
 }
-func (b *GroupsInviteCallResponseBuilder) AlreadyInGroup(v *bool) *GroupsInviteCallResponseBuilder {
+func (b *GroupsInviteCallResponseBuilder) AlreadyInGroup(v bool) *GroupsInviteCallResponseBuilder {
 	b.resp.already_in_group = v
 	return b
 }
@@ -1558,7 +1558,7 @@ type GroupsListCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Groups() *objects.GroupList
+	Groups() objects.GroupList
 }
 
 type groupsListCallResponseProxy struct {
@@ -1574,7 +1574,7 @@ type groupsListCallResponse struct {
 	replyTo int
 	error   *objects.ErrorResponse
 	ts      string
-	groups  *objects.GroupList
+	groups  objects.GroupList
 }
 type GroupsListCallResponseBuilder struct {
 	resp *groupsListCallResponse
@@ -1595,7 +1595,7 @@ func (v *groupsListCallResponse) Error() *objects.ErrorResponse {
 func (v *groupsListCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *groupsListCallResponse) Groups() *objects.GroupList {
+func (v *groupsListCallResponse) Groups() objects.GroupList {
 	return v.groups
 }
 func (b *GroupsListCallResponseBuilder) OK(v bool) *GroupsListCallResponseBuilder {
@@ -1614,7 +1614,7 @@ func (b *GroupsListCallResponseBuilder) Timestamp(v string) *GroupsListCallRespo
 	b.resp.ts = v
 	return b
 }
-func (b *GroupsListCallResponseBuilder) Groups(v *objects.GroupList) *GroupsListCallResponseBuilder {
+func (b *GroupsListCallResponseBuilder) Groups(v objects.GroupList) *GroupsListCallResponseBuilder {
 	b.resp.groups = v
 	return b
 }
@@ -2206,7 +2206,7 @@ type GroupsRepliesCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Messages() *objects.MessageList
+	Messages() objects.MessageList
 	ThreadInfo() *objects.ThreadInfo
 }
 
@@ -2224,7 +2224,7 @@ type groupsRepliesCallResponse struct {
 	replyTo     int
 	error       *objects.ErrorResponse
 	ts          string
-	messages    *objects.MessageList
+	messages    objects.MessageList
 	thread_info *objects.ThreadInfo
 }
 type GroupsRepliesCallResponseBuilder struct {
@@ -2246,7 +2246,7 @@ func (v *groupsRepliesCallResponse) Error() *objects.ErrorResponse {
 func (v *groupsRepliesCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *groupsRepliesCallResponse) Messages() *objects.MessageList {
+func (v *groupsRepliesCallResponse) Messages() objects.MessageList {
 	return v.messages
 }
 func (v *groupsRepliesCallResponse) ThreadInfo() *objects.ThreadInfo {
@@ -2268,7 +2268,7 @@ func (b *GroupsRepliesCallResponseBuilder) Timestamp(v string) *GroupsRepliesCal
 	b.resp.ts = v
 	return b
 }
-func (b *GroupsRepliesCallResponseBuilder) Messages(v *objects.MessageList) *GroupsRepliesCallResponseBuilder {
+func (b *GroupsRepliesCallResponseBuilder) Messages(v objects.MessageList) *GroupsRepliesCallResponseBuilder {
 	b.resp.messages = v
 	return b
 }
@@ -2394,7 +2394,7 @@ type GroupsSetPurposeCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Purpose() *string
+	Purpose() string
 }
 
 type groupsSetPurposeCallResponseProxy struct {
@@ -2410,7 +2410,7 @@ type groupsSetPurposeCallResponse struct {
 	replyTo int
 	error   *objects.ErrorResponse
 	ts      string
-	purpose *string
+	purpose string
 }
 type GroupsSetPurposeCallResponseBuilder struct {
 	resp *groupsSetPurposeCallResponse
@@ -2431,7 +2431,7 @@ func (v *groupsSetPurposeCallResponse) Error() *objects.ErrorResponse {
 func (v *groupsSetPurposeCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *groupsSetPurposeCallResponse) Purpose() *string {
+func (v *groupsSetPurposeCallResponse) Purpose() string {
 	return v.purpose
 }
 func (b *GroupsSetPurposeCallResponseBuilder) OK(v bool) *GroupsSetPurposeCallResponseBuilder {
@@ -2450,7 +2450,7 @@ func (b *GroupsSetPurposeCallResponseBuilder) Timestamp(v string) *GroupsSetPurp
 	b.resp.ts = v
 	return b
 }
-func (b *GroupsSetPurposeCallResponseBuilder) Purpose(v *string) *GroupsSetPurposeCallResponseBuilder {
+func (b *GroupsSetPurposeCallResponseBuilder) Purpose(v string) *GroupsSetPurposeCallResponseBuilder {
 	b.resp.purpose = v
 	return b
 }
@@ -2563,7 +2563,7 @@ type GroupsSetTopicCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Topic() *string
+	Topic() string
 }
 
 type groupsSetTopicCallResponseProxy struct {
@@ -2579,7 +2579,7 @@ type groupsSetTopicCallResponse struct {
 	replyTo int
 	error   *objects.ErrorResponse
 	ts      string
-	topic   *string
+	topic   string
 }
 type GroupsSetTopicCallResponseBuilder struct {
 	resp *groupsSetTopicCallResponse
@@ -2600,7 +2600,7 @@ func (v *groupsSetTopicCallResponse) Error() *objects.ErrorResponse {
 func (v *groupsSetTopicCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *groupsSetTopicCallResponse) Topic() *string {
+func (v *groupsSetTopicCallResponse) Topic() string {
 	return v.topic
 }
 func (b *GroupsSetTopicCallResponseBuilder) OK(v bool) *GroupsSetTopicCallResponseBuilder {
@@ -2619,7 +2619,7 @@ func (b *GroupsSetTopicCallResponseBuilder) Timestamp(v string) *GroupsSetTopicC
 	b.resp.ts = v
 	return b
 }
-func (b *GroupsSetTopicCallResponseBuilder) Topic(v *string) *GroupsSetTopicCallResponseBuilder {
+func (b *GroupsSetTopicCallResponseBuilder) Topic(v string) *GroupsSetTopicCallResponseBuilder {
 	b.resp.topic = v
 	return b
 }

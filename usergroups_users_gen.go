@@ -76,7 +76,7 @@ type UsergroupsUsersListCallResponse interface {
 	ReplyTo() int
 	Error() *objects.ErrorResponse
 	Timestamp() string
-	Users() *objects.UsergroupUsersList
+	Users() objects.UsergroupUsersList
 }
 
 type usergroupsUsersListCallResponseProxy struct {
@@ -92,7 +92,7 @@ type usergroupsUsersListCallResponse struct {
 	replyTo int
 	error   *objects.ErrorResponse
 	ts      string
-	users   *objects.UsergroupUsersList
+	users   objects.UsergroupUsersList
 }
 type UsergroupsUsersListCallResponseBuilder struct {
 	resp *usergroupsUsersListCallResponse
@@ -113,7 +113,7 @@ func (v *usergroupsUsersListCallResponse) Error() *objects.ErrorResponse {
 func (v *usergroupsUsersListCallResponse) Timestamp() string {
 	return v.ts
 }
-func (v *usergroupsUsersListCallResponse) Users() *objects.UsergroupUsersList {
+func (v *usergroupsUsersListCallResponse) Users() objects.UsergroupUsersList {
 	return v.users
 }
 func (b *UsergroupsUsersListCallResponseBuilder) OK(v bool) *UsergroupsUsersListCallResponseBuilder {
@@ -132,7 +132,7 @@ func (b *UsergroupsUsersListCallResponseBuilder) Timestamp(v string) *Usergroups
 	b.resp.ts = v
 	return b
 }
-func (b *UsergroupsUsersListCallResponseBuilder) Users(v *objects.UsergroupUsersList) *UsergroupsUsersListCallResponseBuilder {
+func (b *UsergroupsUsersListCallResponseBuilder) Users(v objects.UsergroupUsersList) *UsergroupsUsersListCallResponseBuilder {
 	b.resp.users = v
 	return b
 }

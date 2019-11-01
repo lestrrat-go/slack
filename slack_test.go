@@ -512,62 +512,62 @@ func newDummyServer() *dummyServer {
 	)
 	mux.HandleFunc(
 		"/api/groups.info",
-		ArgCheck( required(tokenArg), required(channelArg), newArg("include_locale", nil) ),
+		ArgCheck(required(tokenArg), required(channelArg), newArg("include_locale", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.invite",
-		ArgCheck( required(tokenArg), required(channelArg), required(newArg("user", nil)) ),
+		ArgCheck(required(tokenArg), required(channelArg), required(newArg("user", nil))),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.kick",
-		ArgCheck( required(tokenArg), required(channelArg), required(newArg("user", nil))),
+		ArgCheck(required(tokenArg), required(channelArg), required(newArg("user", nil))),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.leave",
-		ArgCheck( required(tokenArg), required(channelArg)),
+		ArgCheck(required(tokenArg), required(channelArg)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.list",
-		ArgCheck( required(tokenArg), newArg("exclude_archived", nil), newArg("exclude_members", nil)),
+		ArgCheck(required(tokenArg), newArg("exclude_archived", nil), newArg("exclude_members", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.mark",
-		ArgCheck( required(tokenArg), required(channelArg), required(newArg("ts", nil)) ),
+		ArgCheck(required(tokenArg), required(channelArg), required(newArg("ts", nil))),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.open",
-		ArgCheck( required(tokenArg), required(channelArg) ),
+		ArgCheck(required(tokenArg), required(channelArg)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.rename",
-		ArgCheck( required(tokenArg), required(channelArg), required(newArg("name", nil)), newArg("validate", nil)),
+		ArgCheck(required(tokenArg), required(channelArg), required(newArg("name", nil)), newArg("validate", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.replies",
-		ArgCheck( required(tokenArg), required(channelArg), newArg("thread_ts", nil) ),
+		ArgCheck(required(tokenArg), required(channelArg), newArg("thread_ts", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.setPurpose",
-		ArgCheck( required(tokenArg), required(channelArg), newArg("purpose", nil) ),
+		ArgCheck(required(tokenArg), required(channelArg), newArg("purpose", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.setTopic",
-		ArgCheck( required(tokenArg), required(channelArg), newArg("topic", nil) ),
+		ArgCheck(required(tokenArg), required(channelArg), newArg("topic", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/groups.unarchive",
-		ArgCheck( required(tokenArg), required(channelArg) ),
+		ArgCheck(required(tokenArg), required(channelArg)),
 		nil,
 	)
 
@@ -578,22 +578,22 @@ func newDummyServer() *dummyServer {
 	)
 	mux.HandleFunc(
 		"/api/reactions.add",
-		ArgCheck( required(tokenArg), required(nameArg), channelArg, newArg("file", nil), newArg("fileComment", nil), newArg("timestamp", nil) ),
+		ArgCheck(required(tokenArg), required(nameArg), channelArg, newArg("file", nil), newArg("fileComment", nil), newArg("timestamp", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/reactions.get",
-		ArgCheck( required(tokenArg), channelArg, newArg("file", nil), newArg("fileComment", nil), newArg("timestamp", nil), newArg("full", nil)),
+		ArgCheck(required(tokenArg), channelArg, newArg("file", nil), newArg("fileComment", nil), newArg("timestamp", nil), newArg("full", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/reactions.list",
-		ArgCheck( required(tokenArg), channelArg, newArg("user", nil), newArg("full", nil), newArg("count", nil), newArg("page", nil)),
+		ArgCheck(required(tokenArg), channelArg, newArg("user", nil), newArg("full", nil), newArg("count", nil), newArg("page", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/reactions.remove",
-		ArgCheck( required(tokenArg), required(nameArg), channelArg, newArg("file", nil), newArg("fileComment", nil), newArg("timestamp", nil) ),
+		ArgCheck(required(tokenArg), required(nameArg), channelArg, newArg("file", nil), newArg("fileComment", nil), newArg("timestamp", nil)),
 		nil,
 	)
 	mux.HandleFunc(
@@ -605,51 +605,62 @@ func newDummyServer() *dummyServer {
 	// usergroups
 	mux.HandleFunc(
 		"/api/usergroups.create",
-		ArgCheck( required(tokenArg), required(newArg("name", nil)), newArg("channels", nil), newArg("description", nil), newArg("handle", nil), newArg("include_count", nil) ),
+		ArgCheck(required(tokenArg), required(newArg("name", nil)), newArg("channels", nil), newArg("description", nil), newArg("handle", nil), newArg("include_count", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/usergroups.disable",
-		ArgCheck( required(tokenArg), required(newArg("usergroup", nil)), newArg("include_count", nil) ),
+		ArgCheck(required(tokenArg), required(newArg("usergroup", nil)), newArg("include_count", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/usergroups.enable",
-		ArgCheck( required(tokenArg), required(newArg("usergroup", nil)), newArg("include_count", nil) ),
+		ArgCheck(required(tokenArg), required(newArg("usergroup", nil)), newArg("include_count", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/usergroups.list",
-		ArgCheck( required(tokenArg), newArg("include_count", nil), newArg("include_disabled", nil), newArg("include_users", nil) ),
+		ArgCheck(required(tokenArg), newArg("include_count", nil), newArg("include_disabled", nil), newArg("include_users", nil)),
 		nil,
 	)
 	mux.HandleFunc(
 		"/api/usergroups.update",
-		ArgCheck( required(tokenArg), required(newArg("usergroup", nil)), newArg("channels", nil), newArg("description", nil), newArg("handle", nil), newArg("include_count", nil), newArg("name", nil) ),
+		ArgCheck(required(tokenArg), required(newArg("usergroup", nil)), newArg("channels", nil), newArg("description", nil), newArg("handle", nil), newArg("include_count", nil), newArg("name", nil)),
 		nil,
 	)
 
 	// usergroups.users
 	mux.HandleFunc(
 		"/api/usergroups.users.list",
-		ArgCheck( required(tokenArg), required(newArg("usergroup", nil)), newArg("include_disabled", nil)),
-		nil,
+		ArgCheck(required(tokenArg), required(newArg("usergroup", nil)), newArg("include_disabled", nil)),
+		slack.BuildUsersListCallResponse().
+			OK(true).
+			Members(objects.UserList{
+				mockserver.UserLukeSkywalker,
+				mockserver.UserObiwanKenobi,
+				mockserver.UserYoda,
+			}).
+			Build(),
 	)
 	mux.HandleFunc(
 		"/api/usergroups.users.update",
-		ArgCheck( required(tokenArg), required(newArg("usergroup", nil)), required(newArg("users", nil)), newArg("include_count", nil)),
+		ArgCheck(required(tokenArg), required(newArg("usergroup", nil)), required(newArg("users", nil)), newArg("include_count", nil)),
 		nil,
 	)
 
 	mux.HandleFunc(
 		"/api/users.deletePhoto",
 		ArgCheck(required(tokenArg)),
-		nil,
+		slack.BuildUsersDeletePhotoCallResponse().
+			OK(true).
+			Build(),
 	)
 	mux.HandleFunc(
 		"/api/users.getPresence",
 		ArgCheck(required(tokenArg), required(userArg)),
-		nil,
+		slack.BuildUsersGetPresenceCallResponse().
+			OK(true).
+			Build(),
 	)
 	mux.HandleFunc(
 		"/api/users.identity",
@@ -667,18 +678,29 @@ func newDummyServer() *dummyServer {
 	)
 	mux.HandleFunc(
 		"/api/users.list",
-		ArgCheck( required(tokenArg), newArg("presence", nil) ),
-		nil,
+		ArgCheck(required(tokenArg), newArg("presence", nil)),
+						slack.BuildUsersListCallResponse().
+							OK(true).
+							Members(objects.UserList{
+				mockserver.UserLukeSkywalker,
+				mockserver.UserObiwanKenobi,
+				mockserver.UserYoda,
+			}).
+			Build(),
 	)
 	mux.HandleFunc(
 		"/api/users.profile.get",
-		ArgCheck( required(tokenArg), userArg, newArg("include_labels", nil) ),
-		nil,
+		ArgCheck(required(tokenArg), userArg, newArg("include_labels", nil)),
+		slack.BuildUsersProfileGetCallResponse().
+			OK(true).
+			Build(),
 	)
 	mux.HandleFunc(
 		"/api/users.profile.set",
-		ArgCheck( required(tokenArg), userArg, newArg("profile", nil), newArg("name", nil), newArg("value", nil) ),
-		nil,
+		ArgCheck(required(tokenArg), userArg, newArg("profile", nil), newArg("name", nil), newArg("value", nil)),
+		slack.BuildUsersProfileSetCallResponse().
+			OK(true).
+			Build(),
 	)
 
 	mux.ServeMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
